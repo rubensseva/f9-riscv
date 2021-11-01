@@ -1,7 +1,0 @@
-SECTIONS
-{
-	.kernel :
-	{
-		*(.data)
-	}
-}
