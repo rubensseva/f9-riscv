@@ -3,13 +3,12 @@
  * found in the LICENSE file.
  */
 
-#include INC_PLAT(systick.h)
+// #include INC_PLAT(systick.h)
 
-#include <debug.h>
 #include <ktimer.h>
 #include <lib/ktable.h>
 #include <softirq.h>
-#include <platform/armv7m.h>
+// #include <platform/armv7m.h>
 #include <platform/bitops.h>
 #include <platform/irq.h>
 #include <init_hook.h>
@@ -51,15 +50,10 @@ static void ktimer_enable(uint32_t delta)
 		ktimer_delta = delta;
 		ktimer_time = 0;
 		ktimer_enabled = 1;
-
-#if defined(CONFIG_KDB) && \
-    defined(CONFIG_KTIMER_TICKLESS) && defined(CONFIG_KTIMER_TICKLESS_VERIFY)
-		tickless_verify_start(ktimer_now, ktimer_delta);
-#endif	/* CONFIG_KDB */
 	}
 }
 
-void __ktimer_handler(void)
+void ktimer_handler(void)
 {
 	++ktimer_now;
 
@@ -70,29 +64,11 @@ void __ktimer_handler(void)
 		if (ktimer_delta == 0) {
 			ktimer_enabled = 0;
 			ktimer_time = ktimer_delta = 0;
-
-#if defined(CONFIG_KDB) && \
-    defined(CONFIG_KTIMER_TICKLESS) && defined(CONFIG_KTIMER_TICKLESS_VERIFY)
-			tickless_verify_stop(ktimer_now);
-#endif	/* CONFIG_KDB */
-
 			softirq_schedule(KTE_SOFTIRQ);
 		}
 	}
 }
 
-IRQ_HANDLER(ktimer_handler, __ktimer_handler);
-
-#ifdef CONFIG_KDB
-void kdb_show_ktimer(void)
-{
-	dbg_printf(DL_KDB, "Now is %ld\n", ktimer_now);
-
-	if (ktimer_enabled) {
-		dbg_printf(DL_KDB,
-		           "Ktimer T=%d D=%d\n", ktimer_time, ktimer_delta);
-	}
-}
 
 #if defined(CONFIG_KTIMER_TICKLESS) && defined(CONFIG_KTIMER_TICKLESS_VERIFY)
 void kdb_show_tickless_verify(void)
@@ -102,23 +78,22 @@ void kdb_show_tickless_verify(void)
 	int times;
 
 	if (init == 0) {
-		dbg_printf(DL_KDB, "Init tickless verification...\n");
+		// dbg_printf(DL_KDB, "Init tickless verification...\n");
 		tickless_verify_init();
 		init++;
 	} else {
 		avg = tickless_verify_stat(&times);
-		dbg_printf(DL_KDB, "Times: %d\nAverage: %d\n", times, avg);
+		// dbg_printf(DL_KDB, "Times: %d\nAverage: %d\n", times, avg);
 	}
 }
 #endif
-#endif	/* CONFIG_KDB */
 
 static void ktimer_event_recalc(ktimer_event_t* event, uint32_t new_delta)
 {
 	if (event) {
-		dbg_printf(DL_KTIMER,
-		           "KTE: Recalculated event %p D=%d -> %d\n",
-		           event, event->delta, event->delta - new_delta);
+		/* dbg_printf(DL_KTIMER, */
+		/*            "KTE: Recalculated event %p D=%d -> %d\n", */
+		/*            event, event->delta, event->delta - new_delta); */
 		event->delta -= new_delta;
 	}
 
@@ -138,9 +113,9 @@ int ktimer_event_schedule(uint32_t ticks, ktimer_event_t *kte)
 		/* All other events are already handled, so simply schedule
 		 * and enable timer
 		 */
-		dbg_printf(DL_KTIMER,
-		           "KTE: Scheduled dummy event %p on %d\n",
-		           kte, ticks);
+		/* dbg_printf(DL_KTIMER, */
+		/*            "KTE: Scheduled dummy event %p on %d\n", */
+		/*            kte, ticks); */
 
 		kte->delta = ticks;
 		event_queue = kte;
@@ -177,18 +152,18 @@ int ktimer_event_schedule(uint32_t ticks, ktimer_event_t *kte)
 			} while (next_event &&
 			         ticks > (etime + next_event->delta));
 
-			dbg_printf(DL_KTIMER,
-			           "KTE: Scheduled event %p [%p:%p] with "
-			           "D=%d and T=%d\n",
-			           kte, event, next_event, delta, ticks);
+			/* dbg_printf(DL_KTIMER, */
+			/*            "KTE: Scheduled event %p [%p:%p] with " */
+			/*            "D=%d and T=%d\n", */
+			/*            kte, event, next_event, delta, ticks); */
 
 			/* Insert into chain and recalculate */
 			event->next = kte;
 		} else {
 			/* Event should be scheduled before earlier event */
-			dbg_printf(DL_KTIMER,
-			           "KTE: Scheduled early event %p with T=%d\n",
-			           kte, ticks);
+			/* dbg_printf(DL_KTIMER, */
+			/*            "KTE: Scheduled early event %p with T=%d\n", */
+			/*            kte, ticks); */
 
 			event_queue = kte;
 			delta = ticks;
@@ -247,7 +222,7 @@ void ktimer_event_handler()
 
 	if (!event_queue) {
 		/* That is bug if we are here */
-		dbg_printf(DL_KTIMER, "KTE: OOPS! handler found no events\n");
+		/* dbg_printf(DL_KTIMER, "KTE: OOPS! handler found no events\n"); */
 
 		ktimer_disable();
 		return;
@@ -270,14 +245,14 @@ void ktimer_event_handler()
 		next_event = event->next;
 
 		if (h_retvalue != 0x0) {
-			dbg_printf(DL_KTIMER,
-			           "KTE: Handled and rescheduled event %p @%ld\n",
-			           event, ktimer_now);
+			/* dbg_printf(DL_KTIMER, */
+			/*            "KTE: Handled and rescheduled event %p @%ld\n", */
+			/*            event, ktimer_now); */
 			ktimer_event_schedule(h_retvalue, event);
 		} else {
-			dbg_printf(DL_KTIMER,
-			           "KTE: Handled event %p @%ld\n",
-			           event, ktimer_now);
+			/* dbg_printf(DL_KTIMER, */
+			/*            "KTE: Handled event %p @%ld\n", */
+			/*            event, ktimer_now); */
 			ktable_free(&ktimer_event_table, event);
 		}
 
@@ -300,21 +275,6 @@ void ktimer_event_init()
 
 INIT_HOOK(ktimer_event_init, INIT_LEVEL_KERNEL);
 
-#ifdef CONFIG_KDB
-void kdb_dump_events(void)
-{
-	ktimer_event_t *event = event_queue;
-
-	dbg_puts("\nktimer events: \n");
-	dbg_printf(DL_KDB, "%8s %12s\n", "EVENT", "DELTA");
-
-	while (event) {
-		dbg_printf(DL_KDB, "%p %12d\n", event, event->delta);
-
-		event = event->next;
-	}
-}
-#endif
 
 #ifdef CONFIG_KTIMER_TICKLESS
 
@@ -345,11 +305,6 @@ void ktimer_enter_tickless()
 
 	if (reload > 2) {
 		init_systick(reload, CONFIG_KTIMER_HEARTBEAT);
-
-#if defined(CONFIG_KDB) && \
-    defined(CONFIG_KTIMER_TICKLESS) && defined(CONFIG_KTIMER_TICKLESS_VERIFY)
-		tickless_verify_count();
-#endif
 	}
 
 	wait_for_interrupt();
@@ -372,10 +327,6 @@ void ktimer_enter_tickless()
 				tickless_delta++;
 			}
 
-#if defined(CONFIG_KDB) && \
-    defined(CONFIG_KTIMER_TICKLESS) && defined(CONFIG_KTIMER_TICKLESS_VERIFY)
-			tickless_verify_count_int();
-#endif
 		}
 	}
 

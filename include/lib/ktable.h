@@ -6,7 +6,7 @@
 #ifndef LIB_KTABLE_H_
 #define LIB_KTABLE_H_
 
-#include <platform/armv7m.h>
+// #include <platform/armv7m.h>
 #include <platform/link.h>
 #include <lib/bitmap.h>
 #include <types.h>
@@ -21,13 +21,22 @@ struct ktable {
 
 typedef struct ktable ktable_t;
 
+/* #define DECLARE_KTABLE(type, name, num_)			\ */
+/* 	DECLARE_BITMAP(kt_ ## name ## _bitmap, num_);		\ */
+/* 	static __KTABLE type kt_ ## name ## _data[num_];	\ */
+/* 	ktable_t name = {					\ */
+/* 			.tname = #name,				\ */
+/* 			.bitmap = kt_ ## name ## _bitmap,	\ */
+/* 			.data = (ptr_t) kt_ ## name ## _data,	\ */
+/* 			.num = num_, .size = sizeof(type)	\ */
+/* 	} */
+
 #define DECLARE_KTABLE(type, name, num_)			\
 	DECLARE_BITMAP(kt_ ## name ## _bitmap, num_);		\
 	static __KTABLE type kt_ ## name ## _data[num_];	\
 	ktable_t name = {					\
 			.tname = #name,				\
 			.bitmap = kt_ ## name ## _bitmap,	\
-			.data = (ptr_t) kt_ ## name ## _data,	\
 			.num = num_, .size = sizeof(type)	\
 	}
 

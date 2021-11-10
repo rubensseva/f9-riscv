@@ -6,11 +6,10 @@
 #include <syscall.h>
 #include <softirq.h>
 #include <thread.h>
-#include <debug.h>
 #include <ipc.h>
 #include <l4/utcb.h>
 #include <memory.h>
-#include <platform/armv7m.h>
+// #include <platform/armv7m.h>
 #include <platform/irq.h>
 #include <init_hook.h>
 
@@ -84,10 +83,10 @@ void syscall_handler()
 	} else if (svc_num == SYS_IPC) {
 		sys_ipc(svc_param1);
 	} else {
-		dbg_printf(DL_SYSCALL,
-		           "SVC: %d called [%d, %d, %d, %d]\n", svc_num,
-		           svc_param1[REG_R0], svc_param1[REG_R1],
-		           svc_param1[REG_R2], svc_param1[REG_R3]);
+		/* dbg_printf(DL_SYSCALL, */
+		/*            "SVC: %d called [%d, %d, %d, %d]\n", svc_num, */
+		/*            svc_param1[REG_R0], svc_param1[REG_R1], */
+		/*            svc_param1[REG_R2], svc_param1[REG_R3]); */
 		caller->state = T_RUNNABLE;
 	}
 }

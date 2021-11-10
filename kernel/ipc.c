@@ -3,10 +3,9 @@
  * found in the LICENSE file.
  */
 
-#include INC_PLAT(systick.h)
+#include <systick.h>
 
-#include <platform/armv7m.h>
-#include <debug.h>
+// #include <platform/armv7m.h>
 #include <error.h>
 #include <types.h>
 #include <thread.h>
@@ -157,15 +156,15 @@ static void do_ipc(tcb_t *from, tcb_t *to)
 		from->state = T_RECV_BLOCKED;
 		from->ipc_from = from_recv_tid;
 
-		dbg_printf(DL_IPC, "IPC: %t receiving\n", from->t_globalid);
+		// dbg_printf(DL_IPC, "IPC: %t receiving\n", from->t_globalid);
 	}
 
 	/* Dispatch communicating threads */
 	sched_slot_dispatch(SSI_NORMAL_THREAD, from);
 	sched_slot_dispatch(SSI_IPC_THREAD, to);
 
-	dbg_printf(DL_IPC,
-	           "IPC: %t to %t\n", caller->t_globalid, to->t_globalid);
+	/* dbg_printf(DL_IPC, */
+	/*            "IPC: %t to %t\n", caller->t_globalid, to->t_globalid); */
 }
 
 uint32_t ipc_timeout(void *data)
@@ -246,8 +245,8 @@ void sys_ipc(uint32_t *param1)
 				size_t stack_size = ipc_read_mr(caller, 3);
 				uint32_t regs[4];	/* r0, r1, r2, r3 */
 
-				dbg_printf(DL_IPC,
-				           "IPC: %t thread start\n", to_tid);
+				/* dbg_printf(DL_IPC, */
+				/*            "IPC: %t thread start\n", to_tid); */
 
 				to_thr->stack_base = sp - stack_size;
 				to_thr->stack_size = stack_size;
@@ -276,8 +275,8 @@ void sys_ipc(uint32_t *param1)
 			/* No waiting, block myself */
 			caller->state = T_SEND_BLOCKED;
 			caller->utcb->intended_receiver = to_tid;
-			dbg_printf(DL_IPC,
-			           "IPC: %t sending\n", caller->t_globalid);
+			/* dbg_printf(DL_IPC, */
+			/*            "IPC: %t sending\n", caller->t_globalid); */
 
 			if (timeout)
 				sys_ipc_timeout(timeout);
@@ -325,7 +324,7 @@ void sys_ipc(uint32_t *param1)
 		if (timeout)
 			sys_ipc_timeout(timeout);
 
-		dbg_printf(DL_IPC, "IPC: %t receiving\n", caller->t_globalid);
+		// dbg_printf(DL_IPC, "IPC: %t receiving\n", caller->t_globalid);
 
 		return;
 	}

@@ -6,10 +6,9 @@
 #include <thread.h>
 #include <lib/ktable.h>
 #include <error.h>
-#include <debug.h>
 #include <sched.h>
 #include <platform/irq.h>
-#include <platform/armv7m.h>
+// #include <platform/armv7m.h>
 #include <fpage_impl.h>
 #include <init_hook.h>
 
@@ -181,7 +180,7 @@ tcb_t *thread_init(l4_thread_t globalid, utcb_t *utcb)
 
 	thr->timeout_event = 0;
 
-	dbg_printf(DL_THREAD, "T: New thread: %t @[%p] \n", globalid, thr);
+	/* dbg_printf(DL_THREAD, "T: New thread: %t @[%p] \n", globalid, thr); */
 
 	return thr;
 }
@@ -277,8 +276,8 @@ void thread_space(tcb_t *thr, l4_thread_t spaceid, utcb_t *utcb)
 		map_fpage(NULL, thr->as, kip_fpage, GRANT);
 		map_fpage(NULL, thr->as, kip_extra_fpage, GRANT);
 
-		dbg_printf(DL_THREAD,
-		           "\tNew space: as: %p, utcb: %p \n", thr->as, utcb);
+		/* dbg_printf(DL_THREAD, */
+		/*            "\tNew space: as: %p, utcb: %p \n", thr->as, utcb); */
 	} else {
 		tcb_t *space = thread_by_globalid(spaceid);
 
@@ -436,42 +435,3 @@ static tcb_t *thread_sched(sched_slot_t *slot)
 	return thread_select(root);
 }
 
-#ifdef CONFIG_KDB
-
-static char *kdb_get_thread_type(tcb_t *thr)
-{
-	int id = GLOBALID_TO_TID(thr->t_globalid);
-
-	if (id == THREAD_KERNEL)
-		return "KERN";
-	else if (id == THREAD_ROOT)
-		return "ROOT";
-	else if (id == THREAD_IDLE)
-		return "IDLE";
-	else if (id >= THREAD_USER)
-		return "[USR]";
-	else if (id >= THREAD_SYS)
-		return "[SYS]";
-
-	return "???";
-}
-
-void kdb_dump_threads(void)
-{
-	tcb_t *thr;
-	int idx;
-
-	char *state[] = { "FREE", "RUN", "SVC", "RECV", "SEND" };
-
-	dbg_printf(DL_KDB, "%5s %8s %8s %6s %s\n",
-	           "type", "global", "local", "state", "parent");
-
-	for_each_in_ktable(thr, idx, (&thread_table)) {
-		dbg_printf(DL_KDB, "%5s %t %t %6s %t\n",
-		           kdb_get_thread_type(thr),
-		           thr->t_globalid, thr->t_localid, state[thr->state],
-		           (thr->t_parent) ? thr->t_parent->t_globalid : 0);
-	}
-}
-
-#endif	/* CONFIG_KDB */

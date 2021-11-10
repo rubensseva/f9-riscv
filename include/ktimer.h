@@ -6,6 +6,8 @@
 #ifndef KTIMER_H_
 #define KTIMER_H_
 
+#include <stdint.h>
+
 void ktimer_handler(void);
 
 /* Returns 0 if successfully handled

@@ -5,7 +5,6 @@
 
 #include <memory.h>
 #include <error.h>
-#include <debug.h>
 #include <thread.h>
 #include <lib/ktable.h>
 #include <fpage_impl.h>
@@ -494,17 +493,17 @@ static char *kdb_mempool_prop(mempool_t *mp)
 
 void kdb_dump_mempool(void)
 {
-	dbg_printf(DL_KDB,
-	           "%2s %20s %10s [%8s:%8s] %10s\n",
-	           "ID", "NAME", "SIZE", "START", "END", "FLAGS");
+	/* dbg_printf(DL_KDB, */
+	/*            "%2s %20s %10s [%8s:%8s] %10s\n", */
+	/*            "ID", "NAME", "SIZE", "START", "END", "FLAGS"); */
 
 	for (int i = 0; i < sizeof(memmap) / sizeof(mempool_t); ++i) {
-		dbg_printf(DL_KDB,
-		           "%2d %20s %10d [%p:%p] %10s\n",
-		           i,
-		           memmap[i].name, (memmap[i].end - memmap[i].start),
-		           memmap[i].start, memmap[i].end,
-		           kdb_mempool_prop(&(memmap[i])));
+		/* dbg_printf(DL_KDB, */
+		/*            "%2d %20s %10d [%p:%p] %10s\n", */
+		/*            i, */
+		/*            memmap[i].name, (memmap[i].end - memmap[i].start), */
+		/*            memmap[i].start, memmap[i].end, */
+		/*            kdb_mempool_prop(&(memmap[i]))); */
 	}
 }
 
@@ -513,14 +512,14 @@ void kdb_dump_as(void)
 	extern enum {
 		DBG_ASYNC, DBG_PANIC
 	}
-	dbg_state;
+	/* dbg_state; */
 	int idx = 0, nl = 0, i;
 	as_t *as = NULL;
 	fpage_t *fpage = NULL;
 
 	for_each_in_ktable(as, idx, &as_table) {
 		fpage = as->first;
-		dbg_printf(DL_KDB, "Address Space %p\n", as->as_spaceid);
+		/* dbg_printf(DL_KDB, "Address Space %p\n", as->as_spaceid); */
 
 		while (fpage) {
 			fpage->used = 0;
@@ -545,20 +544,20 @@ void kdb_dump_as(void)
 		nl = 0;
 		fpage = as->first;
 		while (fpage) {
-			dbg_printf(DL_KDB,
-			           "MEM: %c fpage %5s [b:%p, sz:2**%d]\n",
-			           fpage->used ? 'o' : ' ',
-			           memmap[fpage->fpage.mpid].name,
-			           fpage->fpage.base, fpage->fpage.shift);
+			/* dbg_printf(DL_KDB, */
+			/*            "MEM: %c fpage %5s [b:%p, sz:2**%d]\n", */
+			/*            fpage->used ? 'o' : ' ', */
+			/*            memmap[fpage->fpage.mpid].name, */
+			/*            fpage->fpage.base, fpage->fpage.shift); */
 			fpage = fpage->as_next;
 			++nl;
 
-			if (dbg_state != DBG_PANIC && nl == 12) {
-				dbg_puts("Press any key...\n");
-				while (dbg_getchar() == 0)
+			/* if (dbg_state != DBG_PANIC && nl == 12) { */
+				/* dbg_puts("Press any key...\n"); */
+				/* while (dbg_getchar() == 0) */
 					/* */ ;
-				nl = 0;
-			}
+			/* 	nl = 0; */
+			/* } */
 		}
 	}
 }

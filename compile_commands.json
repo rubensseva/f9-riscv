@@ -1,0 +1,26 @@
+[
+  {
+    "arguments": [
+      "/home/ruben/CustomSources/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc",
+      "-c",
+      "-Wall",
+      "-O",
+      "-fno-omit-frame-pointer",
+      "-ggdb",
+      "-mcmodel=medany",
+      "-ffreestanding",
+      "-fno-common",
+      "-mno-relax",
+      "-Iinclude",
+      "-Iinclude/l4",
+      "-Iinclude/lib",
+      "-Iinclude/platform",
+      "-o",
+      "build/ktimer.o",
+      "kernel/ktimer.c"
+    ],
+    "directory": "/home/ruben/Code/SoftwareDefinedMemory/f9-kernel-risc-v-simple",
+    "file": "/home/ruben/Code/SoftwareDefinedMemory/f9-kernel-risc-v-simple/kernel/ktimer.c",
+    "output": "/home/ruben/Code/SoftwareDefinedMemory/f9-kernel-risc-v-simple/build/ktimer.o"
+  }
+]

@@ -13,7 +13,6 @@
 #include <fpage_impl.h>
 
 #include <error.h>
-#include <debug.h>
 
 DECLARE_KTABLE(fpage_t, fpage_table, CONFIG_MAX_FPAGES);
 
@@ -242,9 +241,9 @@ int assign_fpages_ext(int mpid, as_t *as, memptr_t base, size_t size,
 				fpage_t *first = NULL, *last = NULL;
 				size = (end < FPAGE_BASE(*fp) ? end : FPAGE_BASE(*fp)) - base;
 
-				dbg_printf(DL_MEMORY,
-				           "MEM: fpage chain %s [b:%p, sz:%p] as %p\n",
-				           mempool_getbyid(mpid)->name, base, size, as);
+				/* dbg_printf(DL_MEMORY, */
+				/*            "MEM: fpage chain %s [b:%p, sz:%p] as %p\n", */
+				/*            mempool_getbyid(mpid)->name, base, size, as); */
 
 				create_fpage_chain(mempool_align(mpid, base),
 				                   mempool_align(mpid, size),
@@ -274,9 +273,9 @@ int assign_fpages_ext(int mpid, as_t *as, memptr_t base, size_t size,
 			fpage_t *first = NULL, *last = NULL;
 			size = end - base;
 
-			dbg_printf(DL_MEMORY,
-			           "MEM: fpage chain %s [b:%p, sz:%p] as %p\n",
-			           mempool_getbyid(mpid)->name, base, size, as);
+			/* dbg_printf(DL_MEMORY, */
+			/*            "MEM: fpage chain %s [b:%p, sz:%p] as %p\n", */
+			/*            mempool_getbyid(mpid)->name, base, size, as); */
 
 			create_fpage_chain(mempool_align(mpid, base),
 			                   mempool_align(mpid, size),
@@ -289,9 +288,9 @@ int assign_fpages_ext(int mpid, as_t *as, memptr_t base, size_t size,
 			*plast = last;
 		}
 	} else {
-		dbg_printf(DL_MEMORY,
-		           "MEM: fpage chain %s [b:%p, sz:%p] as %p\n",
-		           mempool_getbyid(mpid)->name, base, size, as);
+		/* dbg_printf(DL_MEMORY, */
+		/*            "MEM: fpage chain %s [b:%p, sz:%p] as %p\n", */
+		/*            mempool_getbyid(mpid)->name, base, size, as); */
 
 		create_fpage_chain(mempool_align(mpid, base),
 		                   mempool_align(mpid, size),
@@ -332,8 +331,8 @@ int map_fpage(as_t *src, as_t *dst, fpage_t *fpage, map_action_t action)
 	/* Insert into AS */
 	insert_fpage_to_as(dst, fpmap);
 
-	dbg_printf(DL_MEMORY, "MEM: %s fpage %p from %p to %p\n",
-	           (action == MAP) ? "mapped" : "granted", fpage, src, dst);
+	/* dbg_printf(DL_MEMORY, "MEM: %s fpage %p from %p to %p\n", */
+	/*            (action == MAP) ? "mapped" : "granted", fpage, src, dst); */
 
 	return 0;
 }
@@ -342,7 +341,7 @@ int unmap_fpage(as_t *as, fpage_t *fpage)
 {
 	fpage_t *fpprev = fpage;
 
-	dbg_printf(DL_MEMORY, "MEM: unmapped fpage %p from %p\n", fpage, as);
+	/* dbg_printf(DL_MEMORY, "MEM: unmapped fpage %p from %p\n", fpage, as); */
 
 	/* Fpages that are not mapped or granted
 	 * are destroyed with its AS

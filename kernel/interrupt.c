@@ -3,12 +3,12 @@
 #include <platform/irq.h>
 #include <interrupt.h>
 #include <interrupt_ipc.h>
-#include <debug.h>
 #include <init_hook.h>
 #include <error.h>
 #include <lib/ktable.h>
+#include <riscv.h>
 
-#include INC_PLAT(nvic.h)
+// #include INC_PLAT(nvic.h)
 
 void __interrupt_handler(int n);
 
@@ -26,7 +26,7 @@ void __interrupt_handler(int n);
 #undef USER_INTERRUPT_USED
 #define USER_INTERRUPT
 #define IRQ_VEC_N_OP	USER_IRQ_VEC
-#include INC_PLAT(nvic_private.h)
+// #include INC_PLAT(nvic_private.h)
 #undef IRQ_VEC_N_OP
 #undef USER_INTERRUPT
 
@@ -309,29 +309,38 @@ void user_interrupt_handler_update(tcb_t *thr)
 
 void user_irq_enable(int irq)
 {
-	if (nvic_is_setup(irq)) {
-		NVIC_EnableIRQ(irq);
-	}
+	int enable_bits = (SIE_SEIE | SIE_SSIE);
+	w_sie(SIE_SEIE | SIE_SSIE);
+	/* if (nvic_is_setup(irq)) { */
+	/* 	NVIC_EnableIRQ(irq); */
+	/* } */
 }
 
 void user_irq_disable(int irq)
 {
-	if (nvic_is_setup(irq)) {
-		NVIC_ClearPendingIRQ(irq);
-		NVIC_DisableIRQ(irq);
-	}
+	int prev = (SIE_SEIE | SIE_SSIE);
+	uint64 sie = r_sie();
+	w_sie(~prev & sie);
+	// TODO: Also clear pending
+
+	/* if (nvic_is_setup(irq)) { */
+	/* 	NVIC_ClearPendingIRQ(irq); */
+	/* 	NVIC_DisableIRQ(irq); */
+	/* } */
 }
 
 void user_irq_set_pending(int irq)
 {
-	if (nvic_is_setup(irq)) {
-		NVIC_SetPendingIRQ(irq);
-	}
+	// TODO: fillmein
+	/* if (nvic_is_setup(irq)) { */
+	/* 	NVIC_SetPendingIRQ(irq); */
+	/* } */
 }
 
 void user_irq_clear_pending(int irq)
 {
-	if (nvic_is_setup(irq)) {
-		NVIC_ClearPendingIRQ(irq);
-	}
+	// TODO: fillmein
+	/* if (nvic_is_setup(irq)) { */
+	/* 	NVIC_ClearPendingIRQ(irq); */
+	/* } */
 }

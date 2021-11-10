@@ -5,12 +5,9 @@
 
 #include <error.h>
 #include <thread.h>
-#include <debug.h>
-#include <kdb.h>
 #include <platform/irq.h>
-#include <platform/armv7m.h>
+// #include <platform/armv7m.h>
 #include <platform/link.h>
-#include <platform/debug_device.h>
 #include <lib/stdarg.h>
 
 #ifdef LOADER
@@ -42,17 +39,17 @@ static void panic_dump_stack(void)
 	uint32_t *current_sp = (uint32_t *) read_msp();
 	int word = 0;
 
-	dbg_puts("\n\nStack dump:\n");
+	/* dbg_puts("\n\nStack dump:\n"); */
 
 #ifdef LOADER
 	while (current_sp < &stack_end) {
 #else
 	while (current_sp < &kernel_stack_end) {
 #endif
-		dbg_printf(DL_EMERG, "%p ", *(++current_sp));
+		/* dbg_printf(DL_EMERG, "%p ", *(++current_sp)); */
 
 		if (++word % 8 == 0)
-			dbg_putchar('\n');
+			/* dbg_putchar('\n'); */
 	}
 }
 #endif	/* CONFIG_PANIC_DUMP_STACK */
@@ -62,16 +59,10 @@ void panic_impl(char *fmt, ...)
 	va_list va;
 	va_start(va, fmt);
 
-	dbg_start_panic();
+	/* dbg_start_panic(); */
 
 	irq_disable();
-	dbg_vprintf(DL_EMERG, fmt, va);
-
-#ifndef LOADER
-#ifdef CONFIG_KDB
-	kdb_dump_error();
-#endif
-#endif
+	/* dbg_vprintf(DL_EMERG, fmt, va); */
 
 #ifdef CONFIG_PANIC_DUMP_STACK
 	panic_dump_stack();

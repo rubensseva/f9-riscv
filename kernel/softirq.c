@@ -4,10 +4,9 @@
  */
 
 #include <types.h>
-#include <platform/irq.h>
-#include <platform/bitops.h>
+#include <irq.h>
+#include <bitops.h>
 #include <softirq.h>
-#include <debug.h>
 #include <systhread.h>
 
 static softirq_t softirq[NR_SOFTIRQ];
@@ -45,8 +44,8 @@ retry:
 			executed = 1;
 			atomic_set(&(softirq[i].schedule), 0);
 
-			dbg_printf(DL_SOFTIRQ,
-			           "SOFTIRQ: executing %s\n", softirq_names[i]);
+			/* dbg_printf(DL_SOFTIRQ, */
+			/*            "SOFTIRQ: executing %s\n", softirq_names[i]); */
 		}
 	}
 
@@ -67,13 +66,3 @@ retry:
 	return executed;
 }
 
-#ifdef CONFIG_KDB
-void kdb_dump_softirq(void)
-{
-	for (int i = 0; i < NR_SOFTIRQ; ++i) {
-		dbg_printf(DL_KDB, "%32s %s\n", softirq_names[i],
-		           atomic_get(&(softirq[i].schedule)) ?
-		           "scheduled" : "not scheduled");
-	}
-}
-#endif

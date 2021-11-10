@@ -1,0 +1,8 @@
+#+TITLE: Changes From Original F9
+
+* deleted build system, use a single simpler makefile
+* constants previously in build system is now in config.c
+* deleted all arm specific code
+* simplify platform config and directory structure, assume only one platform for now
+* remove debug statements
+* remove interrupt vector table. use direct interrupt instead for now.
