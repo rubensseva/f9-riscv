@@ -3,6 +3,7 @@
 
 // #include <platform/stm32f429/registers.h>
 
+#include <stdint.h>
 #define CORE_CLOCK		(0x0a037a00) /* 168MHz */
 #define SYSTICK_MAXRELOAD	(0x00ffffff)
 

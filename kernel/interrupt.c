@@ -1,12 +1,13 @@
 #include <thread.h>
 #include <ipc.h>
-#include <platform/irq.h>
+#include <irq.h>
 #include <interrupt.h>
 #include <interrupt_ipc.h>
 #include <init_hook.h>
 #include <error.h>
 #include <lib/ktable.h>
 #include <riscv.h>
+#include <config.h>
 
 // #include INC_PLAT(nvic.h)
 
@@ -184,9 +185,14 @@ static void irq_schedule(int irq)
 {
 	struct user_irq *uirq = user_irq_fetch(irq);
 
-	irq_disable();
+	// irq_disable();
+	intr_off();
+	machine_intr_off();
+
 	user_irq_queue_push(uirq);
-	irq_enable();
+	// irq_enable();
+	intr_on();
+	machine_intr_on();
 
 	irq_handler_enable(irq);
 }
@@ -195,7 +201,9 @@ static tcb_t *irq_handler_sched(struct sched_slot *slot)
 {
 	tcb_t *thr = NULL;
 
-	irq_disable();
+	// irq_disable();
+	intr_off();
+	machine_intr_off();
 	struct user_irq *uirq = user_irq_queue_pop();
 
 	if (uirq && (thr = uirq->thr) &&
@@ -204,7 +212,8 @@ static tcb_t *irq_handler_sched(struct sched_slot *slot)
 		sched_slot_dispatch(SSI_INTR_THREAD, thr);
 	}
 
-	irq_enable();
+	intr_on();
+	machine_intr_on();
 
 	return thr;
 }
@@ -287,16 +296,24 @@ void user_interrupt_handler_update(tcb_t *thr)
 				user_irq_enable(irq);
 				break;
 			case USER_IRQ_DISABLE:
-				irq_disable();
+				// irq_disable();
+				intr_off();
+				machine_intr_off();
 				user_irq_queue_delete(irq);
-				irq_enable();
-				user_irq_disable(irq);
+				// irq_enable();
+				// user_irq_disable(irq);
+				intr_on();
+				machine_intr_on();
 				break;
 			case USER_IRQ_FREE:
-				irq_disable();
+				// irq_disable();
+				intr_off();
+				machine_intr_off();
 				user_irq_queue_delete(irq);
 				user_irq_release(irq);
-				irq_enable();
+				// irq_enable();
+				intr_on();
+				machine_intr_on();
 				/* reply ipc immediately */
 				irq_handler_ipc(uirq);
 				thr->state = T_RUNNABLE;
@@ -319,7 +336,7 @@ void user_irq_enable(int irq)
 void user_irq_disable(int irq)
 {
 	int prev = (SIE_SEIE | SIE_SSIE);
-	uint64 sie = r_sie();
+	uint64_t sie = r_sie();
 	w_sie(~prev & sie);
 	// TODO: Also clear pending
 

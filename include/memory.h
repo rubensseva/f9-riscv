@@ -8,7 +8,7 @@
 
 #include <types.h>
 #include <fpage.h>
-#include <platform/link.h>
+#include <link.h>
 
 /*
  * Each address space is associated with one or more thread.
@@ -128,7 +128,6 @@ void as_setup_mpu(as_t *as, memptr_t sp, memptr_t pc,
 void as_map_user(as_t *as);
 void as_map_ktext(as_t *as);
 
-void mpu_enable(mpu_state_t i);
 void mpu_setup_region(int n, struct fpage *fp);
 int mpu_select_lru(as_t *as, uint32_t addr);
 

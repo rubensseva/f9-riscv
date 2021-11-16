@@ -8,6 +8,7 @@
 #include <bitops.h>
 #include <softirq.h>
 #include <systhread.h>
+#include <riscv.h>
 
 static softirq_t softirq[NR_SOFTIRQ];
 
@@ -19,7 +20,9 @@ void softirq_register(softirq_type_t type, softirq_handler_t handler)
 
 void softirq_schedule(softirq_type_t type)
 {
-	atomic_set(&(softirq[type].schedule), 1);
+	// TODO: Do this atomically
+	// old: atomic_set(&(softirq[type].schedule), 1);
+	softirq[type].schedule = 1;
 	set_kernel_state(T_RUNNABLE);
 }
 
@@ -37,12 +40,15 @@ int softirq_execute()
 	uint32_t softirq_schedule = 0, executed = 0;
 retry:
 	for (int i = 0; i < NR_SOFTIRQ; ++i) {
-		if (atomic_get(&(softirq[i].schedule)) != 0 &&
-		    softirq[i].handler) {
+		// TODO: Do this atomically
+		// OLD: if (atomic_get(&(softirq[i].schedule)) != 0 &&
+		if (softirq[i].schedule != 0 && softirq[i].handler) {
 			softirq[i].handler();
 
 			executed = 1;
-			atomic_set(&(softirq[i].schedule), 0);
+			// TODO: Do this atomically
+			// OLD: atomic_set(&(softirq[i].schedule), 0);
+			softirq[i].schedule = 0;
 
 			/* dbg_printf(DL_SOFTIRQ, */
 			/*            "SOFTIRQ: executing %s\n", softirq_names[i]); */
@@ -50,7 +56,10 @@ retry:
 	}
 
 	/* Must ensure that no interrupt reschedule its softirq */
-	irq_disable();
+	intr_off();
+	machine_intr_off();
+
+	// irq_disable();
 
 	softirq_schedule = 0;
 	for (int i = 0; i < NR_SOFTIRQ; ++i) {
@@ -58,7 +67,7 @@ retry:
 	}
 
 	set_kernel_state((softirq_schedule) ? T_RUNNABLE : T_INACTIVE);
-	irq_enable();
+	// irq_enable();
 
 	if (softirq_schedule)
 		goto retry;

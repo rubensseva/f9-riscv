@@ -10,12 +10,12 @@
 #include <l4/utcb.h>
 #include <memory.h>
 // #include <platform/armv7m.h>
-#include <platform/irq.h>
+#include <irq.h>
 #include <init_hook.h>
 
 tcb_t *caller;
 
-void __svc_handler(void)
+void svc_handler(void)
 {
 	extern tcb_t *kernel;
 
@@ -29,7 +29,6 @@ void __svc_handler(void)
 	softirq_schedule(SYSCALL_SOFTIRQ);
 }
 
-IRQ_HANDLER(svc_handler, __svc_handler);
 
 void syscall_init()
 {

@@ -9,10 +9,37 @@
 #include <softirq.h>
 #include <thread.h>
 #include <sched.h>
-#include <platform/link.h>
+#include <link.h>
 // #include <platform/cortex_m.h>
 
 void irq_init(void);
+
+
+/* Initial context switches to kernel.
+ * It simulates interrupt to save corect context on stack.
+ * When interrupts are enabled, it will jump to interrupt handler
+ * and then return to normal execution of kernel code.
+ *
+ * // msr (general purpose register to psr (program status register))
+ * // msp (main stack pointer)
+ * // so msr msp, r0 means move r0 into master stack pointer (i think)
+ *
+ * CPS (Change Processor State)
+ * CPSIE i  ; Enable interrupts and configurable fault handlers (clear PRIMASK)
+ * bx jump, with hint that this is not a function return
+ *
+ * old:
+	__asm__ __volatile__ ("mov sp, %0" : : "r" ((ctx)->sp));	\
+	__asm__ __volatile__ ("msr msp, r0");				\
+	__asm__ __volatile__ ("mov r1, %0" : : "r" (pc));		\
+	__asm__ __volatile__ ("cpsie i");				\
+	__asm__ __volatile__ ("bx r1");
+	// jalr x0, rs, 0 - Jump register
+	// jalr x0, x1, 0 - Return from subroutine
+ */
+#define init_ctx_switch(ctx, pc) \
+	__asm__ __volatile__ ("add sp, x0, %0" : : "r" ((ctx)->sp));	\
+	__asm__ __volatile__ ("jalr x0, %0, 0" : : "r" (pc));		\
 
 
 #define context_switch(from, to)					\

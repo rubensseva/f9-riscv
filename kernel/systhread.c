@@ -3,10 +3,11 @@
  * found in the LICENSE file.
  */
 
-#include <platform/irq.h>
+#include <irq.h>
 #include <softirq.h>
 #include <thread.h>
 #include <ktimer.h>
+#include <riscv.h>
 
 /*
  * @file systhread.c
@@ -17,7 +18,9 @@ tcb_t *idle;
 tcb_t *kernel;
 tcb_t *root;
 
-extern void root_thread(void);
+// TODO: Fixme
+// extern void root_thread(void);
+
 utcb_t root_utcb __KIP;
 
 static void kernel_thread(void);
@@ -36,7 +39,8 @@ void create_root_thread(void)
 		[REG_R3] = 0,
 	};
 
-	thread_init_ctx((void *) &root_stack_end, root_thread, regs, root);
+	// TODO: Fixme
+	// thread_init_ctx((void *) &root_stack_end, root_thread, regs, root);
 
 	root->stack_base = (memptr_t) &root_stack_start;
 	root->stack_size = (uint32_t) &root_stack_end -
@@ -89,16 +93,14 @@ static void kernel_thread(void)
 		 * switch context immediately
 		 */
 		softirq_execute();
-		irq_svc();
+		// TODO: switch contexts here
+		// irq_svc();
 	}
 }
 
 static void idle_thread(void)
 {
-	while (1)
-#ifdef CONFIG_KTIMER_TICKLESS
-		ktimer_enter_tickless();
-#else
+	while (1) {
 		wait_for_interrupt();
-#endif /* CONFIG_KTIMER_TICKLESS */
+	}
 }

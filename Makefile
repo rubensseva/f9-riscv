@@ -6,6 +6,11 @@
 # $< (first?) prerequisite
 # $^ all prerequisites
 
+
+GIT_HEAD = $(shell git rev-parse HEAD)
+MACH_TYPE = $(shell uname -m)
+BUILD_TIME = $(shell date +%FT%T%z)
+
 CC:=riscv64-unknown-elf-gcc
 LD:=riscv64-unknown-elf-ld
 
@@ -17,32 +22,54 @@ TARGET:=$(BUILD_DIR)/kernel.bin
 default: $(TARGET)
 
 LINKERSCRIPT:=f9.ld
-# CFLAGS:=-g -ffreestanding -O0 -Wl,--gc-sections \
-#     -nostartfiles -nostdlib -nodefaultlibs -Wl,-T,riscv64-virt.ld
 
-CFLAGS = -Wall -O -fno-omit-frame-pointer -ggdb
-# CFLAGS += -MD
+CFLAGS_MISC_DEFINE = \
+	-DGIT_HEAD=\"$(GIT_HEAD)\" \
+	-DMACH_TYPE=\"$(MACH_TYPE)\" \
+	-DBUILD_TIME=\"$(BUILD_TIME)\"
+
+CFLAGS += -Wall -Wundef -Wstrict-prototypes
+CFLAGS += -fno-toplevel-reorder -fno-strict-aliasing
+CFLAGS += -Werror-implicit-function-declaration
+CFLAGS += -O0 -fno-omit-frame-pointer -ggdb
 CFLAGS += -mcmodel=medany
 CFLAGS += -ffreestanding -fno-common -nostdlib -mno-relax
 CFLAGS += -I$(INCLUDES_DIR)
 CFLAGS += -I$(INCLUDES_DIR)/l4
 CFLAGS += -I$(INCLUDES_DIR)/lib
 CFLAGS += -I$(INCLUDES_DIR)/platform
+CFLAGS += $(CFLAGS_MISC_DEFINE)
 
 
-SOURCES:=$(shell find $(SRC_DIR) -name '*.c')
+SOURCES:=$(shell find $(SRC_DIR) -name "*.c")
+ASSEMBLY:=$(shell find $(SRC_DIR) -name "*.s")
 $(info $$SOURCES is [${SOURCES}])
 
 
 # OBJECTS := $(addprefix $(BUILD_DIR)/,$(SOURCES:%.c=%.o))
-OBJECTS = $(SOURCES:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
+SOURCE_OBJECTS = $(SOURCES:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
+ASSEMBLY_OBJECTS = $(ASSEMBLY:$(SRC_DIR)/%.s=$(BUILD_DIR)/%.o)
 $(info $$OBJECTS is [${OBJECTS}])
+$(info $$SOURCE_OBJECTS is [${SOURCE_OBJECTS}])
+$(info $$ASSEMBLY_OBJECTS is [${ASSEMBLY_OBJECTS}])
 
 .SECONDEXPANSION:
 
-$(OBJECTS) : $$(patsubst $(BUILD_DIR)/%.o,$(SRC_DIR)/%.c,$$@)
+$(SOURCE_OBJECTS) : $$(patsubst $(BUILD_DIR)/%.o,$(SRC_DIR)/%.c,$$@)
 	mkdir -p $(@D)
 	$(CC) -c -o $@ $(CFLAGS) $<
 
-$(TARGET): $(OBJECTS)
-	$(LD) $(LDFLAGS) -T $(LINKERSCRIPT) -o $(TARGET) $(OBJECTS)
+$(ASSEMBLY_OBJECTS) : $$(patsubst $(BUILD_DIR)/%.o,$(SRC_DIR)/%.s,$$@)
+	mkdir -p $(@D)
+	$(CC) -c -o $@ $(CFLAGS) $<
+
+$(TARGET): $(SOURCE_OBJECTS) $(ASSEMBLY_OBJECTS)
+	$(LD) $(LDFLAGS) -T $(LINKERSCRIPT) -o $(TARGET) $(SOURCE_OBJECTS) $(ASSEMBLY_OBJECTS)
+
+.PHONY: clean
+clean:
+	rm -r build/
+
+.PHONY: qemu
+qemu: $(TARGET)
+	qemu-system-riscv64 -s -S -machine virt -bios none -kernel $(TARGET)

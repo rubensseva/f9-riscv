@@ -7,7 +7,7 @@
 #define LIB_KTABLE_H_
 
 // #include <platform/armv7m.h>
-#include <platform/link.h>
+#include <link.h>
 #include <lib/bitmap.h>
 #include <types.h>
 

@@ -7,7 +7,7 @@
 #include <types.h>
 #include <lib/stdlib.h>
 #include <init_hook.h>
-#include <platform/link.h>
+#include <link.h>
 
 static int __ksym_count;
 static const ksym_t *__ksym_tbl;

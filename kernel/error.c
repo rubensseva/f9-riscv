@@ -5,9 +5,10 @@
 
 #include <error.h>
 #include <thread.h>
-#include <platform/irq.h>
+#include <irq.h>
+#include <riscv.h>
 // #include <platform/armv7m.h>
-#include <platform/link.h>
+#include <link.h>
 #include <lib/stdarg.h>
 
 #ifdef LOADER
@@ -33,26 +34,20 @@ void set_caller_error(enum user_error_t error)
 }
 #endif
 
-#ifdef CONFIG_PANIC_DUMP_STACK
 static void panic_dump_stack(void)
 {
-	uint32_t *current_sp = (uint32_t *) read_msp();
+	uint32_t *current_sp = (uint32_t *) r_sp();
 	int word = 0;
 
 	/* dbg_puts("\n\nStack dump:\n"); */
 
-#ifdef LOADER
-	while (current_sp < &stack_end) {
-#else
 	while (current_sp < &kernel_stack_end) {
-#endif
 		/* dbg_printf(DL_EMERG, "%p ", *(++current_sp)); */
 
-		if (++word % 8 == 0)
+		// if (++word % 8 == 0)
 			/* dbg_putchar('\n'); */
 	}
 }
-#endif	/* CONFIG_PANIC_DUMP_STACK */
 
 void panic_impl(char *fmt, ...)
 {
@@ -61,7 +56,10 @@ void panic_impl(char *fmt, ...)
 
 	/* dbg_start_panic(); */
 
-	irq_disable();
+	// irq_disable();
+	machine_intr_off();
+	intr_off();
+
 	/* dbg_vprintf(DL_EMERG, fmt, va); */
 
 #ifdef CONFIG_PANIC_DUMP_STACK

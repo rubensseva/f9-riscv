@@ -6,8 +6,8 @@
 #ifndef LIB_BITMAP_H_
 #define LIB_BITMAP_H_
 
-#include <platform/link.h>
-#include <platform/bitops.h>
+#include <link.h>
+#include <bitops.h>
 #include <types.h>
 
 /**
@@ -106,7 +106,9 @@ static inline int bitmap_get_bit(bitmap_cursor_t cursor)
 
 static inline int bitmap_test_and_set_bit(bitmap_cursor_t cursor)
 {
-	return test_and_set_bit(&BITWORD(cursor), BITMASK(cursor.bc_bit));
+	// TODO: Fixme
+	//OLD: return test_and_set_bit(&BITWORD(cursor), BITMASK(cursor.bc_bit));
+	return 0;
 }
 
 #endif

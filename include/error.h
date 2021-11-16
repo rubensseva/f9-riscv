@@ -6,7 +6,7 @@
 #ifndef ERROR_H_
 #define ERROR_H_
 
-#include <platform/link.h>
+#include <link.h>
 #include <thread.h>
 
 /**

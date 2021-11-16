@@ -273,7 +273,8 @@ void as_setup_mpu(as_t *as, memptr_t sp, memptr_t pc,
 
 	/* Setup MPU stack regions */
 	for (j = 0; j < mpu_first_i; ++j) {
-		mpu_setup_region(j, mpu[j]);
+		// TODO: Fix this
+		// mpu_setup_region(j, mpu[j]);
 
 		if (j < mpu_first_i - 1)
 			mpu[j]->mpu_next = mpu[j + 1];
@@ -283,7 +284,8 @@ void as_setup_mpu(as_t *as, memptr_t sp, memptr_t pc,
 
 	/* Setup MPU fifo regions */
 	for (; j < i; ++j) {
-		mpu_setup_region(j, mpu[j]);
+		// TODO: Fix this
+		// mpu_setup_region(j, mpu[j]);
 
 		if (j < i - 1)
 			mpu[j]->mpu_next = mpu[j + 1];
@@ -291,7 +293,8 @@ void as_setup_mpu(as_t *as, memptr_t sp, memptr_t pc,
 
 	/* Clean unused MPU regions */
 	for (; j < 8; ++j) {
-		mpu_setup_region(j, NULL);
+		// TODO: Fix this
+		// mpu_setup_region(j, NULL);
 	}
 }
 
@@ -511,7 +514,7 @@ void kdb_dump_as(void)
 {
 	extern enum {
 		DBG_ASYNC, DBG_PANIC
-	}
+			};
 	/* dbg_state; */
 	int idx = 0, nl = 0, i;
 	as_t *as = NULL;

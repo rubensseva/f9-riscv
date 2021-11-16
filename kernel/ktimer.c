@@ -9,9 +9,10 @@
 #include <lib/ktable.h>
 #include <softirq.h>
 // #include <platform/armv7m.h>
-#include <platform/bitops.h>
-#include <platform/irq.h>
+#include <bitops.h>
+#include <irq.h>
 #include <init_hook.h>
+#include <riscv.h>
 #if defined(CONFIG_KTIMER_TICKLESS) && defined(CONFIG_KTIMER_TICKLESS_VERIFY)
 #include <tickless-verify.h>
 #endif
@@ -34,7 +35,8 @@ extern uint32_t SystemCoreClock;
 
 static void ktimer_init(void)
 {
-	init_systick(CONFIG_KTIMER_HEARTBEAT, 0);
+	// TODO: Fix timer stuff here
+	// init_systick(CONFIG_KTIMER_HEARTBEAT, 0);
 }
 
 static void ktimer_disable(void)
@@ -276,64 +278,6 @@ void ktimer_event_init()
 INIT_HOOK(ktimer_event_init, INIT_LEVEL_KERNEL);
 
 
-#ifdef CONFIG_KTIMER_TICKLESS
+// TODO: Find a sensible value, or delete this
+#define KTIMER_MAXTICKS 9999999999
 
-#define KTIMER_MAXTICKS (SYSTICK_MAXRELOAD / CONFIG_KTIMER_HEARTBEAT)
-
-static uint32_t volatile ktimer_tickless_compensation = CONFIG_KTIMER_TICKLESS_COMPENSATION;
-static uint32_t volatile ktimer_tickless_int_compensation = CONFIG_KTIMER_TICKLESS_INT_COMPENSATION;
-
-void ktimer_enter_tickless()
-{
-	uint32_t tickless_delta;
-	uint32_t reload;
-
-	irq_disable();
-
-	if (ktimer_enabled && ktimer_delta <= KTIMER_MAXTICKS) {
-		tickless_delta = ktimer_delta;
-	} else {
-		tickless_delta = KTIMER_MAXTICKS;
-	}
-
-	/* Minus 1 for current value */
-	tickless_delta -= 1;
-
-	reload = CONFIG_KTIMER_HEARTBEAT * tickless_delta;
-
-	reload += systick_now() - ktimer_tickless_compensation;
-
-	if (reload > 2) {
-		init_systick(reload, CONFIG_KTIMER_HEARTBEAT);
-	}
-
-	wait_for_interrupt();
-
-	if (!systick_flag_count()) {
-		uint32_t tickless_rest = (systick_now() / CONFIG_KTIMER_HEARTBEAT);
-
-		if (tickless_rest > 0) {
-			int reload_overflow;
-
-			tickless_delta = tickless_delta - tickless_rest;
-
-			reload = systick_now() % CONFIG_KTIMER_HEARTBEAT - ktimer_tickless_int_compensation;
-			reload_overflow = reload < 0;
-			reload += reload_overflow * CONFIG_KTIMER_HEARTBEAT;
-
-			init_systick(reload, CONFIG_KTIMER_HEARTBEAT);
-
-			if (reload_overflow) {
-				tickless_delta++;
-			}
-
-		}
-	}
-
-	ktimer_time += tickless_delta;
-	ktimer_delta -= tickless_delta;
-	ktimer_now += tickless_delta;
-
-	irq_enable();
-}
-#endif /* CONFIG_KTIMER_TICKLESS */

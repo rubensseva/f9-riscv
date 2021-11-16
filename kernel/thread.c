@@ -7,7 +7,7 @@
 #include <lib/ktable.h>
 #include <error.h>
 #include <sched.h>
-#include <platform/irq.h>
+#include <irq.h>
 // #include <platform/armv7m.h>
 #include <fpage_impl.h>
 #include <init_hook.h>

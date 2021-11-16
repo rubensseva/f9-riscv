@@ -1,5 +1,6 @@
 #include <kip.h>
-#include <platform/link.h>
+#include <link.h>
+#include <config.h>
 
 kip_t kip __KIP = {
 	.kernel_id = 0x00000000,

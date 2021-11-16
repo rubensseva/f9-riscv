@@ -48,8 +48,8 @@ ROOT_THREAD_STACK_SIZE	= 0x00000200;
 SECTIONS {
 	.text :
 	{
-		KEEP(*(.riscv_entry))
-		. = KERNEL_BASE;
+		KEEP(*(__l4_start_section))
+		/* . = KERNEL_BASE; */
 		kernel_text_start = .;
 		*(.text*)
 		*(.rodata*)
