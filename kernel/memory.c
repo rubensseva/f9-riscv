@@ -60,43 +60,6 @@ static mempool_t memmap[] = {
 		MP_UR | MP_UW | MP_MEMPOOL  | MP_MAP_ALWAYS, MPT_USER_DATA),
 	DECLARE_MEMPOOL("MEM0",  &mem0_start, 0x2001c000,
 		MP_UR | MP_UW | MP_SRAM, MPT_AVAILABLE),
-#ifdef CONFIG_BITMAP_BITBAND
-	DECLARE_MEMPOOL("KBITMAP",  &bitmap_bitband_start, &bitmap_bitband_end,
-		MP_KR | MP_KW | MP_NO_FPAGE, MPT_KERNEL_DATA),
-#else
-	DECLARE_MEMPOOL("KBITMAP",  &bitmap_start, &bitmap_end,
-		MP_KR | MP_KW | MP_NO_FPAGE, MPT_KERNEL_DATA),
-#endif
-#ifndef CONFIG_BOARD_STM32P103
-	DECLARE_MEMPOOL("MEM1",   &mem1_start, 0x10010000,
-		MP_UR | MP_UW | MP_AHB_RAM, MPT_AVAILABLE),
-#endif
-	DECLARE_MEMPOOL("APB1DEV", 0x40000000, 0x40007800,
-		MP_UR | MP_UW | MP_DEVICES, MPT_DEVICES),
-	DECLARE_MEMPOOL("APB2_1DEV", 0x40010000, 0x40014c00,
-		MP_UR | MP_UW | MP_DEVICES, MPT_DEVICES),
-	DECLARE_MEMPOOL("APB2_2DEV", 0x40014000, 0x40014c00,
-		MP_UR | MP_UW | MP_DEVICES, MPT_DEVICES),
-	DECLARE_MEMPOOL("AHB1_1DEV", 0x40020000, 0x40023c00,
-		MP_UR | MP_UW | MP_DEVICES, MPT_DEVICES),
-	DECLARE_MEMPOOL("AHB1_2DEV", 0x40023c00, 0x40040000,
-		MP_UR | MP_UW | MP_DEVICES, MPT_DEVICES),
-	DECLARE_MEMPOOL("AHB2DEV", 0x50000000, 0x50061000,
-		MP_UR | MP_UW | MP_DEVICES, MPT_DEVICES),
-	DECLARE_MEMPOOL("AHB3DEV", 0x60000000, 0xA0001000,
-		MP_UR | MP_UW | MP_DEVICES, MPT_DEVICES),
-#ifdef CONFIG_BOARD_STM32F429DISCOVERY
-	DECLARE_MEMPOOL("APB2_3DEV", 0x40015000, 0x40015c00,
-		MP_UR | MP_UW | MP_DEVICES, MPT_DEVICES),
-	DECLARE_MEMPOOL("APB2_4DEV", 0x40016800, 0x40017900,
-		MP_UR | MP_UW | MP_DEVICES, MPT_DEVICES),
-	DECLARE_MEMPOOL("CR_PLLSAION_BB", 0x42470000, 0x42470c00,
-		MP_UR | MP_UW | MP_DEVICES, MPT_DEVICES),
-	DECLARE_MEMPOOL("LCD_FRAME_BUFFER_1", 0xD0000000, 0xD00A0000,
-		MP_UR | MP_UW | MP_DEVICES, MPT_DEVICES),
-	DECLARE_MEMPOOL("LCD_FRAME_BUFFER_2", 0xD00A0000, 0xD0140000,
-		MP_UR | MP_UW | MP_DEVICES, MPT_DEVICES),
-#endif
 };
 
 DECLARE_KTABLE(as_t, as_table, CONFIG_MAX_ADRESS_SPACES);
@@ -478,19 +441,19 @@ int map_area(as_t *src, as_t *dst, memptr_t base, size_t size,
 static char *kdb_mempool_prop(mempool_t *mp)
 {
 	static char mempool[10] = "--- --- -";
-	mempool[0] = (mp->flags & MP_KR) ? 'r' : '-';
-	mempool[1] = (mp->flags & MP_KW) ? 'w' : '-';
-	mempool[2] = (mp->flags & MP_KX) ? 'x' : '-';
+	/* mempool[0] = (mp->flags & MP_KR) ? 'r' : '-'; */
+	/* mempool[1] = (mp->flags & MP_KW) ? 'w' : '-'; */
+	/* mempool[2] = (mp->flags & MP_KX) ? 'x' : '-'; */
 
-	mempool[4] = (mp->flags & MP_UR) ? 'r' : '-';
-	mempool[5] = (mp->flags & MP_UW) ? 'w' : '-';
-	mempool[6] = (mp->flags & MP_UX) ? 'x' : '-';
+	/* mempool[4] = (mp->flags & MP_UR) ? 'r' : '-'; */
+	/* mempool[5] = (mp->flags & MP_UW) ? 'w' : '-'; */
+	/* mempool[6] = (mp->flags & MP_UX) ? 'x' : '-'; */
 
-	mempool[8] = (mp->flags & MP_DEVICES) ?
-	             'D' : (mp->flags & MP_MEMPOOL) ?
-	             'M' : (mp->flags & MP_AHB_RAM) ?
-	             'A' : (mp->flags & MP_SRAM) ?
-	             'S' : 'N';
+	/* mempool[8] = (mp->flags & MP_DEVICES) ? */
+	/*              'D' : (mp->flags & MP_MEMPOOL) ? */
+	/*              'M' : (mp->flags & MP_AHB_RAM) ? */
+	/*              'A' : (mp->flags & MP_SRAM) ? */
+	/*              'S' : 'N'; */
 	return mempool;
 }
 

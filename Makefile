@@ -40,6 +40,8 @@ CFLAGS += -I$(INCLUDES_DIR)/lib
 CFLAGS += -I$(INCLUDES_DIR)/platform
 CFLAGS += $(CFLAGS_MISC_DEFINE)
 
+LDFLAGS = --no-gc-sections
+
 
 SOURCES:=$(shell find $(SRC_DIR) -name "*.c")
 ASSEMBLY:=$(shell find $(SRC_DIR) -name "*.s")
@@ -72,4 +74,4 @@ clean:
 
 .PHONY: qemu
 qemu: $(TARGET)
-	qemu-system-riscv64 -s -S -machine virt -bios none -kernel $(TARGET)
+	qemu-system-riscv64 -nographic -s -S -machine virt -bios none -kernel $(TARGET)

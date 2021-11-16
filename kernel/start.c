@@ -24,6 +24,7 @@
 #include <mpu.h>
 
 
+__attribute__ ((aligned (16))) char stack0[4096];
 
 // From kernelvec.S
 extern void kernelvec();
@@ -60,7 +61,7 @@ irqinit()
 
 int main(void)
 {
-  run_init_hook(INIT_LEVEL_PLATFORM_EARLY);
+  // run_init_hook(INIT_LEVEL_PLATFORM_EARLY);
 
   // disable paging for now.
   w_satp(0);
@@ -72,11 +73,11 @@ int main(void)
 
   irqinit();
 
-  run_init_hook(INIT_LEVEL_PLATFORM);
+  // run_init_hook(INIT_LEVEL_PLATFORM);
 
-  run_init_hook(INIT_LEVEL_KERNEL_EARLY);
+  // run_init_hook(INIT_LEVEL_KERNEL_EARLY);
 
-  run_init_hook(INIT_LEVEL_KERNEL);
+  // run_init_hook(INIT_LEVEL_KERNEL);
 
   /* Not creating kernel thread here because it corrupts current stack
    */
@@ -85,7 +86,7 @@ int main(void)
 
   ktimer_event_create(64, ipc_deliver, NULL);
 
-  run_init_hook(INIT_LEVEL_LAST);
+  // run_init_hook(INIT_LEVEL_LAST);
 
   switch_to_kernel();
 
@@ -93,17 +94,14 @@ int main(void)
   return 0;
 }
 
-__attribute__((section("__l4_start_section"))) extern void __l4_start(void)
+//__attribute__((section("__l4_start_section"))) extern void __l4_start(void)
+extern void __l4_start(void)
 {
-  run_init_hook(INIT_LEVEL_EARLIEST);
+  // run_init_hook(INIT_LEVEL_EARLIEST);
 
   /* Fill bss with zeroes */
   memset(&bss_start, 0,
          (&bss_end - &bss_start) * sizeof(uint32_t));
-  memset(&kernel_ahb_start, 0,
-         (&bss_end - &bss_start) * sizeof(uint32_t));
-  memset(&user_bss_start, 0,
-         (&user_bss_end - & user_bss_start) * sizeof(uint32_t));
 
   /* entry point */
   main();

@@ -140,14 +140,4 @@ SECTIONS {
 		mem0_start = .;
 	} > RamLoc
 
-	.data_AHB (NOLOAD) :
-	{
-		kernel_ahb_start = .;
-		bitmap_start = .;
-		*(.bitmap*)
-		bitmap_end = .;
-		kernel_ahb_end = .;
-		mem1_start = .;
-	} > RamCCM
-
 }

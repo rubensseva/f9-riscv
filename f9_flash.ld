@@ -47,6 +47,7 @@ KERNEL_STACK_SIZE	= 0x00000300;
 ROOT_THREAD_STACK_SIZE	= 0x00000200;
 
 SECTIONS {
+    /* WARNING: I think this is lacking one zero to work with -kernel in qemu */
 	.text 0x08000000:
 	{
 		KEEP(*(.isr_vector))

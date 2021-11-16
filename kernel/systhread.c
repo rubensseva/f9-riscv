@@ -8,6 +8,7 @@
 #include <thread.h>
 #include <ktimer.h>
 #include <riscv.h>
+#include <link.h>
 
 /*
  * @file systhread.c
