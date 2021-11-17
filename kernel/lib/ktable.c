@@ -47,9 +47,11 @@ void kdb_dump_ktable(void)
  * Initialize kernel table kt
  *
  * @param kt - pointer to kernel table
+ * @param data - the data of the kernel table. Cant set it in DECLARE_KTABLE macro, so setting it here instead.
  * */
-void ktable_init(ktable_t *kt)
+void ktable_init(ktable_t *kt, ptr_t data)
 {
+	kt->data = data;
 	char *kt_ptr = (char *) kt->bitmap;
 	char *kt_end = (char *) kt->bitmap + kt->num / 8;
 

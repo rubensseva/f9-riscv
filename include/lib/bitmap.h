@@ -14,6 +14,9 @@
  * @file 	bitmap.h
  * @brief 	Kernel bitmaps
  *
+ * UPDATE FOR RISC-V port: no longer using bit band (obviously)
+ * TODO: Update this comment properly
+ *
  * Bit band bitmaps relocated in AHB SRAM, so we use BitBang addresses
  * accessing bits. Also uses linker segment ".bitmap" from platform/link.h
  *
@@ -28,45 +31,6 @@
 
 typedef uint32_t *bitmap_ptr_t;
 
-#ifdef CONFIG_BITMAP_BITBAND
-
-typedef uint8_t *bitmap_cursor_t;
-
-/* Generate address in bit-band region */
-#define BITBAND_ADDR_SHIFT 	5
-#define ADDR_BITBAND(addr) \
-	(bitmap_cursor_t) (0x22000000 + \
-	                   ((((ptr_t) addr) & 0xFFFFF) << BITBAND_ADDR_SHIFT))
-#define BIT_SHIFT	 		2
-
-#define bitmap_cursor(bitmap, bit) \
-	((ADDR_BITBAND(bitmap) + (bit << BIT_SHIFT)))
-#define bitmap_cursor_id(cursor) \
-	(((ptr_t) cursor & ((1 << (BITBAND_ADDR_SHIFT + BIT_SHIFT)) - 1)) >> BIT_SHIFT)
-#define bitmap_cursor_goto_next(cursor) \
-	cursor += 1 << BIT_SHIFT
-
-static inline void bitmap_set_bit(bitmap_cursor_t cursor)
-{
-	*cursor = 1;
-}
-
-static inline void bitmap_clear_bit(bitmap_cursor_t cursor)
-{
-	*cursor = 0;
-}
-
-static inline int bitmap_get_bit(bitmap_cursor_t cursor)
-{
-	return *cursor;
-}
-
-static inline int bitmap_test_and_set_bit(bitmap_cursor_t cursor)
-{
-	return test_and_set_word((uint32_t *) cursor);
-}
-
-#else
 
 typedef struct {
 	bitmap_ptr_t bc_bitmap;
@@ -106,12 +70,9 @@ static inline int bitmap_get_bit(bitmap_cursor_t cursor)
 
 static inline int bitmap_test_and_set_bit(bitmap_cursor_t cursor)
 {
-	// TODO: Fixme
-	//OLD: return test_and_set_bit(&BITWORD(cursor), BITMASK(cursor.bc_bit));
+	return test_and_set_bit(&BITWORD(cursor), BITMASK(cursor.bc_bit));
 	return 0;
 }
-
-#endif
 
 #define for_each_in_bitmap(cursor, bitmap, size, start) \
 	for (cursor = bitmap_cursor(bitmap, start); \

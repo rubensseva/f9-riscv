@@ -14,12 +14,25 @@
 struct ktable {
 	char *tname;
 	bitmap_ptr_t bitmap;
-	ptr_t data;
+	uint32_t *data;
 	size_t num;
 	size_t size;
 };
 
 typedef struct ktable ktable_t;
+
+#define DECLARE_KTABLE_DATA(name, num) \
+	static __KTABLE uint32_t name [ALIGNED(num, 32)];
+
+#define DECLARE_KTABLE(type, name, num_)			\
+	DECLARE_BITMAP(kt_ ## name ## _bitmap, num_);		\
+	DECLARE_KTABLE_DATA(kt_ ## name ##_data, num_)     \
+	ktable_t name = {					\
+			.tname = #name,				\
+			.bitmap = kt_ ## name ## _bitmap,	\
+			.data = kt_ ## name ## _bitmap,	\
+			.num = num_, .size = sizeof(type)	\
+	}
 
 /* #define DECLARE_KTABLE(type, name, num_)			\ */
 /* 	DECLARE_BITMAP(kt_ ## name ## _bitmap, num_);		\ */
@@ -27,20 +40,10 @@ typedef struct ktable ktable_t;
 /* 	ktable_t name = {					\ */
 /* 			.tname = #name,				\ */
 /* 			.bitmap = kt_ ## name ## _bitmap,	\ */
-/* 			.data = (ptr_t) kt_ ## name ## _data,	\ */
 /* 			.num = num_, .size = sizeof(type)	\ */
-/* 	} */
+/*    }; */
 
-#define DECLARE_KTABLE(type, name, num_)			\
-	DECLARE_BITMAP(kt_ ## name ## _bitmap, num_);		\
-	static __KTABLE type kt_ ## name ## _data[num_];	\
-	ktable_t name = {					\
-			.tname = #name,				\
-			.bitmap = kt_ ## name ## _bitmap,	\
-			.num = num_, .size = sizeof(type)	\
-	}
-
-void ktable_init(ktable_t *kt);
+void ktable_init(ktable_t *kt, ptr_t data);
 int ktable_is_allocated(ktable_t *kt, int i);
 void *ktable_alloc_id(ktable_t *kt, int i);
 void *ktable_alloc(ktable_t *kt);

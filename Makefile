@@ -31,7 +31,7 @@ CFLAGS_MISC_DEFINE = \
 CFLAGS += -Wall -Wundef -Wstrict-prototypes
 CFLAGS += -fno-toplevel-reorder -fno-strict-aliasing
 CFLAGS += -Werror-implicit-function-declaration
-CFLAGS += -O0 -fno-omit-frame-pointer -ggdb
+CFLAGS += -O0 -fno-omit-frame-pointer -ggdb3
 CFLAGS += -mcmodel=medany
 CFLAGS += -ffreestanding -fno-common -nostdlib -mno-relax
 CFLAGS += -I$(INCLUDES_DIR)
@@ -65,7 +65,7 @@ $(ASSEMBLY_OBJECTS) : $$(patsubst $(BUILD_DIR)/%.o,$(SRC_DIR)/%.s,$$@)
 	mkdir -p $(@D)
 	$(CC) -c -o $@ $(CFLAGS) $<
 
-$(TARGET): $(SOURCE_OBJECTS) $(ASSEMBLY_OBJECTS)
+$(TARGET): $(SOURCE_OBJECTS) $(ASSEMBLY_OBJECTS) $(LINKERSCRIPT)
 	$(LD) $(LDFLAGS) -T $(LINKERSCRIPT) -o $(TARGET) $(SOURCE_OBJECTS) $(ASSEMBLY_OBJECTS)
 
 .PHONY: clean
@@ -75,3 +75,7 @@ clean:
 .PHONY: qemu
 qemu: $(TARGET)
 	qemu-system-riscv64 -nographic -s -S -machine virt -bios none -kernel $(TARGET)
+
+.PHONY: qemu-debug
+qemu-debug: $(TARGET)
+	riscv64-unknown-elf-gdb $(TARGET)

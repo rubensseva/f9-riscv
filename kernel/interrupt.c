@@ -51,6 +51,10 @@ static struct user_irq *user_irqs[IRQn_NUM];
 
 DECLARE_KTABLE(struct user_irq, user_irq_table, IRQn_NUM);
 
+void user_irq_init_ktable() {
+	ktable_init(&user_irq_table, kt_user_irq_table_data);
+}
+
 struct user_irq_queue {
 	struct user_irq *head;
 	struct user_irq *tail;

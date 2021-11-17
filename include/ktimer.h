@@ -24,6 +24,7 @@ typedef struct ktimer_event {
 	void *data;
 } ktimer_event_t;
 
+void ktimer_init_ktable();
 void ktimer_event_init(void);
 
 int ktimer_event_schedule(uint32_t ticks, ktimer_event_t *kte);

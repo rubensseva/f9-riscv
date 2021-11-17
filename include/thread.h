@@ -103,6 +103,7 @@ void thread_init_subsys(void);
 
 tcb_t *thread_by_globalid(l4_thread_t globalid);
 
+void thread_init_ktable();
 tcb_t *thread_init(l4_thread_t globalid, utcb_t *utcb);
 tcb_t *thread_create(l4_thread_t globalid, utcb_t *utcb);
 void thread_destroy(tcb_t *thr);

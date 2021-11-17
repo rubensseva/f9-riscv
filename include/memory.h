@@ -131,4 +131,6 @@ void as_map_ktext(as_t *as);
 void mpu_setup_region(int n, struct fpage *fp);
 int mpu_select_lru(as_t *as, uint32_t addr);
 
+void as_t_init_ktable();
+
 #endif /* MEMORY_H_ */

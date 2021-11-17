@@ -64,6 +64,10 @@ static mempool_t memmap[] = {
 
 DECLARE_KTABLE(as_t, as_table, CONFIG_MAX_ADRESS_SPACES);
 
+void as_t_init_ktable() {
+	ktable_init(&as_table, kt_as_table_data);
+}
+
 extern kip_mem_desc_t *mem_desc;
 extern char *kip_extra;
 
@@ -110,7 +114,7 @@ void memory_init()
 
 	fpages_init();
 
-	ktable_init(&as_table);
+	ktable_init(&as_table, kt_as_table_data);
 
 	mem_desc = (kip_mem_desc_t *) kip_extra;
 

@@ -3,6 +3,8 @@
 
 #define DEFAULT_PRIORITY	1
 
+void user_irq_init_ktable();
+
 void user_interrupt_config(tcb_t *from);
 void user_interrupt_handler_update(tcb_t *thr);
 

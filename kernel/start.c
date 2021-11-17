@@ -22,6 +22,8 @@
 #include <config.h>
 #include <memlayout.h>
 #include <mpu.h>
+#include <thread.h>
+#include <interrupt.h>
 
 
 __attribute__ ((aligned (16))) char stack0[4096];
@@ -72,6 +74,20 @@ int main(void)
   w_pmpcfg0(0xf);
 
   irqinit();
+
+  // user_irq_table.data = kt_user_irq_table_data;
+  /* as_t.data = kt_as_t_data; */
+  /* ktimer_event_t.data = kt_ktimer_event_t_data; */
+  /* tcb_t.data = kt_tcb_t_data; */
+  /* fpage_t.data  = kt_fpage_t_data; */
+
+  // initialize ktables
+  thread_init_ktable();
+  user_irq_init_ktable();
+  ktimer_init_ktable();
+  as_t_init_ktable();
+  thread_init_ktable();
+  fpage_table_init_ktable();
 
   // run_init_hook(INIT_LEVEL_PLATFORM);
 
