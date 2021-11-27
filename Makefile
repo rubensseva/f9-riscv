@@ -28,7 +28,7 @@ CFLAGS_MISC_DEFINE = \
 	-DMACH_TYPE=\"$(MACH_TYPE)\" \
 	-DBUILD_TIME=\"$(BUILD_TIME)\"
 
-CFLAGS += -Wall -Wundef -Wstrict-prototypes
+CFLAGS += -Wall -Wundef # -Wstrict-prototypes
 CFLAGS += -fno-toplevel-reorder -fno-strict-aliasing
 CFLAGS += -Werror-implicit-function-declaration
 CFLAGS += -O0 -fno-omit-frame-pointer -ggdb3
@@ -40,7 +40,7 @@ CFLAGS += -I$(INCLUDES_DIR)/lib
 CFLAGS += -I$(INCLUDES_DIR)/platform
 CFLAGS += $(CFLAGS_MISC_DEFINE)
 
-LDFLAGS = --no-gc-sections
+LDFLAGS = --gc-sections
 
 
 SOURCES:=$(shell find $(SRC_DIR) -name "*.c")
@@ -65,7 +65,7 @@ $(ASSEMBLY_OBJECTS) : $$(patsubst $(BUILD_DIR)/%.o,$(SRC_DIR)/%.s,$$@)
 	mkdir -p $(@D)
 	$(CC) -c -o $@ $(CFLAGS) $<
 
-$(TARGET): $(SOURCE_OBJECTS) $(ASSEMBLY_OBJECTS) $(LINKERSCRIPT)
+$(TARGET): $(SOURCE_OBJECTS) $(ASSEMBLY_OBJECTS) $(LINKERSCRIPT) $(INCLUDES_DIR)
 	$(LD) $(LDFLAGS) -T $(LINKERSCRIPT) -o $(TARGET) $(SOURCE_OBJECTS) $(ASSEMBLY_OBJECTS)
 
 .PHONY: clean
@@ -74,8 +74,8 @@ clean:
 
 .PHONY: qemu
 qemu: $(TARGET)
-	qemu-system-riscv64 -nographic -s -S -machine virt -bios none -kernel $(TARGET)
+	qemu-system-riscv64 -nographic -smp 1 -s -S -machine virt -bios none -kernel $(TARGET)
 
-.PHONY: qemu-debug
-qemu-debug: $(TARGET)
+.PHONY: dbg
+dbg: $(TARGET)
 	riscv64-unknown-elf-gdb $(TARGET)

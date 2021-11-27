@@ -21,6 +21,8 @@ typedef enum {
 
 struct sched_slot;
 
+// Define a type "sched_handler_t" which is function pointer which returns
+// a "tcb_t" and accepts a single parameter of type "sched_slot*"
 typedef tcb_t *(*sched_handler_t)(struct sched_slot *slot);
 
 typedef struct sched_slot {

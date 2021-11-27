@@ -251,12 +251,12 @@ void user_interrupt_config(tcb_t *from)
 	if (tag.s.label != USER_INTERRUPT_LABEL)
 		return;
 
-	int irq = (uint16_t) from->ctx.regs[IRQ_IPC_IRQN + 1];
-	l4_thread_t tid = (l4_thread_t) from->ctx.regs[IRQ_IPC_TID + 1];
-	int action = (uint16_t) from->ctx.regs[IRQ_IPC_ACTION + 1];
+	int irq = (uint16_t) from->ctx.s_regs[IRQ_IPC_IRQN + 1];
+	l4_thread_t tid = (l4_thread_t) from->ctx.s_regs[IRQ_IPC_TID + 1];
+	int action = (uint16_t) from->ctx.s_regs[IRQ_IPC_ACTION + 1];
 	irq_handler_t handler = (irq_handler_t)
-	                        from->ctx.regs[IRQ_IPC_HANDLER + 1];
-	int priority = (uint16_t) from->ctx.regs[IRQ_IPC_PRIORITY + 1];
+	                        from->ctx.s_regs[IRQ_IPC_HANDLER + 1];
+	int priority = (uint16_t) from->ctx.s_regs[IRQ_IPC_PRIORITY + 1];
 
 	user_irq_disable(irq);
 

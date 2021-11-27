@@ -21,16 +21,13 @@ struct ktable {
 
 typedef struct ktable ktable_t;
 
-#define DECLARE_KTABLE_DATA(name, num) \
-	static __KTABLE uint32_t name [ALIGNED(num, 32)];
-
 #define DECLARE_KTABLE(type, name, num_)			\
 	DECLARE_BITMAP(kt_ ## name ## _bitmap, num_);		\
-	DECLARE_KTABLE_DATA(kt_ ## name ##_data, num_)     \
+	static __KTABLE uint32_t *kt_ ## name ## _data [num_];    \
 	ktable_t name = {					\
 			.tname = #name,				\
 			.bitmap = kt_ ## name ## _bitmap,	\
-			.data = kt_ ## name ## _bitmap,	\
+			.data = kt_ ## name ## _data,	\
 			.num = num_, .size = sizeof(type)	\
 	}
 

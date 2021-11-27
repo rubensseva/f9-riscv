@@ -59,14 +59,15 @@ typedef enum {
 } thread_state_t;
 
 typedef struct {
-	uint32_t sp;
-	uint32_t ret;
-	uint32_t ctl;
-	uint32_t regs[8];
-#ifdef CONFIG_FPU
-	uint64_t fp_regs[8];
-	uint32_t fp_flag;
-#endif
+	uint64_t mepc;
+
+	uint64_t ra;
+	uint64_t sp;
+	uint64_t gp;
+	uint64_t tp;
+	uint64_t t_regs[7];
+	uint64_t s_regs[12];
+	uint64_t a_regs[8];
 } context_t;
 
 /**
@@ -78,6 +79,8 @@ typedef struct {
 struct tcb {
 	l4_thread_t t_globalid;
 	l4_thread_t t_localid;
+
+	char* name;
 
 	thread_state_t state;
 

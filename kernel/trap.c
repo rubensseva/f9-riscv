@@ -6,22 +6,23 @@
 #include <syscall.h>
 #include <riscv.h>
 #include <plic.h>
+#include <irq.h>
 
 void no_interrupt(void) {
+  int x = 2 + 3;
   // do nothing
 }
 
 extern void timervec();
+extern void kernel_vec_in_c_restore();
 
 void machine_timer_interrupt_handler(void) {
 
-  // get the address of clint_mtimecmp.
-  // use 0 as the hart id, since we currently assume only
-  // one hard
-  uint64_t *clint_addr = (uint64_t*)CLINT_MTIMECMP;
-  uint32_t interval = 10000;
-  uint64_t new_val = *clint_addr + interval;
-  *clint_addr = new_val;
+  uint64_t *clint_mtimecmp = (uint64_t*)CLINT_MTIMECMP;
+  uint64_t *clint_mtime = (uint64_t*)CLINT_MTIME;
+  uint64_t interval = 1000000; // cycles; about 1/10th second in qemu.
+  uint64_t new_val = *clint_mtime + interval;
+  *clint_mtimecmp = new_val;
 
   ktimer_handler();
 }
@@ -56,8 +57,8 @@ void (*async_handler[12])() = {
   no_interrupt,
   no_interrupt,
   no_interrupt,
-  machine_timer_interrupt_handler,
   no_interrupt,
+  machine_timer_interrupt_handler,
   no_interrupt,
   supervisor_external_interrupt, // Interrupts to PLIC goes here
   no_interrupt,
@@ -82,19 +83,36 @@ void (*sync_handler[16])() = {
   no_interrupt,
 };
 
-#define MCAUSE_INT_MASK 0x80000000 // [31]=1 interrupt, else exception
+#define MCAUSE_INT_MASK 0x8000000000000000 // [63]=1 interrupt, else exception
 #define MCAUSE_CODE_MASK 0x7FFFFFFF // low bits show code
 
 extern void kerneltrap()
 {
-  unsigned long mcause_value = r_mcause();
-  // this works for everything except PLIC
-  if (mcause_value & MCAUSE_INT_MASK) {
-    // Branch to interrupt handler here
-    // Index into 32-bit array containing addresses of functions
-    async_handler[(mcause_value & MCAUSE_CODE_MASK)]();
+  unsigned long mstatus_value = r_mstatus();
+  unsigned long xcause_value;
+  int tmp = MSTATUS_MPP_M;
+
+  xcause_value = r_mcause();
+
+  if (xcause_value & MCAUSE_INT_MASK) {
+    current->ctx.mepc = r_mepc();
+    // Branch to interrupt handler
+    async_handler[(xcause_value & MCAUSE_CODE_MASK)]();
   } else {
+    // Set mepc to +4, since we encountered an exception
+    current->ctx.mepc = r_mepc() + 4;
     // Branch to exception handler
-    sync_handler[(mcause_value & MCAUSE_CODE_MASK)]();
+    sync_handler[(xcause_value & MCAUSE_CODE_MASK)]();
   }
+
+
+  // schedule
+  // schedule_in_irq();
+  /* tcb_t* sel = schedule_select(); */
+  /* if (sel != current) { */
+	/* 	thread_switch(sel); */
+  /* } */
+
+  kernel_vec_in_c_restore();
+
 }

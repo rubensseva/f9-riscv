@@ -12,11 +12,6 @@ typedef enum {
 	KTE_SOFTIRQ,		/* Kernel timer event */
 	ASYNC_SOFTIRQ,		/* Asynchronius event */
 	SYSCALL_SOFTIRQ,
-
-#ifdef CONFIG_KDB
-	KDB_SOFTIRQ,		/* KDB should have least priority */
-#endif
-
 	NR_SOFTIRQ
 } softirq_type_t;
 

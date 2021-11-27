@@ -15,13 +15,20 @@ r_mhartid()
   return x;
 }
 
-// Machine Status Register, mstatus
+// privilege levels encodings
+// privileged spec, 20190608, page 3
+#define U_MODE_LEVEL 0
+#define S_MODE_LEVEL 1
+#define M_MODE_LEVEL 3
 
+// machine Status Register, mstatus
 #define MSTATUS_MPP_MASK (3L << 11) // previous mode.
 #define MSTATUS_MPP_M (3L << 11)
 #define MSTATUS_MPP_S (1L << 11)
 #define MSTATUS_MPP_U (0L << 11)
 #define MSTATUS_MIE (1L << 3)    // machine-mode interrupt enable.
+#define MSTATUS_SIE (1L << 1)  // Supervisor Interrupt Enable
+#define MSTATUS_MPIE (1L << 7)  // machine-mode previous interrupt enable
 
 static inline uint64_t
 r_mstatus()
@@ -46,6 +53,14 @@ w_mepc(uint64_t x)
   asm volatile("csrw mepc, %0" : : "r" (x));
 }
 
+static inline uint64_t
+r_mepc()
+{
+  uint64_t x;
+  asm volatile("csrr %0, mepc" : "=r" (x));
+  return x;
+}
+
 // Supervisor Status Register, sstatus
 
 #define SSTATUS_SPP (1L << 8)  // Previous mode, 1=Supervisor, 0=User
@@ -54,7 +69,6 @@ w_mepc(uint64_t x)
 #define SSTATUS_SIE (1L << 1)  // Supervisor Interrupt Enable
 #define SSTATUS_UIE (1L << 0)  // User Interrupt Enable
 
-#define MSTATUS_SIE (1L << 3)  // Supervisor Interrupt Enable
 
 static inline uint64_t
 r_sstatus()
@@ -191,6 +205,15 @@ w_mtvec(uint64_t x)
   asm volatile("csrw mtvec, %0" : : "r" (x));
 }
 
+// static inline uint64_t
+static uint64_t
+r_mtvec()
+{
+  uint64_t x;
+  asm volatile("csrr %0, mtvec" : "=r" (x) );
+  return x;
+}
+
 static inline void
 w_pmpcfg0(uint64_t x)
 {
@@ -312,7 +335,7 @@ intr_off()
 static inline void
 machine_intr_off()
 {
-  w_sstatus(r_mstatus() & ~MSTATUS_SIE);
+  w_mstatus(r_mstatus() & ~MSTATUS_SIE);
 }
 
 // are device interrupts enabled?
@@ -330,6 +353,7 @@ r_sp()
   asm volatile("mv %0, sp" : "=r" (x) );
   return x;
 }
+
 
 // read and write tp, the thread pointer, which holds
 // this core's hartid (core number), the index into cpus[].

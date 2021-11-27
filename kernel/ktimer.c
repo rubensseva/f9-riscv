@@ -38,12 +38,6 @@ static long long ktimer_time = 0;
 
 extern uint32_t SystemCoreClock;
 
-static void ktimer_init(void)
-{
-	// TODO: Fix timer stuff here
-	// init_systick(CONFIG_KTIMER_HEARTBEAT, 0);
-}
-
 static void ktimer_disable(void)
 {
 	if (ktimer_enabled) {
@@ -276,11 +270,10 @@ void ktimer_event_handler()
 void ktimer_event_init()
 {
 	ktable_init(&ktimer_event_table, kt_ktimer_event_table_data);
-	ktimer_init();
 	softirq_register(KTE_SOFTIRQ, ktimer_event_handler);
 }
 
-INIT_HOOK(ktimer_event_init, INIT_LEVEL_KERNEL);
+// INIT_HOOK(ktimer_event_init, INIT_LEVEL_KERNEL);
 
 
 // TODO: Find a sensible value, or delete this

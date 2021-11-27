@@ -309,36 +309,42 @@ void thread_init_ctx(void *sp, void *pc, void *regs, tcb_t *thr)
 {
 	/* Reserve 8 words for fake context */
 	sp -= RESERVED_STACK;
-	thr->ctx.sp = (uint32_t) sp;
-
-	/* Set EXC_RETURN and CONTROL for thread and create initial stack for it
-	 * When thread is dispatched, on first context switch
-	 */
-	if (GLOBALID_TO_TID(thr->t_globalid) >= THREAD_ROOT) {
-		thr->ctx.ret = 0xFFFFFFFD;
-		thr->ctx.ctl = 0x3;
-	} else {
-		thr->ctx.ret = 0xFFFFFFF9;
-		thr->ctx.ctl = 0x0;
-	}
+	thr->ctx.sp = (uint64_t) sp;
+	thr->ctx.mepc = (uint64_t) pc;
 
 	if (!regs) {
-		((uint32_t *) sp)[REG_R0] = 0x0;
-		((uint32_t *) sp)[REG_R1] = 0x0;
-		((uint32_t *) sp)[REG_R2] = 0x0;
-		((uint32_t *) sp)[REG_R3] = 0x0;
+		((uint64_t *) sp)[REG_T0] = 0x0;
+		((uint64_t *) sp)[REG_T1] = 0x0;
+		((uint64_t *) sp)[REG_T2] = 0x0;
+		((uint64_t *) sp)[REG_T3] = 0x0;
+		((uint64_t *) sp)[REG_T4] = 0x0;
+		((uint64_t *) sp)[REG_T5] = 0x0;
+		((uint64_t *) sp)[REG_T6] = 0x0;
+		((uint64_t *) sp)[REG_A0] = 0x0;
+		((uint64_t *) sp)[REG_A1] = 0x0;
+		((uint64_t *) sp)[REG_A2] = 0x0;
+		((uint64_t *) sp)[REG_A3] = 0x0;
+		((uint64_t *) sp)[REG_A4] = 0x0;
+		((uint64_t *) sp)[REG_A5] = 0x0;
+		((uint64_t *) sp)[REG_A6] = 0x0;
+		((uint64_t *) sp)[REG_A7] = 0x0;
 	} else {
-		((uint32_t *) sp)[REG_R0] = ((uint32_t *) regs)[0];
-		((uint32_t *) sp)[REG_R1] = ((uint32_t *) regs)[1];
-		((uint32_t *) sp)[REG_R2] = ((uint32_t *) regs)[2];
-		((uint32_t *) sp)[REG_R3] = ((uint32_t *) regs)[3];
+		((uint64_t *) sp)[REG_T0] = ((uint64_t *) regs)[0];
+		((uint64_t *) sp)[REG_T1] = ((uint64_t *) regs)[1];
+		((uint64_t *) sp)[REG_T2] = ((uint64_t *) regs)[2];
+		((uint64_t *) sp)[REG_T3] = ((uint64_t *) regs)[3];
+		((uint64_t *) sp)[REG_T4] = ((uint64_t *) regs)[4];
+		((uint64_t *) sp)[REG_T5] = ((uint64_t *) regs)[5];
+		((uint64_t *) sp)[REG_T6] = ((uint64_t *) regs)[6];
+		((uint64_t *) sp)[REG_A0] = ((uint64_t *) regs)[7];
+		((uint64_t *) sp)[REG_A1] = ((uint64_t *) regs)[8];
+		((uint64_t *) sp)[REG_A2] = ((uint64_t *) regs)[9];
+		((uint64_t *) sp)[REG_A3] = ((uint64_t *) regs)[10];
+		((uint64_t *) sp)[REG_A4] = ((uint64_t *) regs)[11];
+		((uint64_t *) sp)[REG_A5] = ((uint64_t *) regs)[12];
+		((uint64_t *) sp)[REG_A6] = ((uint64_t *) regs)[13];
+		((uint64_t *) sp)[REG_A7] = ((uint64_t *) regs)[14];
 	}
-
-	((uint32_t *) sp)[REG_R12] = 0x0;
-	((uint32_t *) sp)[REG_LR] = 0xFFFFFFFF;
-	((uint32_t *) sp)[REG_PC] = (uint32_t) pc;
-	((uint32_t *) sp)[REG_xPSR] = 0x1000000; /* Thumb bit on */
-
 }
 
 /* Kernel has no fake context, instead of that we rewind
@@ -351,8 +357,6 @@ void thread_init_kernel_ctx(void *sp, tcb_t *thr)
 	sp -= RESERVED_STACK;
 
 	thr->ctx.sp = (uint32_t) sp;
-	thr->ctx.ret = 0xFFFFFFF9;
-	thr->ctx.ctl = 0x0;
 }
 
 /*
@@ -391,10 +395,10 @@ void thread_switch(tcb_t *thr)
 
 	current = thr;
 	current_utcb = thr->utcb;
-	if (current->as)
-		as_setup_mpu(current->as, current->ctx.sp,
-		             ((uint32_t *) current->ctx.sp)[REG_PC],
-		             current->stack_base, current->stack_size);
+	/* if (current->as) */
+		/* as_setup_mpu(current->as, current->ctx.sp, */
+		/*              ((uint32_t *) current->ctx.sp)[REG_PC], */
+		/*              current->stack_base, current->stack_size); */
 }
 
 /* Select normal thread to run

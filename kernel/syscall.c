@@ -39,9 +39,9 @@ INIT_HOOK(syscall_init, INIT_LEVEL_KERNEL);
 
 static void sys_thread_control(uint32_t *param1, uint32_t *param2)
 {
-	l4_thread_t dest = param1[REG_R0];
-	l4_thread_t space = param1[REG_R1];
-	l4_thread_t pager = param1[REG_R3];
+	l4_thread_t dest = param1[REG_T0];
+	l4_thread_t space = param1[REG_T1];
+	l4_thread_t pager = param1[REG_T3];
 
 	if (space != L4_NILTHREAD) {
 		/* Creation of thread */
@@ -57,7 +57,7 @@ static void sys_thread_control(uint32_t *param1, uint32_t *param2)
 		tcb_t *thr = thread_create(dest, utcb);
 		thread_space(thr, space, utcb);
 		thr->utcb->t_pager = pager;
-		param1[REG_R0] = 1;
+		param1[REG_T0] = 1;
 	} else {
 		/* Removal of thread */
 		tcb_t *thr = thread_by_globalid(dest);
@@ -69,8 +69,9 @@ static void sys_thread_control(uint32_t *param1, uint32_t *param2)
 void syscall_handler()
 {
 	uint32_t *svc_param1 = (uint32_t *) caller->ctx.sp;
-	uint32_t svc_num = ((char *) svc_param1[REG_PC])[-2];
-	uint32_t *svc_param2 = caller->ctx.regs;
+	// TODO: This was previously REG_PC, FIXME
+	uint32_t svc_num = ((char *) svc_param1[REG_T0])[-2];
+	uint32_t *svc_param2 = caller->ctx.s_regs;
 
 	if (svc_num == SYS_THREAD_CONTROL) {
 		/* Simply call thread_create

@@ -6,9 +6,6 @@
 #ifndef L4_THREAD_H_
 #define L4_THREAD_H_
 
-#include <platform/armv7m.h>
-#include <platform/link.h>
-
 #define L4_NILTHREAD		0
 #define L4_ANYTHREAD		0xFFFFFFFF
 

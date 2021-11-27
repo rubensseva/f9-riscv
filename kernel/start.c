@@ -24,9 +24,10 @@
 #include <mpu.h>
 #include <thread.h>
 #include <interrupt.h>
+#include <kernel_vec_in_c.h>
 
 
-__attribute__ ((aligned (16))) char stack0[4096];
+__attribute__ ((aligned (16))) char stack0[16384];
 
 // From kernelvec.S
 extern void kernelvec();
@@ -38,24 +39,20 @@ irqinit()
   uint64_t interval = 1000000; // cycles; about 1/10th second in qemu.
   *(uint64_t*)CLINT_MTIMECMP = *(uint64_t*)CLINT_MTIME + interval;
 
-  // disable paging for now.
+  // disable paging
   w_satp(0);
-
-  // delegate all exceptions except s-mode ecalls to supervisor mode.
-  w_medeleg(0xffff & (1L << 9));
-  // delegate all interrupts except m-mode timer interrupts to supervisor mode
-  w_mideleg(0xffff & (1L << 7));
 
   // enable supervisor interrupts
   w_sie(r_sie() | SIE_SEIE | SIE_STIE | SIE_SSIE);
+  w_mstatus(r_mstatus() | MSTATUS_SIE);
 
-  // set the machine-mode trap handler.
-  w_mtvec((uint64_t)kernelvec);
+  w_mtvec((uint64_t)kernel_vec_in_c);
 
   // enable machine-mode interrupts.
-  // this is not necessary, machine mode interrupts are always enabled, the bits are read only.
-  // w_mstatus(r_mstatus() | MSTATUS_MIE);
-
+  w_mstatus(r_mstatus() | MSTATUS_MIE);
+  // when we execute mret, mstatus.mie is set to mstatus.mpie. Therefore, we need to set
+  // mstatus.mpie as well here, to prevent mstatus.mie from being disabled.
+  w_mstatus(r_mstatus() | MSTATUS_MPIE);
   // enable machine-mode timer interrupts.
   w_mie(r_mie() | MIE_MTIE);
 }
@@ -63,8 +60,6 @@ irqinit()
 
 int main(void)
 {
-  // run_init_hook(INIT_LEVEL_PLATFORM_EARLY);
-
   // disable paging for now.
   w_satp(0);
 
@@ -74,35 +69,16 @@ int main(void)
   w_pmpcfg0(0xf);
 
   irqinit();
+  sched_init();
+  syscall_init();
+  ktimer_event_init();
 
-  // user_irq_table.data = kt_user_irq_table_data;
-  /* as_t.data = kt_as_t_data; */
-  /* ktimer_event_t.data = kt_ktimer_event_t_data; */
-  /* tcb_t.data = kt_tcb_t_data; */
-  /* fpage_t.data  = kt_fpage_t_data; */
-
-  // initialize ktables
-  thread_init_ktable();
-  user_irq_init_ktable();
-  ktimer_init_ktable();
-  as_t_init_ktable();
-  thread_init_ktable();
-  fpage_table_init_ktable();
-
-  // run_init_hook(INIT_LEVEL_PLATFORM);
-
-  // run_init_hook(INIT_LEVEL_KERNEL_EARLY);
-
-  // run_init_hook(INIT_LEVEL_KERNEL);
-
-  /* Not creating kernel thread here because it corrupts current stack
-   */
+  // Not creating kernel thread here because it corrupts current stack
+  thread_init_subsys();
   create_idle_thread();
   create_root_thread();
 
   ktimer_event_create(64, ipc_deliver, NULL);
-
-  // run_init_hook(INIT_LEVEL_LAST);
 
   switch_to_kernel();
 

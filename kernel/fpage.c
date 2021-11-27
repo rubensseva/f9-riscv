@@ -110,7 +110,7 @@ static void insert_fpage_to_as(as_t *as, fpage_t *fpage)
 static void remove_fpage_from_as(as_t *as, fpage_t *fp)
 {
 	remove_fpage_from_list(as, fp, first, as_next);
-	remove_fpage_from_list(as, fp, mpu_first, mpu_next);
+	// remove_fpage_from_list(as, fp, mpu_first, mpu_next);
 }
 
 /* FIXME: Support for bit-bang regions. */

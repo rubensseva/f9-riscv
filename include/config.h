@@ -2,15 +2,41 @@
 #define CONFIG_H
 
 enum register_stack_t {
-	/* old comment in arm: Saved by hardware */
-	REG_R0,
-	REG_R1,
-	REG_R2,
-	REG_R3,
-	REG_R12,
-	REG_LR,
-	REG_PC,
-	REG_xPSR
+	REG_T0,
+	REG_T1,
+	REG_T2,
+	REG_T3,
+	REG_T4,
+	REG_T5,
+	REG_T6,
+	REG_T7,
+
+    REG_RA,
+	REG_SP,
+	REG_GP,
+	REG_TP,
+
+	REG_A0,
+	REG_A1,
+	REG_A2,
+	REG_A3,
+	REG_A4,
+	REG_A5,
+	REG_A6,
+	REG_A7,
+
+	REG_S0,
+	REG_S1,
+	REG_S2,
+	REG_S3,
+	REG_S4,
+	REG_S5,
+	REG_S6,
+	REG_S7,
+	REG_S8,
+	REG_S9,
+	REG_S10,
+	REG_S11
 };
 
 // TODO: Find a nice value
@@ -23,7 +49,7 @@ enum register_stack_t {
 
 // from /f9-kernel/include/platform/armv7m.h"
 // TODO: Need to know more about what this does
-#define RESERVED_STACK (8 * sizeof(uint32_t))
+#define RESERVED_STACK (32 * sizeof(uint64_t))
 
 
 // From old kconfig

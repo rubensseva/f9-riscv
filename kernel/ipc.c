@@ -26,7 +26,7 @@ uint32_t ipc_read_mr(tcb_t *from, int i)
 {
 	if (i >= 8)
 		return from->utcb->mr[i - 8];
-	return from->ctx.regs[i];
+	return from->ctx.s_regs[i];
 }
 
 void ipc_write_mr(tcb_t *to, int i, uint32_t data)
@@ -34,7 +34,7 @@ void ipc_write_mr(tcb_t *to, int i, uint32_t data)
 	if (i >= 8)
 		to->utcb->mr[i - 8] = data;
 	else
-		to->ctx.regs[i] = data;
+		to->ctx.s_regs[i] = data;
 }
 
 static void user_ipc_error(tcb_t *thr, enum user_error_t error)
@@ -146,10 +146,10 @@ static void do_ipc(tcb_t *from, tcb_t *to)
 
 	to->state = T_RUNNABLE;
 	to->ipc_from = L4_NILTHREAD;
-	((uint32_t *) to->ctx.sp)[REG_R0] = from->t_globalid;
+	((uint32_t *) to->ctx.sp)[REG_T0] = from->t_globalid;
 
 	/* If from has receive phases, lock myself */
-	from_recv_tid = ((uint32_t *) from->ctx.sp)[REG_R1];
+	from_recv_tid = ((uint32_t *) from->ctx.sp)[REG_T1];
 	if (from_recv_tid == L4_NILTHREAD) {
 		from->state = T_RUNNABLE;
 	} else {
@@ -205,8 +205,8 @@ void sys_ipc(uint32_t *param1)
 {
 	/* TODO: Checking of recv-mask */
 	tcb_t *to_thr = NULL;
-	l4_thread_t to_tid = param1[REG_R0], from_tid = param1[REG_R1];
-	uint32_t timeout = param1[REG_R2];
+	l4_thread_t to_tid = param1[REG_T0], from_tid = param1[REG_T1];
+	uint32_t timeout = param1[REG_T2];
 
 	if (to_tid == L4_NILTHREAD &&
 		from_tid == L4_NILTHREAD) {
@@ -251,10 +251,10 @@ void sys_ipc(uint32_t *param1)
 				to_thr->stack_base = sp - stack_size;
 				to_thr->stack_size = stack_size;
 
-				regs[REG_R0] = (uint32_t)&kip;
-				regs[REG_R1] = (uint32_t)to_thr->utcb;
-				regs[REG_R2] = ipc_read_mr(caller, 4);
-				regs[REG_R3] = ipc_read_mr(caller, 5);
+				regs[REG_T0] = (uint32_t)&kip;
+				regs[REG_T1] = (uint32_t)to_thr->utcb;
+				regs[REG_T2] = ipc_read_mr(caller, 4);
+				regs[REG_T3] = ipc_read_mr(caller, 5);
 				thread_init_ctx((void *) sp,
 				                (void *) ipc_read_mr(caller, 1),
 				                regs, to_thr);

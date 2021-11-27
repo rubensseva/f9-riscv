@@ -9,6 +9,7 @@
 #include <ktimer.h>
 #include <riscv.h>
 #include <link.h>
+#include <root_thread.h>
 
 /*
  * @file systhread.c
@@ -25,23 +26,25 @@ tcb_t *root;
 utcb_t root_utcb __KIP;
 
 static void kernel_thread(void);
+static void placeholder(void);
 static void idle_thread(void);
 
 void create_root_thread(void)
 {
 	root = thread_init(TID_TO_GLOBALID(THREAD_ROOT), &root_utcb);
+	root->name = "root_thread";
 	thread_space(root, TID_TO_GLOBALID(THREAD_ROOT), &root_utcb);
 	as_map_user(root->as);
 
-	uint32_t regs[4] = {
-		[REG_R0] = (uint32_t) &kip,
-		[REG_R1] = (uint32_t) root->utcb,
-		[REG_R2] = 0,
-		[REG_R3] = 0,
+	uint64_t regs[4] = {
+		[REG_T0] = (uint64_t) &kip,
+		[REG_T1] = (uint64_t) root->utcb,
+		[REG_T2] = 0,
+		[REG_T3] = 0,
 	};
 
 	// TODO: Fixme
-	// thread_init_ctx((void *) &root_stack_end, root_thread, regs, root);
+	thread_init_ctx((void *) &root_stack_end, root_thread, regs, root);
 
 	root->stack_base = (memptr_t) &root_stack_start;
 	root->stack_size = (uint32_t) &root_stack_end -
@@ -54,6 +57,7 @@ void create_root_thread(void)
 void create_kernel_thread(void)
 {
 	kernel = thread_init(TID_TO_GLOBALID(THREAD_KERNEL), NULL);
+	kernel->name = "kernel_thread";
 
 	thread_init_kernel_ctx(&kernel_stack_end, kernel);
 
@@ -67,19 +71,25 @@ void create_kernel_thread(void)
 void create_idle_thread(void)
 {
 	idle = thread_init(TID_TO_GLOBALID(THREAD_IDLE), NULL);
+	idle->name = "idle_thread";
 	thread_init_ctx((void *) &idle_stack_end, idle_thread, NULL, idle);
 
 	sched_slot_dispatch(SSI_IDLE, idle);
 	idle->state = T_RUNNABLE;
 }
 
-void switch_to_kernel(void) __NAKED;
 void switch_to_kernel(void)
 {
 	create_kernel_thread();
 
 	current = kernel;
-	init_ctx_switch(&kernel->ctx, kernel_thread);
+
+	// Set previous mode to S-mode
+	unsigned long x = r_mstatus();
+	x &= ~MSTATUS_MPP_MASK;
+	x |= MSTATUS_MPP_S;
+	w_mstatus(x);
+	init_ctx_switch(kernel->ctx.sp, kernel_thread);
 }
 
 void set_kernel_state(thread_state_t state)
@@ -94,9 +104,14 @@ static void kernel_thread(void)
 		 * switch context immediately
 		 */
 		softirq_execute();
-		// TODO: switch contexts here
-		// irq_svc();
+		__asm__ __volatile__ ("ecall");
 	}
+}
+
+// Should be safe to delete
+static void placeholder(void)
+{
+	int x = 2 + 3;
 }
 
 static void idle_thread(void)

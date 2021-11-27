@@ -57,10 +57,6 @@ void ktable_init(ktable_t *kt, ptr_t data)
 
 	while (kt_ptr != kt_end)
 		*(kt_ptr++) = 0x0;
-
-#ifdef CONFIG_KDB
-	kdb_register_ktable(kt);
-#endif
 }
 
 /**
@@ -154,7 +150,7 @@ void *ktable_alloc(ktable_t *kt)
  */
 uint32_t ktable_getid(ktable_t *kt, void *element)
 {
-	int i = ((ptr_t) element - kt->data) / kt->size;
+	int i = ((uint32_t *) element - kt->data) / kt->size;
 
 	/* Element does not belong to this ktable */
 	if (i > kt->num || i < 0)

@@ -12,3 +12,6 @@
 * Do atomic writes and gets as non-atomic, for now
 * test_and_set_bit(), use simple C code instead of assembly
 * when declaring ~ktables~, add initialization of data in ~ktable_init~. This is because of problems with gcc and initialization with constant expression. Its not ideal, basically a hack. Ant its ugly, since we jump between macros and functions.
+* move init hooks to ~start()~
+* use 64bit addresses for registers
+* use RISC-V interrupts

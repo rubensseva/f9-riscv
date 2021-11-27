@@ -21,8 +21,8 @@ typedef struct {
 	uint32_t as_spaceid;	/*! Space Identifier */
 	struct fpage *first;	/*! head of fpage list */
 
-	struct fpage *mpu_first;	/*! head of MPU fpage list */
-	struct fpage *mpu_stack_first;	/*! head of MPU stack fpage list */
+	// struct fpage *mpu_first;	/*! head of MPU fpage list */
+	// struct fpage *mpu_stack_first;	/*! head of MPU stack fpage list */
 	uint32_t shared;	/*! shared user number */
 } as_t;
 

@@ -56,8 +56,9 @@ retry:
 	}
 
 	/* Must ensure that no interrupt reschedule its softirq */
-	intr_off();
-	machine_intr_off();
+	// intr_off();
+	// We should be in supervisor mode, so cant control machine mode interrupts
+	// machine_intr_off();
 
 	// irq_disable();
 

@@ -36,11 +36,24 @@ void irq_init(void);
 	__asm__ __volatile__ ("bx r1");
 	// jalr x0, rs, 0 - Jump register
 	// jalr x0, x1, 0 - Return from subroutine
- */
-#define init_ctx_switch(ctx, pc) \
-	__asm__ __volatile__ ("add sp, x0, %0" : : "r" ((ctx)->sp));	\
 	__asm__ __volatile__ ("jalr x0, %0, 0" : : "r" (pc));		\
+ */
+/* #define init_ctx_switch(ctx, pc) \ */
+/* 	__asm__ __volatile__ ("add sp, x0, %0" : : "r" ((ctx)->sp));	\ */
+/* 	__asm__ __volatile__ ("jalr x0, 4(%0)" : : "r" (pc));		\ */
+/* __asm__ __volatile__ ("add sp, x0, %0" : : "r" ((ctx)->sp));	\ */
+  // set M Exception Program Counter to main, for mret.
+  // requires gcc -mcmodel=medany
+#define init_ctx_switch(sp, pc) \
+	__asm__ __volatile__ ("mv sp, %0" : : "r" (sp));	\
+    __asm__ __volatile__ ("csrw mepc, %0" : : "r" (pc));     \
+	__asm__ __volatile__ ("mret");		\
 
+#define irq_ecall() \
+	__asm__ __volatile__ ("ecall");
+
+#define irq_save(ctx) \
+	__asm__ __volatile__ ("")
 
 #define context_switch(from, to)					\
 	{								\
