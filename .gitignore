@@ -19,3 +19,4 @@ core
 .config.old
 include/autoconf.h
 mylog
+.cache/

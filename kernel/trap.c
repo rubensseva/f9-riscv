@@ -15,6 +15,12 @@ void no_interrupt(void) {
 
 extern void timervec();
 extern void kernel_vec_in_c_restore();
+void machine_timer_interrupt_handler(void);
+
+
+void supervisor_timer_interrupt_handler(void) {
+  machine_timer_interrupt_handler();
+}
 
 void machine_timer_interrupt_handler(void) {
 
@@ -28,7 +34,6 @@ void machine_timer_interrupt_handler(void) {
 }
 
 void ecall_from_s_handler(void) {
-  // simply call old syscall handler
   svc_handler();
 }
 
@@ -56,7 +61,7 @@ void (*async_handler[12])() = {
   no_interrupt,
   no_interrupt,
   no_interrupt,
-  no_interrupt,
+  supervisor_timer_interrupt_handler,
   no_interrupt,
   machine_timer_interrupt_handler,
   no_interrupt,
@@ -86,33 +91,24 @@ void (*sync_handler[16])() = {
 #define MCAUSE_INT_MASK 0x8000000000000000 // [63]=1 interrupt, else exception
 #define MCAUSE_CODE_MASK 0x7FFFFFFF // low bits show code
 
-extern void kerneltrap()
+extern void kerneltrap(uint64_t* sp)
 {
-  unsigned long mstatus_value = r_mstatus();
-  unsigned long xcause_value;
-  int tmp = MSTATUS_MPP_M;
+  unsigned long mcause_value = r_mcause();
 
-  xcause_value = r_mcause();
-
-  if (xcause_value & MCAUSE_INT_MASK) {
+  if (mcause_value & MCAUSE_INT_MASK) {
     current->ctx.mepc = r_mepc();
-    // Branch to interrupt handler
-    async_handler[(xcause_value & MCAUSE_CODE_MASK)]();
+    async_handler[(mcause_value & MCAUSE_CODE_MASK)]();
   } else {
-    // Set mepc to +4, since we encountered an exception
     current->ctx.mepc = r_mepc() + 4;
-    // Branch to exception handler
-    sync_handler[(xcause_value & MCAUSE_CODE_MASK)]();
+    sync_handler[(mcause_value & MCAUSE_CODE_MASK)]();
   }
-
 
   // schedule
   // schedule_in_irq();
-  /* tcb_t* sel = schedule_select(); */
-  /* if (sel != current) { */
-	/* 	thread_switch(sel); */
-  /* } */
+  tcb_t* sel = schedule_select();
+  if (sel != current) {
+    thread_switch(sel);
+  }
 
   kernel_vec_in_c_restore();
-
 }

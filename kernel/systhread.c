@@ -26,7 +26,6 @@ tcb_t *root;
 utcb_t root_utcb __KIP;
 
 static void kernel_thread(void);
-static void placeholder(void);
 static void idle_thread(void);
 
 void create_root_thread(void)
@@ -106,12 +105,6 @@ static void kernel_thread(void)
 		softirq_execute();
 		__asm__ __volatile__ ("ecall");
 	}
-}
-
-// Should be safe to delete
-static void placeholder(void)
-{
-	int x = 2 + 3;
 }
 
 static void idle_thread(void)

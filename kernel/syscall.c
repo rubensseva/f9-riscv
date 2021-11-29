@@ -37,15 +37,15 @@ void syscall_init()
 
 INIT_HOOK(syscall_init, INIT_LEVEL_KERNEL);
 
-static void sys_thread_control(uint32_t *param1, uint32_t *param2)
+static void sys_thread_control(l4_thread_t dest, l4_thread_t space, l4_thread_t pager, void* utcb)
 {
-	l4_thread_t dest = param1[REG_T0];
-	l4_thread_t space = param1[REG_T1];
-	l4_thread_t pager = param1[REG_T3];
+	/* l4_thread_t dest = param1[REG_T0]; */
+	/* l4_thread_t space = param1[REG_T1]; */
+	/* l4_thread_t pager = param1[REG_T3]; */
 
 	if (space != L4_NILTHREAD) {
 		/* Creation of thread */
-		void *utcb = (void *) param2[0];	/* R4 */
+		/* void *utcb = (void *) param2[0];	/\* R4 *\/ */
 		mempool_t *utcb_pool = mempool_getbyid(mempool_search((memptr_t) utcb,
 		                                       UTCB_SIZE));
 
@@ -57,7 +57,8 @@ static void sys_thread_control(uint32_t *param1, uint32_t *param2)
 		tcb_t *thr = thread_create(dest, utcb);
 		thread_space(thr, space, utcb);
 		thr->utcb->t_pager = pager;
-		param1[REG_T0] = 1;
+		// TODO: What does this commented out line do?
+		// param1[REG_T0] = 1;
 	} else {
 		/* Removal of thread */
 		tcb_t *thr = thread_by_globalid(dest);
@@ -68,25 +69,20 @@ static void sys_thread_control(uint32_t *param1, uint32_t *param2)
 
 void syscall_handler()
 {
-	uint32_t *svc_param1 = (uint32_t *) caller->ctx.sp;
-	// TODO: This was previously REG_PC, FIXME
-	uint32_t svc_num = ((char *) svc_param1[REG_T0])[-2];
-	uint32_t *svc_param2 = caller->ctx.s_regs;
+	uint64_t* a_regs = caller->ctx.a_regs;
+	uint64_t sc_num = a_regs[0];               // system call number
 
-	if (svc_num == SYS_THREAD_CONTROL) {
-		/* Simply call thread_create
-		 * TODO: checking globalid
-		 * TODO: pagers and schedulers
-		 */
-		sys_thread_control(svc_param1, svc_param2);
+	if (sc_num == SYS_THREAD_CONTROL) {
+        sys_thread_control(a_regs[1],          // dest
+						   a_regs[2],          // space
+						   a_regs[3],          // pager
+						   (void*) a_regs[4]); // utcb
 		caller->state = T_RUNNABLE;
-	} else if (svc_num == SYS_IPC) {
-		sys_ipc(svc_param1);
+	} else if (sc_num == SYS_IPC) {
+		sys_ipc(caller->ctx.a_regs[1],         // to_tid
+				caller->ctx.a_regs[2],         // from_tid
+				caller->ctx.a_regs[3]);        // timeout
 	} else {
-		/* dbg_printf(DL_SYSCALL, */
-		/*            "SVC: %d called [%d, %d, %d, %d]\n", svc_num, */
-		/*            svc_param1[REG_R0], svc_param1[REG_R1], */
-		/*            svc_param1[REG_R2], svc_param1[REG_R3]); */
 		caller->state = T_RUNNABLE;
 	}
 }

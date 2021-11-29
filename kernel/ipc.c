@@ -201,12 +201,12 @@ static void sys_ipc_timeout(uint32_t timeout)
 	caller->timeout_event = (uint32_t) kevent;
 }
 
-void sys_ipc(uint32_t *param1)
+void sys_ipc(l4_thread_t to_tid, l4_thread_t from_tid, uint32_t timeout)
 {
 	/* TODO: Checking of recv-mask */
 	tcb_t *to_thr = NULL;
-	l4_thread_t to_tid = param1[REG_T0], from_tid = param1[REG_T1];
-	uint32_t timeout = param1[REG_T2];
+	/* l4_thread_t to_tid = param1[REG_T0], from_tid = param1[REG_T1]; */
+	/* uint32_t timeout = param1[REG_T2]; */
 
 	if (to_tid == L4_NILTHREAD &&
 		from_tid == L4_NILTHREAD) {
