@@ -320,6 +320,12 @@ void thread_init_ctx(void *sp, void *pc, void *regs, tcb_t *thr)
 		((uint64_t *) sp)[REG_T4] = 0x0;
 		((uint64_t *) sp)[REG_T5] = 0x0;
 		((uint64_t *) sp)[REG_T6] = 0x0;
+
+		((uint64_t *) sp)[REG_RA] = 0x0;
+		((uint64_t *) sp)[REG_SP] = 0x0;
+		((uint64_t *) sp)[REG_GP] = 0x0;
+		((uint64_t *) sp)[REG_TP] = 0x0;
+
 		((uint64_t *) sp)[REG_A0] = 0x0;
 		((uint64_t *) sp)[REG_A1] = 0x0;
 		((uint64_t *) sp)[REG_A2] = 0x0;
@@ -328,6 +334,19 @@ void thread_init_ctx(void *sp, void *pc, void *regs, tcb_t *thr)
 		((uint64_t *) sp)[REG_A5] = 0x0;
 		((uint64_t *) sp)[REG_A6] = 0x0;
 		((uint64_t *) sp)[REG_A7] = 0x0;
+
+		((uint64_t *) sp)[REG_S0] = 0x0;
+		((uint64_t *) sp)[REG_S1] = 0x0;
+		((uint64_t *) sp)[REG_S2] = 0x0;
+		((uint64_t *) sp)[REG_S3] = 0x0;
+		((uint64_t *) sp)[REG_S4] = 0x0;
+		((uint64_t *) sp)[REG_S5] = 0x0;
+		((uint64_t *) sp)[REG_S6] = 0x0;
+		((uint64_t *) sp)[REG_S7] = 0x0;
+		((uint64_t *) sp)[REG_S8] = 0x0;
+		((uint64_t *) sp)[REG_S9] = 0x0;
+		((uint64_t *) sp)[REG_S10] = 0x0;
+		((uint64_t *) sp)[REG_S11] = 0x0;
 	} else {
 		((uint64_t *) sp)[REG_T0] = ((uint64_t *) regs)[0];
 		((uint64_t *) sp)[REG_T1] = ((uint64_t *) regs)[1];
@@ -336,14 +355,34 @@ void thread_init_ctx(void *sp, void *pc, void *regs, tcb_t *thr)
 		((uint64_t *) sp)[REG_T4] = ((uint64_t *) regs)[4];
 		((uint64_t *) sp)[REG_T5] = ((uint64_t *) regs)[5];
 		((uint64_t *) sp)[REG_T6] = ((uint64_t *) regs)[6];
-		((uint64_t *) sp)[REG_A0] = ((uint64_t *) regs)[7];
-		((uint64_t *) sp)[REG_A1] = ((uint64_t *) regs)[8];
-		((uint64_t *) sp)[REG_A2] = ((uint64_t *) regs)[9];
-		((uint64_t *) sp)[REG_A3] = ((uint64_t *) regs)[10];
-		((uint64_t *) sp)[REG_A4] = ((uint64_t *) regs)[11];
-		((uint64_t *) sp)[REG_A5] = ((uint64_t *) regs)[12];
-		((uint64_t *) sp)[REG_A6] = ((uint64_t *) regs)[13];
-		((uint64_t *) sp)[REG_A7] = ((uint64_t *) regs)[14];
+		((uint64_t *) sp)[REG_T7] = ((uint64_t *) regs)[7];
+
+		((uint64_t *) sp)[REG_RA] = ((uint64_t *) regs)[8];
+		((uint64_t *) sp)[REG_SP] = ((uint64_t *) regs)[9];
+		((uint64_t *) sp)[REG_GP] = ((uint64_t *) regs)[10];
+		((uint64_t *) sp)[REG_TP] = ((uint64_t *) regs)[11];
+
+		((uint64_t *) sp)[REG_A0] = ((uint64_t *) regs)[12];
+		((uint64_t *) sp)[REG_A1] = ((uint64_t *) regs)[13];
+		((uint64_t *) sp)[REG_A2] = ((uint64_t *) regs)[14];
+		((uint64_t *) sp)[REG_A3] = ((uint64_t *) regs)[15];
+		((uint64_t *) sp)[REG_A4] = ((uint64_t *) regs)[16];
+		((uint64_t *) sp)[REG_A5] = ((uint64_t *) regs)[17];
+		((uint64_t *) sp)[REG_A6] = ((uint64_t *) regs)[18];
+		((uint64_t *) sp)[REG_A7] = ((uint64_t *) regs)[19];
+
+		((uint64_t *) sp)[REG_S0] = ((uint64_t *) regs)[20];
+		((uint64_t *) sp)[REG_S1] = ((uint64_t *) regs)[21];
+		((uint64_t *) sp)[REG_S2] = ((uint64_t *) regs)[22];
+		((uint64_t *) sp)[REG_S3] = ((uint64_t *) regs)[23];
+		((uint64_t *) sp)[REG_S4] = ((uint64_t *) regs)[24];
+		((uint64_t *) sp)[REG_S5] = ((uint64_t *) regs)[25];
+		((uint64_t *) sp)[REG_S6] = ((uint64_t *) regs)[26];
+		((uint64_t *) sp)[REG_S7] = ((uint64_t *) regs)[27];
+		((uint64_t *) sp)[REG_S8] = ((uint64_t *) regs)[28];
+		((uint64_t *) sp)[REG_S9] = ((uint64_t *) regs)[29];
+		((uint64_t *) sp)[REG_S10] = ((uint64_t *) regs)[30];
+		((uint64_t *) sp)[REG_S11] = ((uint64_t *) regs)[31];
 	}
 }
 

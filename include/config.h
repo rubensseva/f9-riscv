@@ -10,12 +10,10 @@ enum register_stack_t {
 	REG_T5,
 	REG_T6,
 	REG_T7,
-
     REG_RA,
 	REG_SP,
 	REG_GP,
 	REG_TP,
-
 	REG_A0,
 	REG_A1,
 	REG_A2,
@@ -24,7 +22,6 @@ enum register_stack_t {
 	REG_A5,
 	REG_A6,
 	REG_A7,
-
 	REG_S0,
 	REG_S1,
 	REG_S2,

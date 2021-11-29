@@ -91,7 +91,7 @@ void (*sync_handler[16])() = {
 #define MCAUSE_INT_MASK 0x8000000000000000 // [63]=1 interrupt, else exception
 #define MCAUSE_CODE_MASK 0x7FFFFFFF // low bits show code
 
-extern void kerneltrap(uint64_t* sp)
+extern void kerneltrap(uint64_t* caller_sp)
 {
   unsigned long mcause_value = r_mcause();
 
@@ -107,8 +107,10 @@ extern void kerneltrap(uint64_t* sp)
   // schedule_in_irq();
   tcb_t* sel = schedule_select();
   if (sel != current) {
+    __asm__ volatile ("mv %0, sp" : "=r" (current->ctx.sp));
     thread_switch(sel);
   }
-
-  kernel_vec_in_c_restore();
+  // update mepc in case of context switch, or mepc + 4
+  __asm__ ("csrw mepc, %0" : : "r" (current->ctx.mepc));
+  __asm__ volatile ("mv a0, %0" : : "r" (current->ctx.sp));
 }

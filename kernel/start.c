@@ -47,7 +47,7 @@ irqinit()
   w_sie(r_sie() | SIE_SEIE | SIE_SSIE);
   w_mstatus(r_mstatus() | MSTATUS_SIE);
 
-  w_mtvec((uint64_t)kernel_vec_in_c);
+  w_mtvec((uint64_t)kernelvec);
 
   // enable machine-mode interrupts.
   w_mstatus(r_mstatus() | MSTATUS_MIE);

@@ -3,7 +3,7 @@
 
 extern volatile tcb_t *current;
 
-__attribute__((naked)) void store_ctx() {
+void store_ctx(uint64_t* caller_sp) {
     __asm__ ("mv %0, ra" : "=r" (current->ctx.ra));
     __asm__ ("mv %0, sp" : "=r" (current->ctx.sp));
     __asm__ ("mv %0, gp" : "=r" (current->ctx.gp));
