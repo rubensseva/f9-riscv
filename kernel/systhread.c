@@ -46,8 +46,8 @@ void create_root_thread(void)
 	thread_init_ctx((void *) &root_stack_end, root_thread, regs, root);
 
 	root->stack_base = (memptr_t) &root_stack_start;
-	root->stack_size = (uint32_t) &root_stack_end -
-	                   (uint32_t) &root_stack_start;
+	root->stack_size = (uint64_t) &root_stack_end -
+	                   (uint64_t) &root_stack_start;
 
 	sched_slot_dispatch(SSI_ROOT_THREAD, root);
 	root->state = T_RUNNABLE;

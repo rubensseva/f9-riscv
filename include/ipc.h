@@ -9,8 +9,7 @@
 #include <l4/ipc.h>
 #include <types.h>
 
-// void sys_ipc(uint32_t *param1);
-void sys_ipc(l4_thread_t to_tid, l4_thread_t from_tid, uint32_t timeout);
+void sys_ipc(uint64_t *param1);
 uint32_t ipc_deliver(void *data);
 
 uint32_t ipc_read_mr(tcb_t *from, int i);

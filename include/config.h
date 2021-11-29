@@ -9,7 +9,6 @@ enum register_stack_t {
 	REG_T4,
 	REG_T5,
 	REG_T6,
-	REG_T7,
     REG_RA,
 	REG_SP,
 	REG_GP,

@@ -201,12 +201,12 @@ static void sys_ipc_timeout(uint32_t timeout)
 	caller->timeout_event = (uint32_t) kevent;
 }
 
-void sys_ipc(l4_thread_t to_tid, l4_thread_t from_tid, uint32_t timeout)
+void sys_ipc(uint64_t* sc_param1)
 {
 	/* TODO: Checking of recv-mask */
 	tcb_t *to_thr = NULL;
-	/* l4_thread_t to_tid = param1[REG_T0], from_tid = param1[REG_T1]; */
-	/* uint32_t timeout = param1[REG_T2]; */
+	l4_thread_t to_tid = sc_param1[REG_A1], from_tid = sc_param1[REG_A2];
+	uint32_t timeout = sc_param1[REG_A3];
 
 	if (to_tid == L4_NILTHREAD &&
 		from_tid == L4_NILTHREAD) {
@@ -243,7 +243,7 @@ void sys_ipc(l4_thread_t to_tid, l4_thread_t from_tid, uint32_t timeout)
 
 				memptr_t sp = ipc_read_mr(caller, 2);
 				size_t stack_size = ipc_read_mr(caller, 3);
-				uint32_t regs[4];	/* r0, r1, r2, r3 */
+				uint64_t regs[4];	/* r0, r1, r2, r3 */
 
 				/* dbg_printf(DL_IPC, */
 				/*            "IPC: %t thread start\n", to_tid); */
@@ -251,10 +251,13 @@ void sys_ipc(l4_thread_t to_tid, l4_thread_t from_tid, uint32_t timeout)
 				to_thr->stack_base = sp - stack_size;
 				to_thr->stack_size = stack_size;
 
-				regs[REG_T0] = (uint32_t)&kip;
-				regs[REG_T1] = (uint32_t)to_thr->utcb;
-				regs[REG_T2] = ipc_read_mr(caller, 4);
-				regs[REG_T3] = ipc_read_mr(caller, 5);
+				// TODO: This needs another look
+				// Should be a registers or something else?
+				// Confirm that kip is here only to point to mempool
+				regs[REG_A0] = (uint64_t)&kip;
+				regs[REG_A0] = (uint64_t)to_thr->utcb;
+				regs[REG_A0] = ipc_read_mr(caller, 4);
+				regs[REG_A0] = ipc_read_mr(caller, 5);
 				thread_init_ctx((void *) sp,
 				                (void *) ipc_read_mr(caller, 1),
 				                regs, to_thr);
