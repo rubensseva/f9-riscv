@@ -36,10 +36,10 @@ void create_root_thread(void)
 	as_map_user(root->as);
 
 	uint64_t regs[4] = {
-		[REG_T0] = (uint64_t) &kip,
-		[REG_T1] = (uint64_t) root->utcb,
-		[REG_T2] = 0,
-		[REG_T3] = 0,
+		[REG_A0] = (uint64_t) &kip,
+		[REG_A1] = (uint64_t) root->utcb,
+		[REG_A2] = 0,
+		[REG_A3] = 0,
 	};
 
 	// TODO: Fixme

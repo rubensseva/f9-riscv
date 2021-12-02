@@ -103,13 +103,13 @@ extern void kerneltrap(uint64_t* caller_sp)
     sync_handler[(mcause_value & MCAUSE_CODE_MASK)]();
   }
 
-  // schedule
-  // schedule_in_irq();
+  // context switch
+  current->ctx.sp = (uint64_t) caller_sp;
   tcb_t* sel = schedule_select();
   if (sel != current) {
-    __asm__ volatile ("mv %0, sp" : "=r" (current->ctx.sp));
     thread_switch(sel);
   }
+
   // update mepc in case of context switch, or mepc + 4
   __asm__ ("csrw mepc, %0" : : "r" (current->ctx.mepc));
   __asm__ volatile ("mv a0, %0" : : "r" (current->ctx.sp));

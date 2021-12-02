@@ -114,10 +114,6 @@ int ktimer_event_schedule(uint32_t ticks, ktimer_event_t *kte)
 		/* All other events are already handled, so simply schedule
 		 * and enable timer
 		 */
-		/* dbg_printf(DL_KTIMER, */
-		/*            "KTE: Scheduled dummy event %p on %d\n", */
-		/*            kte, ticks); */
-
 		kte->delta = ticks;
 		event_queue = kte;
 
@@ -152,20 +148,10 @@ int ktimer_event_schedule(uint32_t ticks, ktimer_event_t *kte)
 				next_event = event->next;
 			} while (next_event &&
 			         ticks > (etime + next_event->delta));
-
-			/* dbg_printf(DL_KTIMER, */
-			/*            "KTE: Scheduled event %p [%p:%p] with " */
-			/*            "D=%d and T=%d\n", */
-			/*            kte, event, next_event, delta, ticks); */
-
 			/* Insert into chain and recalculate */
 			event->next = kte;
 		} else {
 			/* Event should be scheduled before earlier event */
-			/* dbg_printf(DL_KTIMER, */
-			/*            "KTE: Scheduled early event %p with T=%d\n", */
-			/*            kte, ticks); */
-
 			event_queue = kte;
 			delta = ticks;
 

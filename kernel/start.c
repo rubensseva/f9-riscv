@@ -37,6 +37,7 @@ irqinit()
 {
   // ask the CLINT for a timer interrupt.
   uint64_t interval = 1000000; // cycles; about 1/10th second in qemu.
+  *(uint64_t*)CLINT_MTIME = 0;
   *(uint64_t*)CLINT_MTIMECMP = *(uint64_t*)CLINT_MTIME + interval;
 
   // disable paging
