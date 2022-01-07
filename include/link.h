@@ -48,6 +48,8 @@ extern uint64_t user_text_flash_end;
 
 extern uint64_t root_stack_start;
 extern uint64_t root_stack_end;
+extern uint64_t user_thread_stack_start;
+extern uint64_t user_thread_stack_end;
 
 extern uint64_t kip_start;
 extern uint64_t kip_end;
@@ -61,6 +63,7 @@ extern uint64_t symtab_start;
 extern uint64_t symtab_end;
 
 extern uint64_t mem0_start;
+extern uint64_t mem0_end;
 extern uint64_t mem1_start;
 #endif
 

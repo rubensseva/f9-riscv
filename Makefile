@@ -76,6 +76,6 @@ clean:
 qemu: $(TARGET)
 	qemu-system-riscv64 -nographic -smp 1 -s -S -machine virt -bios none -kernel $(TARGET)
 
-.PHONY: dbg
+.PHONY: gdb
 dbg: $(TARGET)
 	riscv64-unknown-elf-gdb $(TARGET)

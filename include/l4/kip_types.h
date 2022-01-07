@@ -16,8 +16,8 @@
  * NOTE: kip_mem_desc_t differs from L4 X.2 standard
  */
 typedef struct {
-	uint32_t 	base;	/* Last 6 bits contains poolid */
-	uint32_t	size;	/* Last 6 bits contains tag */
+	uint32_t 	base;	/* L(e?)ast 6 bits contains poolid */
+	uint32_t	size;	/* L(e?)ast 6 bits contains tag */
 } kip_mem_desc_t;
 
 typedef union {

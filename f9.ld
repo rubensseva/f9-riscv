@@ -45,6 +45,9 @@ IDLE_STACK_SIZE		= 0x00000200;
 /* KERNEL_STACK_SIZE	= 0x00000300; */
 KERNEL_STACK_SIZE	= 0x00001000;
 ROOT_THREAD_STACK_SIZE	= 0x00000200;
+USER_THREAD_STACK_SIZE	= 0x00001000;
+
+MEM0_SIZE = 0x00001000;
 
 SECTIONS {
 	.text :
@@ -123,6 +126,9 @@ SECTIONS {
 		root_stack_start = .;
 		. += ROOT_THREAD_STACK_SIZE;
 		root_stack_end = .;
+        user_thread_stack_start = .;
+        . += USER_THREAD_STACK_SIZE;
+        user_thread_stack_end = .;
 		*(.user_data*)
 		user_runtime_start = .;
 		KEEP(*(.user_runtime))
@@ -139,6 +145,8 @@ SECTIONS {
 		. = ALIGN (256);
 		user_bss_end = .;
 		mem0_start = .;
+        . += MEM0_SIZE;
+        mem0_end = .;
 	} > RamLoc
 
 }

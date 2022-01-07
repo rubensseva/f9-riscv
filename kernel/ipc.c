@@ -24,17 +24,21 @@ extern int thread_count;
 
 uint32_t ipc_read_mr(tcb_t *from, int i)
 {
-	if (i >= 8)
-		return from->utcb->mr[i - 8];
-	return from->ctx.s_regs[i];
+	/* if (i >= 8) */
+	/* 	return from->utcb->mr[i - 8]; */
+	/* return from->ctx.s_regs[i]; */
+
+	return from->utcb->mr[i];
 }
 
 void ipc_write_mr(tcb_t *to, int i, uint32_t data)
 {
-	if (i >= 8)
-		to->utcb->mr[i - 8] = data;
-	else
-		to->ctx.s_regs[i] = data;
+	/* if (i >= 8) */
+	/* 	to->utcb->mr[i - 8] = data; */
+	/* else */
+	/* 	to->ctx.s_regs[i] = data; */
+
+	to->utcb->mr[i] = data;
 }
 
 static void user_ipc_error(tcb_t *thr, enum user_error_t error)
@@ -255,9 +259,9 @@ void sys_ipc(uint64_t* sc_param1)
 				// Should be a registers or something else?
 				// Confirm that kip is here only to point to mempool
 				regs[REG_A0] = (uint64_t)&kip;
-				regs[REG_A0] = (uint64_t)to_thr->utcb;
-				regs[REG_A0] = ipc_read_mr(caller, 4);
-				regs[REG_A0] = ipc_read_mr(caller, 5);
+				regs[REG_A1] = (uint64_t)to_thr->utcb;
+				regs[REG_A2] = ipc_read_mr(caller, 4);
+				regs[REG_A3] = ipc_read_mr(caller, 5);
 				thread_init_ctx((void *) sp,
 				                (void *) ipc_read_mr(caller, 1),
 				                regs, to_thr);

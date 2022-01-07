@@ -58,8 +58,10 @@ static mempool_t memmap[] = {
 		MP_UR | MP_UW | MP_MEMPOOL | MP_MAP_ALWAYS, MPT_USER_DATA),
 	DECLARE_MEMPOOL_2("UBSS",  user_bss,
 		MP_UR | MP_UW | MP_MEMPOOL  | MP_MAP_ALWAYS, MPT_USER_DATA),
-	DECLARE_MEMPOOL("MEM0",  &mem0_start, 0x2001c000,
-		MP_UR | MP_UW | MP_SRAM, MPT_AVAILABLE),
+	DECLARE_MEMPOOL_2("MEM0",  mem0,
+					  MP_UR | MP_UW | MP_SRAM, MPT_AVAILABLE)
+	// DECLARE_MEMPOOL("MEM0",  &mem0_start, 0x2001c000,
+	// MP_UR | MP_UW | MP_SRAM, MPT_AVAILABLE),
 };
 
 DECLARE_KTABLE(as_t, as_table, CONFIG_MAX_ADRESS_SPACES);
@@ -110,7 +112,6 @@ mempool_t *mempool_getbyid(int mpid)
 void memory_init()
 {
 	int j = 0;
-	uint32_t *shcsr = (uint32_t *) 0xE000ED24;
 
 	fpages_init();
 
@@ -125,9 +126,11 @@ void memory_init()
 		case MPT_USER_TEXT:
 		case MPT_DEVICES:
 		case MPT_AVAILABLE:
+			// Last 6 bits of base contains poolid
 			mem_desc[j].base = addr_align(
 					(memmap[i].start),
 			                CONFIG_SMALLEST_FPAGE_SIZE) | i;
+			// last 6 bits of size contains tag
 			mem_desc[j].size = addr_align(
 					(memmap[i].end - memmap[i].start),
 					CONFIG_SMALLEST_FPAGE_SIZE) | memmap[i].tag;
@@ -140,10 +143,9 @@ void memory_init()
 	    ((void *) mem_desc) - ((void *) &kip);
 	kip.memory_info.s.n = j;
 
-	*shcsr |= 1 << 16;	/* Enable memfault */
 }
 
-INIT_HOOK(memory_init, INIT_LEVEL_KERNEL_EARLY);
+// INIT_HOOK(memory_init, INIT_LEVEL_KERNEL_EARLY);
 
 /*
  * AS functions

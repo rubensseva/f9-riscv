@@ -74,6 +74,7 @@ int main(void)
   sched_init();
   syscall_init();
   ktimer_event_init();
+  memory_init();
 
   // Not creating kernel thread here because it corrupts current stack
   thread_init_subsys();

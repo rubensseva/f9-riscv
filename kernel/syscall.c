@@ -37,16 +37,18 @@ void syscall_init()
 
 INIT_HOOK(syscall_init, INIT_LEVEL_KERNEL);
 
-static void sys_thread_control(uint64_t *param1, uint64_t *param2)
+static void sys_thread_control(uint64_t *param1)
 {
 	l4_thread_t dest = param1[REG_A1];
 	l4_thread_t space = param1[REG_A2];
-	l4_thread_t pager = param1[REG_A3];
+	l4_thread_t scheduler = param1[REG_A3];
+	l4_thread_t pager = param1[REG_A4];
 
 	if (space != L4_NILTHREAD) {
 		/* Creation of thread */
 		// TODO: Fix this, what register to use? What does param2 represent?
-		void *utcb = (void *) param2[0];	/* R4 */
+		// void *utcb = (void *) param2[0];	/* R4 */
+		void *utcb = (void*) param1[REG_A5];
 		mempool_t *utcb_pool = mempool_getbyid(mempool_search((memptr_t) utcb,
 		                                       UTCB_SIZE));
 
@@ -59,8 +61,8 @@ static void sys_thread_control(uint64_t *param1, uint64_t *param2)
 		thread_space(thr, space, utcb);
 		thr->utcb->t_pager = pager;
 		// TODO: This needs another look
-		// What reg to use? Whats this for?
-		param1[REG_A5] = 1;
+		// What reg to use? Whats this for? Set destination register to one.. no idea why?
+		param1[REG_A1] = 1;
 	} else {
 		/* Removal of thread */
 		tcb_t *thr = thread_by_globalid(dest);
@@ -73,14 +75,14 @@ void syscall_handler()
 {
 	uint64_t *sc_param1 = (uint64_t *) caller->ctx.sp;
 	uint64_t sc_num = sc_param1[REG_A0];
-	uint64_t *sc_param2 = caller->ctx.a_regs;
+	// uint64_t *sc_param2 = caller->ctx.a_regs;
 
 	if (sc_num == SYS_THREAD_CONTROL) {
 		/* Simply call thread_create
 		 * TODO: checking globalid
 		 * TODO: pagers and schedulers
 		 */
-		sys_thread_control(sc_param1, sc_param2);
+		sys_thread_control(sc_param1);
 		caller->state = T_RUNNABLE;
 	} else if (sc_num == SYS_IPC) {
 		sys_ipc(sc_param1);
