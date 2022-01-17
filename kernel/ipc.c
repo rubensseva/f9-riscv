@@ -239,6 +239,8 @@ void sys_ipc(uint64_t* sc_param1)
 		} else if (to_thr && to_thr->state == T_INACTIVE &&
 		           GLOBALID_TO_TID(to_thr->utcb->t_pager) ==
 		           GLOBALID_TO_TID(caller->t_globalid)) {
+			/* mr0 is the IPC tag. By comparing it to 5, we check that the field n_untyped is equal to 5, while
+			 * ensuring that the other fields are nil. */
 			if (ipc_read_mr(caller, 0) == 0x00000005) {
 				/* mr1: thread func, mr2: stack addr,
 				 * mr3: stack size
@@ -252,12 +254,15 @@ void sys_ipc(uint64_t* sc_param1)
 				/* dbg_printf(DL_IPC, */
 				/*            "IPC: %t thread start\n", to_tid); */
 
+				/* Since the stack grows downwards, sp is at the top address of
+				 * the stack as this point. To get the base, we need to subtract
+				 * the size */
 				to_thr->stack_base = sp - stack_size;
 				to_thr->stack_size = stack_size;
 
-				// TODO: This needs another look
-				// Should be a registers or something else?
-				// Confirm that kip is here only to point to mempool
+				/* TODO: This needs another look
+				 * Should be a registers or something else?
+				 * Confirm that kip is here only to point to mempool */
 				regs[REG_A0] = (uint64_t)&kip;
 				regs[REG_A1] = (uint64_t)to_thr->utcb;
 				regs[REG_A2] = ipc_read_mr(caller, 4);
