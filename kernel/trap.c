@@ -35,6 +35,9 @@ void machine_timer_interrupt_handler(void) {
 void ecall_from_s_handler(void) {
   svc_handler();
 }
+void ecall_from_m_handler(void) {
+  svc_handler();
+}
 
 void supervisor_external_interrupt(void) {
     int irq = plic_claim();
@@ -80,7 +83,7 @@ void (*sync_handler[16])() = {
   no_interrupt,
   ecall_from_s_handler,
   no_interrupt,
-  no_interrupt,
+  ecall_from_m_handler, // should only happen from kernel thread
   no_interrupt,
   no_interrupt,
   no_interrupt,
@@ -108,6 +111,24 @@ extern void kerneltrap(uint64_t* caller_sp)
   if (sel != current) {
     thread_switch(sel);
   }
+
+  /* Kernel thread should run in m-mode, rest should run in s-mode
+   * The reason we need the kernel thread in m-mode is because it needs
+   * the ability to disable all interrupts */
+	extern tcb_t *kernel;
+  unsigned long x = r_mstatus();
+  x &= ~MSTATUS_MPP_MASK;
+  if (thread_current() == kernel) {
+    x |= MSTATUS_MPP_M;
+  } else {
+    x |= MSTATUS_MPP_S;
+  }
+  w_mstatus(x);
+
+  // current = kernel_thread or whatevah
+    // set previous privelege mode to machine mode
+  // else
+  // set previous privelege mode to s-mode
 
   // update mepc in case of context switch, or mepc + 4
   __asm__ ("csrw mepc, %0" : : "r" (current->ctx.mepc));

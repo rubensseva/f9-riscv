@@ -10,8 +10,6 @@
 #include <systhread.h>
 #include <riscv.h>
 
-extern int ask_interrupts_disabled;
-
 static softirq_t softirq[NR_SOFTIRQ];
 
 void softirq_register(softirq_type_t type, softirq_handler_t handler)
@@ -61,9 +59,10 @@ retry:
 	// intr_off();
 	// We should be in supervisor mode, so cant control machine mode interrupts
 	// machine_intr_off();
-
 	// irq_disable();
-	ask_interrupts_disabled = 1;
+
+	// Disable interrupts
+	w_mstatus(r_mstatus() & ~(MSTATUS_MIE | MSTATUS_SIE));
 
 	softirq_schedule = 0;
 	for (int i = 0; i < NR_SOFTIRQ; ++i) {
@@ -71,8 +70,10 @@ retry:
 	}
 
 	set_kernel_state((softirq_schedule) ? T_RUNNABLE : T_INACTIVE);
+
 	// irq_enable();
-	ask_interrupts_disabled = 0;
+	// Enable interrupts
+	w_mstatus(r_mstatus() | (MSTATUS_MIE | MSTATUS_SIE));
 
 	if (softirq_schedule)
 		goto retry;

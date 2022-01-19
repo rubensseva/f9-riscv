@@ -25,6 +25,7 @@
 #include <thread.h>
 #include <interrupt.h>
 #include <kernel_vec_in_c.h>
+#include <uart.h>
 
 
 __attribute__ ((aligned (16))) char stack0[16384];
@@ -75,6 +76,8 @@ int main(void)
   syscall_init();
   ktimer_event_init();
   memory_init();
+
+  uartinit();
 
   // Not creating kernel thread here because it corrupts current stack
   thread_init_subsys();

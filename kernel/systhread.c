@@ -83,10 +83,17 @@ void switch_to_kernel(void)
 
 	current = kernel;
 
+	// TODO: Dont forget to revert this if going back to s-mode for kernel thread
+	// For now, skip this, kernel mode should be in m-mode
 	// Set previous mode to S-mode
+	/* unsigned long x = r_mstatus(); */
+	/* x &= ~MSTATUS_MPP_MASK; */
+	/* x |= MSTATUS_MPP_S; */
+	/* w_mstatus(x); */
+
 	unsigned long x = r_mstatus();
 	x &= ~MSTATUS_MPP_MASK;
-	x |= MSTATUS_MPP_S;
+	x |= MSTATUS_MPP_M;
 	w_mstatus(x);
 	init_ctx_switch(kernel->ctx.sp, kernel_thread);
 }

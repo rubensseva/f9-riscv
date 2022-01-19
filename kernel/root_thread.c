@@ -2,6 +2,7 @@
 #include <thread.h>
 #include <syscall.h>
 #include <ipc.h>
+#include <uart.h>
 
 extern void* current_utcb;
 
@@ -102,11 +103,21 @@ void L4_ThreadControl(L4_ThreadId_t dest, L4_ThreadId_t SpaceSpecifier,
 }
 
 void __USER_TEXT my_user_thread() {
-  L4_ThreadId_t gid = TID_TO_GLOBALID(24);
-
   ipc_msg_tag_t tag = {{1, 0, 0, 0}};
   ((utcb_t *)current_utcb)->mr[0] = tag.raw;
   L4_Ipc(L4_nilthread, root_id);
+
+  uartputc('h');
+  uartputc('e');
+  uartputc('l');
+  uartputc('l');
+  uartputc('o');
+  uartputc(' ');
+  uartputc('w');
+  uartputc('o');
+  uartputc('r');
+  uartputc('l');
+  uartputc('d');
 
   while (1) {
     L4_Sleep();
