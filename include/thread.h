@@ -66,7 +66,7 @@ typedef struct {
 	uint64_t gp;
 	uint64_t tp;
 	uint64_t t_regs[7];
-	uint64_t s_regs[12];
+	uint64_t _regs[12];
 	uint64_t a_regs[8];
 } context_t;
 

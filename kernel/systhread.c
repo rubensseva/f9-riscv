@@ -20,6 +20,10 @@ tcb_t *idle;
 tcb_t *kernel;
 tcb_t *root;
 
+tcb_t *get_kernel_thread() {
+	return kernel;
+}
+
 // TODO: Fixme
 // extern void root_thread(void);
 
@@ -79,18 +83,8 @@ void create_idle_thread(void)
 
 void switch_to_kernel(void)
 {
-	create_kernel_thread();
-
-	current = kernel;
-
-	// TODO: Dont forget to revert this if going back to s-mode for kernel thread
-	// For now, skip this, kernel mode should be in m-mode
-	// Set previous mode to S-mode
-	/* unsigned long x = r_mstatus(); */
-	/* x &= ~MSTATUS_MPP_MASK; */
-	/* x |= MSTATUS_MPP_S; */
-	/* w_mstatus(x); */
-
+	// Set previous privilege level to M mode for kernel thread
+	// (kernel thread runs in m-mode, other threads run in s-mode)
 	unsigned long x = r_mstatus();
 	x &= ~MSTATUS_MPP_MASK;
 	x |= MSTATUS_MPP_M;

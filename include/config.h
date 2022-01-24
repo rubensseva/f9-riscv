@@ -47,6 +47,7 @@ enum register_stack_t {
 // TODO: Need to know more about what this does
 #define RESERVED_STACK (32 * sizeof(uint64_t))
 
+#define CONFIG_BITMAP_BITBAND 0
 
 // From old kconfig
 // -----------------------------

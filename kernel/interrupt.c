@@ -190,13 +190,16 @@ static void irq_schedule(int irq)
 	struct user_irq *uirq = user_irq_fetch(irq);
 
 	// irq_disable();
-	intr_off();
-	machine_intr_off();
+	/* intr_off(); */
+	/* machine_intr_off(); */
+	w_mstatus(r_mstatus() & ~(MSTATUS_MIE | MSTATUS_SIE));
 
 	user_irq_queue_push(uirq);
+
 	// irq_enable();
-	intr_on();
-	machine_intr_on();
+	/* intr_on(); */
+	/* machine_intr_on(); */
+	w_mstatus(r_mstatus() | (MSTATUS_MIE | MSTATUS_SIE));
 
 	irq_handler_enable(irq);
 }
@@ -206,8 +209,10 @@ static tcb_t *irq_handler_sched(struct sched_slot *slot)
 	tcb_t *thr = NULL;
 
 	// irq_disable();
-	intr_off();
-	machine_intr_off();
+	/* intr_off(); */
+	/* machine_intr_off(); */
+	w_mstatus(r_mstatus() & ~(MSTATUS_MIE | MSTATUS_SIE));
+
 	struct user_irq *uirq = user_irq_queue_pop();
 
 	if (uirq && (thr = uirq->thr) &&
@@ -216,8 +221,9 @@ static tcb_t *irq_handler_sched(struct sched_slot *slot)
 		sched_slot_dispatch(SSI_INTR_THREAD, thr);
 	}
 
-	intr_on();
-	machine_intr_on();
+	/* intr_on(); */
+	/* machine_intr_on(); */
+	w_mstatus(r_mstatus() | (MSTATUS_MIE | MSTATUS_SIE));
 
 	return thr;
 }
@@ -251,12 +257,17 @@ void user_interrupt_config(tcb_t *from)
 	if (tag.s.label != USER_INTERRUPT_LABEL)
 		return;
 
-	int irq = (uint16_t) from->ctx.s_regs[IRQ_IPC_IRQN + 1];
-	l4_thread_t tid = (l4_thread_t) from->ctx.s_regs[IRQ_IPC_TID + 1];
-	int action = (uint16_t) from->ctx.s_regs[IRQ_IPC_ACTION + 1];
-	irq_handler_t handler = (irq_handler_t)
-	                        from->ctx.s_regs[IRQ_IPC_HANDLER + 1];
-	int priority = (uint16_t) from->ctx.s_regs[IRQ_IPC_PRIORITY + 1];
+	/* int irq = (uint16_t) from->ctx.s_regs[IRQ_IPC_IRQN + 1]; */
+	/* l4_thread_t tid = (l4_thread_t) from->ctx.s_regs[IRQ_IPC_TID + 1]; */
+	/* int action = (uint16_t) from->ctx.s_regs[IRQ_IPC_ACTION + 1]; */
+	/* irq_handler_t handler = (irq_handler_t) */
+	/*                         from->ctx.s_regs[IRQ_IPC_HANDLER + 1]; */
+	/* int priority = (uint16_t) from->ctx.s_regs[IRQ_IPC_PRIORITY + 1]; */
+	int irq = (uint16_t) ipc_read_mr(from, 1);
+	l4_thread_t tid = (l4_thread_t) ipc_read_mr(from, 2);
+	int action = (uint16_t) ipc_read_mr(from, 3);
+	irq_handler_t handler = (irq_handler_t) ipc_read_mr(from, 4);
+	int priority = (uint16_t) ipc_read_mr(from, 5);
 
 	user_irq_disable(irq);
 
@@ -337,11 +348,13 @@ void user_irq_enable(int irq)
 	/* } */
 }
 
+// TODO: Fixme
 void user_irq_disable(int irq)
 {
-	int prev = (SIE_SEIE | SIE_SSIE);
-	uint64_t sie = r_sie();
-	w_sie(~prev & sie);
+	/* int prev = (SIE_SEIE | SIE_SSIE); */
+	/* uint64_t sie = r_sie(); */
+	/* w_sie(~prev & sie); */
+	/* w_mstatus(r_mstatus() & ~MSTATUS_SIE); */
 	// TODO: Also clear pending
 
 	/* if (nvic_is_setup(irq)) { */

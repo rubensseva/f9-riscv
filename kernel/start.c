@@ -26,6 +26,7 @@
 #include <interrupt.h>
 #include <kernel_vec_in_c.h>
 #include <uart.h>
+#include <plic.h>
 
 
 __attribute__ ((aligned (16))) char stack0[16384];
@@ -52,7 +53,9 @@ irqinit()
   w_mtvec((uint64_t)kernelvec);
 
   // enable machine-mode interrupts.
-  w_mstatus(r_mstatus() | MSTATUS_MIE);
+  // this should be enabled after the first interrupt
+  // w_mstatus(r_mstatus() | MSTATUS_MIE);
+
   // when we execute mret, mstatus.mie is set to mstatus.mpie. Therefore, we need to set
   // mstatus.mpie as well here, to prevent mstatus.mie from being disabled.
   w_mstatus(r_mstatus() | MSTATUS_MPIE);
@@ -71,20 +74,30 @@ int main(void)
   w_pmpaddr0(0x3fffffffffffffull);
   w_pmpcfg0(0xf);
 
-  irqinit();
   sched_init();
   syscall_init();
   ktimer_event_init();
   memory_init();
 
-  uartinit();
+  ktimer_event_create(64, ipc_deliver, NULL);
 
   // Not creating kernel thread here because it corrupts current stack
   thread_init_subsys();
   create_idle_thread();
   create_root_thread();
 
-  ktimer_event_create(64, ipc_deliver, NULL);
+	create_kernel_thread();
+	current = get_kernel_thread();
+
+  // Initialize user interrupts;
+  interrupt_init();
+
+  // Initate interrupts. Needs to be done after threads are created,
+  irqinit();
+  plicinit();
+  plicinithart();
+  uartinit();
+
 
   switch_to_kernel();
 

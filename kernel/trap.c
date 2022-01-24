@@ -6,6 +6,8 @@
 #include <riscv.h>
 #include <plic.h>
 #include <irq.h>
+#include <uart.h>
+#include <interrupt.h>
 
 void no_interrupt(void) {
   int x = 2 + 3;
@@ -42,10 +44,10 @@ void ecall_from_m_handler(void) {
 void supervisor_external_interrupt(void) {
     int irq = plic_claim();
 
+    __interrupt_handler(irq);
+
     if(irq == UART0_IRQ){
       // uartintr();
-    } else if(irq == VIRTIO0_IRQ){
-      // virtio_disk_intr();
     } else if(irq){
       // printf("unexpected interrupt irq=%d\n", irq);
     }

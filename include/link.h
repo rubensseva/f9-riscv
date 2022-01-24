@@ -73,11 +73,7 @@ extern uint64_t mem1_start;
 #define __KIP 			__attribute__ ((section(".kip")))
 #define __KTABLE		__attribute__ ((section(".ktable")))
 
-#ifdef CONFIG_BITMAP_BITBAND
-#define __BITMAP		__attribute__ ((section(".bitmap_bitband")))
-#else
 #define __BITMAP		__attribute__ ((section(".bitmap")))
-#endif
 
 #define __USER_TEXT		__attribute__ ((section(".user_text")))
 #define __USER_DATA		__attribute__ ((section(".user_data")))

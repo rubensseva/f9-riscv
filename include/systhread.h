@@ -8,6 +8,8 @@
 
 #include <thread.h>
 
+tcb_t *get_kernel_thread();
+
 void create_root_thread(void);
 void create_kernel_thread(void);
 void create_idle_thread(void);
