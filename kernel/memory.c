@@ -113,10 +113,6 @@ void memory_init()
 {
 	int j = 0;
 
-	fpages_init();
-
-	ktable_init(&as_table, kt_as_table_data);
-
 	mem_desc = (kip_mem_desc_t *) kip_extra;
 
 	/* Initialize mempool table in KIP */

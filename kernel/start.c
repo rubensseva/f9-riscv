@@ -74,6 +74,13 @@ int main(void)
   w_pmpaddr0(0x3fffffffffffffull);
   w_pmpcfg0(0xf);
 
+  // init ktables
+  thread_init_ktable();
+  user_irq_init_ktable();
+  as_t_init_ktable();
+  ktimer_init_ktable();
+  fpage_table_init_ktable();
+
   sched_init();
   syscall_init();
   ktimer_event_init();

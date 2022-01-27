@@ -34,6 +34,7 @@ end
 
 # Breakpoints
 define sbr
+  break panic_dump_stack
   break main
   # break kernel_thread
   # break root_thread

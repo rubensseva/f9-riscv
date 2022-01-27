@@ -108,8 +108,9 @@ void L4_ThreadControl(L4_ThreadId_t dest, L4_ThreadId_t SpaceSpecifier,
 
 
 void __USER_TEXT user_uart_handler() {
-  while (1) {
-    L4_Sleep();
+  int c = uartgetc();
+  if (c != -1) {
+    uartputc(c);
   }
 }
 
@@ -167,7 +168,7 @@ void __USER_TEXT my_user_thread() {
       /* } */
     }
 
-    L4_Sleep();
+    // L4_Sleep();
   }
 }
 

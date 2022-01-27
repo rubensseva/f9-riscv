@@ -100,7 +100,7 @@ static void ktimer_event_recalc(ktimer_event_t* event, uint32_t new_delta)
 
 }
 
-int ktimer_event_schedule(uint32_t ticks, ktimer_event_t *kte)
+int ktimer_event_schedule(uint64_t ticks, ktimer_event_t *kte)
 {
 	long etime = 0, delta = 0;
 	ktimer_event_t *event = NULL, *next_event = NULL;
@@ -116,6 +116,13 @@ int ktimer_event_schedule(uint32_t ticks, ktimer_event_t *kte)
 		 */
 		kte->delta = ticks;
 		event_queue = kte;
+
+		// HACK: This line should not be necessary
+		// I'm not 100% sure whats wrong when assigning kte to event_queue, but
+		// something is not correct. Its almost like the sd assembly instruction
+		// is storing in two places at once, and filling the .next pointer of kte
+		// to be itself. Super weird, no idea how to fix it.
+		event_queue->next = NULL;
 
 		ktimer_enable(ticks);
 	} else {
@@ -163,7 +170,17 @@ int ktimer_event_schedule(uint32_t ticks, ktimer_event_t *kte)
 		if (delta < CONFIG_KTIMER_MINTICKS)
 			delta = 0;
 
+
+		// HACK For some ungodly reason, the next field is set 0x8000d418 consistently
+		// So this is a stupid workaround to prevent that
+		ktimer_event_t *__prev_next = next_event->next;
+
 		kte->next = next_event;
+
+		// HACK continued
+		next_event->next = __prev_next;
+
+
 		kte->delta = delta;
 
 		ktimer_event_recalc(next_event, delta);
@@ -255,7 +272,6 @@ void ktimer_event_handler()
 
 void ktimer_event_init()
 {
-	ktable_init(&ktimer_event_table, kt_ktimer_event_table_data);
 	softirq_register(KTE_SOFTIRQ, ktimer_event_handler);
 }
 

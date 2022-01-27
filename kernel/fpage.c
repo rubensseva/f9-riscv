@@ -49,11 +49,6 @@ static int fp_addr_log2(memptr_t addr)
 	return 31 - shift;
 }
 
-void fpages_init(void)
-{
-	ktable_init(&fpage_table, kt_fpage_table_data);
-}
-
 /**
  * Insert chain of fpages into address space
  * @param first, last - fpage chain

@@ -189,17 +189,19 @@ static void irq_schedule(int irq)
 {
 	struct user_irq *uirq = user_irq_fetch(irq);
 
+	// Interrupts should already be disabled since we are in kernel thread, no need to disable them
 	// irq_disable();
 	/* intr_off(); */
 	/* machine_intr_off(); */
-	w_mstatus(r_mstatus() & ~(MSTATUS_MIE | MSTATUS_SIE));
+	// w_mstatus(r_mstatus() & ~(MSTATUS_MIE | MSTATUS_SIE));
 
 	user_irq_queue_push(uirq);
 
+	// Interrupts should already be disabled since we are in kernel thread, no need to disable them
 	// irq_enable();
 	/* intr_on(); */
 	/* machine_intr_on(); */
-	w_mstatus(r_mstatus() | (MSTATUS_MIE | MSTATUS_SIE));
+	// w_mstatus(r_mstatus() | (MSTATUS_MIE | MSTATUS_SIE));
 
 	irq_handler_enable(irq);
 }
@@ -208,10 +210,11 @@ static tcb_t *irq_handler_sched(struct sched_slot *slot)
 {
 	tcb_t *thr = NULL;
 
+	// We are in the interrupt handler, so no need to disable interrupts
 	// irq_disable();
 	/* intr_off(); */
 	/* machine_intr_off(); */
-	w_mstatus(r_mstatus() & ~(MSTATUS_MIE | MSTATUS_SIE));
+	// w_mstatus(r_mstatus() & ~(MSTATUS_MIE | MSTATUS_SIE));
 
 	struct user_irq *uirq = user_irq_queue_pop();
 
@@ -221,9 +224,10 @@ static tcb_t *irq_handler_sched(struct sched_slot *slot)
 		sched_slot_dispatch(SSI_INTR_THREAD, thr);
 	}
 
+	// We are in the interrupt handler, so no need to disable interrupts
 	/* intr_on(); */
 	/* machine_intr_on(); */
-	w_mstatus(r_mstatus() | (MSTATUS_MIE | MSTATUS_SIE));
+	// w_mstatus(r_mstatus() | (MSTATUS_MIE | MSTATUS_SIE));
 
 	return thr;
 }

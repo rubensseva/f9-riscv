@@ -70,8 +70,8 @@ static inline int bitmap_get_bit(bitmap_cursor_t cursor)
 
 static inline int bitmap_test_and_set_bit(bitmap_cursor_t cursor)
 {
+	// We send in the address of BITWORD(cursor) because we want to change that value
 	return test_and_set_bit(&BITWORD(cursor), BITMASK(cursor.bc_bit));
-	return 0;
 }
 
 #define for_each_in_bitmap(cursor, bitmap, size, start) \

@@ -15,6 +15,7 @@ struct ktable {
 	char *tname;
 	bitmap_ptr_t bitmap;
 	uint32_t *data;
+	/* uint64_t *data; */
 	size_t num;
 	size_t size;
 };
@@ -23,7 +24,7 @@ typedef struct ktable ktable_t;
 
 #define DECLARE_KTABLE(type, name, num_)			\
 	DECLARE_BITMAP(kt_ ## name ## _bitmap, num_);		\
-	static __KTABLE uint32_t *kt_ ## name ## _data [num_];    \
+	static __KTABLE type kt_ ## name ## _data [num_];    \
 	ktable_t name = {					\
 			.tname = #name,				\
 			.bitmap = kt_ ## name ## _bitmap,	\
