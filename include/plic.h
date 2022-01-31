@@ -14,6 +14,8 @@ void plicinit(void);
 void plicinithart(void);
 int plic_claim(void);
 void plic_complete(int irq);
+int plic_is_interrupt_pending(int irq);
+void plic_clear_pending(int irq);
 
 /* typedef enum IRQn { */
 /* 	USART1_IRQn		= 0,	/\*!< USART1 global Interrupt *\/ */

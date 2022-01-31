@@ -117,13 +117,6 @@ int ktimer_event_schedule(uint64_t ticks, ktimer_event_t *kte)
 		kte->delta = ticks;
 		event_queue = kte;
 
-		// HACK: This line should not be necessary
-		// I'm not 100% sure whats wrong when assigning kte to event_queue, but
-		// something is not correct. Its almost like the sd assembly instruction
-		// is storing in two places at once, and filling the .next pointer of kte
-		// to be itself. Super weird, no idea how to fix it.
-		event_queue->next = NULL;
-
 		ktimer_enable(ticks);
 	} else {
 		/* etime is total delta for event from now (-ktimer_value())
@@ -171,15 +164,7 @@ int ktimer_event_schedule(uint64_t ticks, ktimer_event_t *kte)
 			delta = 0;
 
 
-		// HACK For some ungodly reason, the next field is set 0x8000d418 consistently
-		// So this is a stupid workaround to prevent that
-		ktimer_event_t *__prev_next = next_event->next;
-
 		kte->next = next_event;
-
-		// HACK continued
-		next_event->next = __prev_next;
-
 
 		kte->delta = delta;
 

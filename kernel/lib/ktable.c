@@ -150,7 +150,7 @@ void *ktable_alloc(ktable_t *kt)
  */
 uint32_t ktable_getid(ktable_t *kt, void *element)
 {
-	int i = ((uint32_t *) element - kt->data) / kt->size;
+	int i = ((char *) element - (char *) kt->data) / kt->size;
 
 	/* Element does not belong to this ktable */
 	if (i > kt->num || i < 0)

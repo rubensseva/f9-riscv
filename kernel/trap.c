@@ -46,12 +46,6 @@ void supervisor_external_interrupt(void) {
 
     __interrupt_handler(irq);
 
-    if(irq == UART0_IRQ){
-      // uartintr();
-    } else if(irq){
-      // printf("unexpected interrupt irq=%d\n", irq);
-    }
-
     // the PLIC allows each device to raise at most one
     // interrupt at a time; tell the PLIC the device is
     // now allowed to interrupt again.

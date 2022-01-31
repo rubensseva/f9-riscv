@@ -8,6 +8,7 @@
 #include <lib/ktable.h>
 #include <riscv.h>
 #include <config.h>
+#include <plic.h>
 
 // #include INC_PLAT(nvic.h)
 
@@ -156,7 +157,7 @@ static void irq_handler_ipc(struct user_irq *uirq)
 
 	ipc_write_mr(thr, 0, tag.raw);
 	ipc_write_mr(thr, IRQ_IPC_IRQN + 1, (uint32_t) uirq->irq);
-	ipc_write_mr(thr, IRQ_IPC_HANDLER + 1, (uint32_t) uirq->handler);
+	ipc_write_mr(thr, IRQ_IPC_HANDLER + 1, (uint64_t) uirq->handler);
 	ipc_write_mr(thr, IRQ_IPC_ACTION + 1, (uint32_t) uirq->action);
 	thr->utcb->sender = TID_TO_GLOBALID(THREAD_INTERRUPT);
 	thr->ipc_from = L4_NILTHREAD;
@@ -367,16 +368,9 @@ void user_irq_disable(int irq)
 	/* } */
 }
 
-void user_irq_set_pending(int irq)
-{
-	// TODO: fillmein
-	/* if (nvic_is_setup(irq)) { */
-	/* 	NVIC_SetPendingIRQ(irq); */
-	/* } */
-}
-
 void user_irq_clear_pending(int irq)
 {
+	plic_clear_pending(irq);
 	// TODO: fillmein
 	/* if (nvic_is_setup(irq)) { */
 	/* 	NVIC_ClearPendingIRQ(irq); */

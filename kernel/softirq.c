@@ -55,12 +55,6 @@ retry:
 		}
 	}
 
-	/* Must ensure that no interrupt reschedule its softirq */
-	// intr_off();
-	// We should be in supervisor mode, so cant control machine mode interrupts
-	// machine_intr_off();
-	// irq_disable();
-
 	// Disable interrupts
 	w_mstatus(r_mstatus() & ~(MSTATUS_MIE | MSTATUS_SIE));
 
@@ -71,7 +65,6 @@ retry:
 
 	set_kernel_state((softirq_schedule) ? T_RUNNABLE : T_INACTIVE);
 
-	// irq_enable();
 	// Enable interrupts
 	w_mstatus(r_mstatus() | (MSTATUS_MIE | MSTATUS_SIE));
 
