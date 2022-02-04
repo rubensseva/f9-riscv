@@ -43,5 +43,6 @@ define sbr
   # break sys_ipc
   # when we return from kerneltrap:
   break kernelvec.s:91
+  break mpu.c:62
 end
 sbr

@@ -147,121 +147,121 @@ void memory_init()
  * AS functions
  */
 
-/* void as_setup_mpu(as_t *as, memptr_t sp, memptr_t pc, */
-/*                   memptr_t stack_base, size_t stack_size) */
-/* { */
-/* 	fpage_t *mpu[8] = { NULL }; */
-/* 	fpage_t *fp; */
-/* 	int mpu_first_i; */
-/* 	int i, j; */
+void as_setup_mpu(as_t *as, memptr_t sp, memptr_t pc,
+                  memptr_t stack_base, size_t stack_size)
+{
+	fpage_t *mpu[8] = { NULL };
+	fpage_t *fp;
+	int mpu_first_i;
+	int i, j;
 
-/* 	fpage_t *mpu_stack_first = NULL; */
-/* 	memptr_t start = stack_base; */
-/* 	memptr_t end = stack_base + stack_size; */
+	fpage_t *mpu_stack_first = NULL;
+	memptr_t start = stack_base;
+	memptr_t end = stack_base + stack_size;
 
-/* 	/\* Find stack fpages *\/ */
-/* 	fp = as->first; */
-/* 	i = 0; */
-/* 	while (i < 8 && fp && start < end) { */
-/* 		if (addr_in_fpage(start, fp, 0)) { */
-/* 			if (!mpu_stack_first) */
-/* 				mpu_stack_first = fp; */
+	/* Find stack fpages */
+	fp = as->first;
+	i = 0;
+	while (i < 8 && fp && start < end) {
+		if (addr_in_fpage(start, fp, 0)) {
+			if (!mpu_stack_first)
+				mpu_stack_first = fp;
 
-/* 			mpu[i++] = fp; */
-/* 			start = FPAGE_END(fp); */
-/* 		} */
-/* 		fp = fp->as_next; */
-/* 	} */
+			mpu[i++] = fp;
+			start = FPAGE_END(fp);
+		}
+		fp = fp->as_next;
+	}
 
-/* 	as->mpu_stack_first = mpu_stack_first; */
-/* 	mpu_first_i = i; */
+	as->mpu_stack_first = mpu_stack_first;
+	mpu_first_i = i;
 
-/* 	/\* */
-/* 	 * We walk through fpage list */
-/* 	 * mpu_fp[0] are pc */
-/* 	 * mpu_fp[1] are always-mapped fpages */
-/* 	 * mpu_fp[2] are others */
-/* 	 *\/ */
-/* 	fp = as->mpu_first; */
-/* 	if (!fp) { */
-/* 		fpage_t *mpu_first[3] = {NULL}; */
-/* 		fpage_t *mpu_fp[3] = {NULL}; */
+	/*
+	 * We walk through fpage list
+	 * mpu_fp[0] are pc
+	 * mpu_fp[1] are always-mapped fpages
+	 * mpu_fp[2] are others
+	 */
+	fp = as->mpu_first;
+	if (!fp) {
+		fpage_t *mpu_first[3] = {NULL};
+		fpage_t *mpu_fp[3] = {NULL};
 
-/* 		fp = as->first; */
-/* 		while (fp) { */
-/* 			int priv = 2; */
+		fp = as->first;
+		while (fp) {
+			int priv = 2;
 
-/* 			if (addr_in_fpage(pc, fp, 0)) { */
-/* 				priv = 0; */
-/* 			} else if (fp->fpage.flags & FPAGE_ALWAYS) { */
-/* 				priv = 1; */
-/* 			} */
+			if (addr_in_fpage(pc, fp, 0)) {
+				priv = 0;
+			} else if (fp->fpage.flags & FPAGE_ALWAYS) {
+				priv = 1;
+			}
 
-/* 			if (!mpu_first[priv]) { */
-/* 				mpu_first[priv] = fp; */
-/* 				mpu_fp[priv] = fp; */
-/* 			} else { */
-/* 				mpu_fp[priv]->mpu_next = fp; */
-/* 				mpu_fp[priv] = fp; */
-/* 			} */
+			if (!mpu_first[priv]) {
+				mpu_first[priv] = fp;
+				mpu_fp[priv] = fp;
+			} else {
+				mpu_fp[priv]->mpu_next = fp;
+				mpu_fp[priv] = fp;
+			}
 
-/* 			fp = fp->as_next; */
-/* 		} */
+			fp = fp->as_next;
+		}
 
-/* 		if (mpu_first[1]) { */
-/* 			mpu_fp[1]->mpu_next = mpu_first[2]; */
-/* 		} else { */
-/* 			mpu_first[1] = mpu_first[2]; */
-/* 		} */
-/* 		if (mpu_first[0]) { */
-/* 			mpu_fp[0]->mpu_next = mpu_first[1]; */
-/* 		} else { */
-/* 			mpu_first[0] = mpu_first[1]; */
-/* 		} */
-/* 		as->mpu_first = mpu_first[0]; */
-/* 	} */
+		if (mpu_first[1]) {
+			mpu_fp[1]->mpu_next = mpu_first[2];
+		} else {
+			mpu_first[1] = mpu_first[2];
+		}
+		if (mpu_first[0]) {
+			mpu_fp[0]->mpu_next = mpu_first[1];
+		} else {
+			mpu_first[0] = mpu_first[1];
+		}
+		as->mpu_first = mpu_first[0];
+	}
 
-/* 	/\* Prevent link to stack pages *\/ */
-/* 	for (fp = as->mpu_first; i < 8 && fp; fp = fp->mpu_next) { */
-/* 		for (j = 0; j < mpu_first_i; j++) { */
-/* 			if (fp == mpu[j]) { */
-/* 				break; */
-/* 			} */
-/* 		} */
+	/* Prevent link to stack pages */
+	for (fp = as->mpu_first; i < 8 && fp; fp = fp->mpu_next) {
+		for (j = 0; j < mpu_first_i; j++) {
+			if (fp == mpu[j]) {
+				break;
+			}
+		}
 
-/* 		if (j == mpu_first_i) { */
-/* 			mpu[i++] = fp; */
-/* 		} */
-/* 	} */
+		if (j == mpu_first_i) {
+			mpu[i++] = fp;
+		}
+	}
 
-/* 	as->mpu_first = mpu[mpu_first_i]; */
+	as->mpu_first = mpu[mpu_first_i];
 
-/* 	/\* Setup MPU stack regions *\/ */
-/* 	for (j = 0; j < mpu_first_i; ++j) { */
-/* 		// TODO: Fix this */
-/* 		// mpu_setup_region(j, mpu[j]); */
+	/* Setup MPU stack regions */
+	for (j = 0; j < mpu_first_i; ++j) {
+		// TODO: Fix this
+		// mpu_setup_region(j, mpu[j]);
 
-/* 		if (j < mpu_first_i - 1) */
-/* 			mpu[j]->mpu_next = mpu[j + 1]; */
-/* 		else */
-/* 			mpu[j]->mpu_next = NULL; */
-/* 	} */
+		if (j < mpu_first_i - 1)
+			mpu[j]->mpu_next = mpu[j + 1];
+		else
+			mpu[j]->mpu_next = NULL;
+	}
 
-/* 	/\* Setup MPU fifo regions *\/ */
-/* 	for (; j < i; ++j) { */
-/* 		// TODO: Fix this */
-/* 		// mpu_setup_region(j, mpu[j]); */
+	/* Setup MPU fifo regions */
+	for (; j < i; ++j) {
+		// TODO: Fix this
+		// mpu_setup_region(j, mpu[j]);
 
-/* 		if (j < i - 1) */
-/* 			mpu[j]->mpu_next = mpu[j + 1]; */
-/* 	} */
+		if (j < i - 1)
+			mpu[j]->mpu_next = mpu[j + 1];
+	}
 
-/* 	/\* Clean unused MPU regions *\/ */
-/* 	for (; j < 8; ++j) { */
-/* 		// TODO: Fix this */
-/* 		// mpu_setup_region(j, NULL); */
-/* 	} */
-/* } */
+	/* Clean unused MPU regions */
+	for (; j < 8; ++j) {
+		// TODO: Fix this
+		// mpu_setup_region(j, NULL);
+	}
+}
 
 void as_map_user(as_t *as)
 {

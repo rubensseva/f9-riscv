@@ -38,6 +38,7 @@ void fpage_table_init_ktable() {
 
 /*
  * Helper functions
+ * COMMENTARY: fp_addr_log2 finds the position of the LSB that is 1
  */
 static int fp_addr_log2(memptr_t addr)
 {
@@ -46,7 +47,7 @@ static int fp_addr_log2(memptr_t addr)
 	while ((addr <<= 1) != 0)
 		++shift;
 
-	return 31 - shift;
+	return 63 - shift;
 }
 
 /**
@@ -147,14 +148,38 @@ static void create_fpage_chain(memptr_t base, size_t size, int mpid,
 {
 	int shift, sshift, bshift;
 	fpage_t *fpage = NULL;
+	base = 33;
 
 	while (size) {
 		/* Select least of log2(base), log2(size).
 		 * Needed to make regions with correct align
+         *
+		 * COMMENTARY:
+		 *     We "chomp" of pieces from the beginning of the region, then
+		 *     we add to base, and subtract from size to adjust. We do this
+		 *     continually until we have a set of fpages that are aligned and
+		 *     fit the memory region.
+		 *
+		 *     fp_addr_log2 finds the position of the LSB that is 1.
+		 *
+		 *     I think the idea here is that we choose bshift as the size
+		 *     as long as it is smaller then sshift / size. This is because
+		 *     when we choose sshift, we actually use up the rest of the region.
+		 *     And we dont want that if we are not in alignment. So first we
+	     *     piece it up with bshift, and when we are aligned, then we potentially
+		 *     use sshift.
+		 *
+		 *     The reason this works is that size is already a power of two, so we
+		 *     just continually adjust the base so that the total size is actually
+		 *     a power of two.
 		 */
 		bshift = fp_addr_log2(base);
 		sshift = fp_addr_log2(size);
 
+		/* THOUGHTS:
+		 * Why do we do "size" here instead of (1 << sshift)? I think its
+		 * because size == (1 << sshift). But why not do "bshift > sshift" then?
+		*/
 		shift = ((1 << bshift) > size) ? sshift : bshift;
 
 		if (!*pfirst) {

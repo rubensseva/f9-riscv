@@ -1,3 +1,4 @@
+#include "types.h"
 #include <link.h>
 #include <thread.h>
 #include <syscall.h>
@@ -114,6 +115,40 @@ void __USER_TEXT user_uart_handler() {
   }
 }
 
+void __USER_TEXT L4_map(memptr_t base, uint64_t size, L4_ThreadId_t tid) {
+    ipc_msg_tag_t tag;
+    tag.s.n_typed = 2;
+
+    // 0xA is 0b1010, it decides what operation to do for typed argument:
+    //     - 1xxx means that this is a grant or a map instead of a normal typed IPC.
+    //     - xx1x means that this is a grant.
+    L4_Word_t page[2] = {
+      (base & 0xFFFFFFC0) | 0xA,
+      size & 0xFFFFFFC0
+    };
+
+    ((utcb_t *)current_utcb)->mr[0] = tag.raw;
+    ((utcb_t *)current_utcb)->mr[1] = page[0];
+    ((utcb_t *)current_utcb)->mr[2] = page[1];
+
+    L4_Ipc(tid, L4_NILTHREAD);
+}
+
+void __USER_TEXT map_user_sections(kip_t *kip_ptr, L4_ThreadId_t tid)
+{
+  kip_mem_desc_t *desc = ((void *) kip_ptr) +
+                         kip_ptr->memory_info.s.memory_desc_ptr;
+  int n = kip_ptr->memory_info.s.n;
+  int i = 0;
+
+  for (i = 0; i < n; ++i) {
+    uint32_t tag = desc[i].size & 0x3F;
+    if (tag == 2 || tag == 3) {
+      L4_map(desc[i].base, desc[i].size, tid);
+    }
+  }
+}
+
 void __USER_TEXT my_user_thread() {
   // Recieve some data from root_thread
   ipc_msg_tag_t tag = {{1, 0, 0, 0}};
@@ -180,6 +215,10 @@ void __USER_TEXT root_thread(kip_t *kip_ptr, utcb_t *utcb_ptr) {
     root_id = myself;
     L4_ThreadId_t user_thread = TID_TO_GLOBALID(24);
     user_id = user_thread;
+
+    // Map all user sections to root thread.
+    // When creating other threads, they will share the address space.
+    map_user_sections(kip_ptr, root_id);
 
     // Create user thread
     char *free_mem = (char *) get_free_base(kip_ptr);
