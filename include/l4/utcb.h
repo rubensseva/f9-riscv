@@ -21,12 +21,12 @@ struct utcb {
 
 	l4_thread_t	intended_receiver;
 	l4_thread_t	sender;
-	uint64_t	thread_word_1;
-	uint64_t	thread_word_2;
-	uint64_t	mr[8];		/* MRs 8-15 (0-8 are laying in
+	uint32_t	thread_word_1;
+	uint32_t	thread_word_2;
+	uint32_t	mr[8];		/* MRs 8-15 (0-8 are laying in
 					   r4..r11 [thread's context]) */
-	uint64_t	br[8];
-	uint64_t	reserved[4];
+	uint32_t	br[8];
+	uint32_t	reserved[4];
 };
 
 typedef struct utcb utcb_t;

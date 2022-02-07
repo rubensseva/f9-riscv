@@ -12,59 +12,59 @@
  * Entries about linker address
  */
 
-extern uint64_t bss_start;
-extern uint64_t bss_end;
+extern uint32_t bss_start;
+extern uint32_t bss_end;
 
 #ifdef LOADER
-extern uint64_t stack_end;
-extern uint64_t kernel_flash_start;
-extern uint64_t kernel_start;
-extern uint64_t kernel_end;
-extern uint64_t data_start;
-extern uint64_t data_end;
-extern uint64_t stack_end;
+extern uint32_t stack_end;
+extern uint32_t kernel_flash_start;
+extern uint32_t kernel_start;
+extern uint32_t kernel_end;
+extern uint32_t data_start;
+extern uint32_t data_end;
+extern uint32_t stack_end;
 #else
-extern uint64_t kernel_text_start;
-extern uint64_t kernel_text_end;
-extern uint64_t kernel_data_start;
-extern uint64_t kernel_data_end;
-extern uint64_t kernel_bss_start;
-extern uint64_t kernel_bss_end;
+extern uint32_t kernel_text_start;
+extern uint32_t kernel_text_end;
+extern uint32_t kernel_data_start;
+extern uint32_t kernel_data_end;
+extern uint32_t kernel_bss_start;
+extern uint32_t kernel_bss_end;
 // extern uint32_t kernel_ahb_start;
 // extern uint32_t kernel_ahb_end;
 
-extern uint64_t idle_stack_start;
-extern uint64_t idle_stack_end;
-extern uint64_t kernel_stack_end;
+extern uint32_t idle_stack_start;
+extern uint32_t idle_stack_end;
+extern uint32_t kernel_stack_end;
 
-extern uint64_t user_text_start;
-extern uint64_t user_text_end;
-extern uint64_t user_data_start;
-extern uint64_t user_data_end;
-extern uint64_t user_bss_start;
-extern uint64_t user_bss_end;
-extern uint64_t user_text_flash_start;
-extern uint64_t user_text_flash_end;
+extern uint32_t user_text_start;
+extern uint32_t user_text_end;
+extern uint32_t user_data_start;
+extern uint32_t user_data_end;
+extern uint32_t user_bss_start;
+extern uint32_t user_bss_end;
+extern uint32_t user_text_flash_start;
+extern uint32_t user_text_flash_end;
 
-extern uint64_t root_stack_start;
-extern uint64_t root_stack_end;
-extern uint64_t user_thread_stack_start;
-extern uint64_t user_thread_stack_end;
+extern uint32_t root_stack_start;
+extern uint32_t root_stack_end;
+extern uint32_t user_thread_stack_start;
+extern uint32_t user_thread_stack_end;
 
-extern uint64_t kip_start;
-extern uint64_t kip_end;
+extern uint32_t kip_start;
+extern uint32_t kip_end;
 
-extern uint64_t bitmap_start;
-extern uint64_t bitmap_end;
-extern uint64_t bitmap_bitband_start;
-extern uint64_t bitmap_bitband_end;
+extern uint32_t bitmap_start;
+extern uint32_t bitmap_end;
+extern uint32_t bitmap_bitband_start;
+extern uint32_t bitmap_bitband_end;
 
-extern uint64_t symtab_start;
-extern uint64_t symtab_end;
+extern uint32_t symtab_start;
+extern uint32_t symtab_end;
 
-extern uint64_t mem0_start;
-extern uint64_t mem0_end;
-extern uint64_t mem1_start;
+extern uint32_t mem0_start;
+extern uint32_t mem0_end;
+extern uint32_t mem1_start;
 #endif
 
 #define __BSS 			__attribute__ ((section(".bss")))

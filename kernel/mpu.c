@@ -2,7 +2,7 @@
 #include "riscv.h"
 
 
-void (*w_pmpaddrarr[16])(uint64_t) = {
+void (*w_pmpaddrarr[16])(uint32_t) = {
     w_pmpaddr0,
     w_pmpaddr1,
     w_pmpaddr2,
@@ -21,9 +21,10 @@ void (*w_pmpaddrarr[16])(uint64_t) = {
     w_pmpaddr15,
 };
 
+// FIXME: Needs adjustment for 32 bit
 
 /* w_pmpaddri writes a pmp addr register based on the pmp entry i (1-16). */
-void w_pmpaddri(int i, uint64_t data) {
+void w_pmpaddri(int i, uint32_t data) {
     w_pmpaddrarr[i](data);
 }
 
@@ -31,9 +32,9 @@ void w_pmpaddri(int i, uint64_t data) {
  * Its a bit complex since the cfg configuration is densly packed in
  * cfg0 and cfg2. Eight bytes in cfg0 and eight bytes in cfg2 correspond
  * to the configuration of the 16 pmp entries. */
-void w_pmpcfgi(int i, uint64_t data) {
-    void (*w_func)(uint64_t);
-    uint64_t (*r_func)(void);
+void w_pmpcfgi(int i, uint32_t data) {
+    void (*w_func)(uint32_t);
+    uint32_t (*r_func)(void);
     if (i < 7) {
         w_func = w_pmpcfg0;
         r_func = r_pmpcfg0;
@@ -43,9 +44,9 @@ void w_pmpcfgi(int i, uint64_t data) {
     }
 
     int shift = (i % 8);
-    uint64_t mask = 0xF << shift;
-    uint64_t shifted_data = data << shift;
-    uint64_t cfg_data = r_func();
+    uint32_t mask = 0xF << shift;
+    uint32_t shifted_data = data << shift;
+    uint32_t cfg_data = r_func();
     cfg_data &= ~mask;
     w_func(cfg_data | shifted_data);
 }

@@ -310,50 +310,50 @@ void thread_init_ctx(void *sp, void *pc, void *regs, tcb_t *thr)
 	/* Reserve 8 words for fake context */
 	sp -= RESERVED_STACK;
 
-	thr->ctx.sp = (uint64_t) sp;
-	thr->ctx.mepc = (uint64_t) pc;
+	thr->ctx.sp = (uint32_t) sp;
+	thr->ctx.mepc = (uint32_t) pc;
 
-	((uint64_t *) sp)[REG_T0] = 0x0;
-	((uint64_t *) sp)[REG_T1] = 0x0;
-	((uint64_t *) sp)[REG_T2] = 0x0;
-	((uint64_t *) sp)[REG_T3] = 0x0;
-	((uint64_t *) sp)[REG_T4] = 0x0;
-	((uint64_t *) sp)[REG_T5] = 0x0;
-	((uint64_t *) sp)[REG_T6] = 0x0;
+	((uint32_t *) sp)[REG_T0] = 0x0;
+	((uint32_t *) sp)[REG_T1] = 0x0;
+	((uint32_t *) sp)[REG_T2] = 0x0;
+	((uint32_t *) sp)[REG_T3] = 0x0;
+	((uint32_t *) sp)[REG_T4] = 0x0;
+	((uint32_t *) sp)[REG_T5] = 0x0;
+	((uint32_t *) sp)[REG_T6] = 0x0;
 
-	((uint64_t *) sp)[REG_RA] = 0x0;
-	((uint64_t *) sp)[REG_SP] = 0x0;
-	((uint64_t *) sp)[REG_GP] = 0x0;
-	((uint64_t *) sp)[REG_TP] = 0x0;
+	((uint32_t *) sp)[REG_RA] = 0x0;
+	((uint32_t *) sp)[REG_SP] = 0x0;
+	((uint32_t *) sp)[REG_GP] = 0x0;
+	((uint32_t *) sp)[REG_TP] = 0x0;
 
-	((uint64_t *) sp)[REG_A0] = 0x0;
-	((uint64_t *) sp)[REG_A1] = 0x0;
-	((uint64_t *) sp)[REG_A2] = 0x0;
-	((uint64_t *) sp)[REG_A3] = 0x0;
-	((uint64_t *) sp)[REG_A4] = 0x0;
-	((uint64_t *) sp)[REG_A5] = 0x0;
-	((uint64_t *) sp)[REG_A6] = 0x0;
-	((uint64_t *) sp)[REG_A7] = 0x0;
+	((uint32_t *) sp)[REG_A0] = 0x0;
+	((uint32_t *) sp)[REG_A1] = 0x0;
+	((uint32_t *) sp)[REG_A2] = 0x0;
+	((uint32_t *) sp)[REG_A3] = 0x0;
+	((uint32_t *) sp)[REG_A4] = 0x0;
+	((uint32_t *) sp)[REG_A5] = 0x0;
+	((uint32_t *) sp)[REG_A6] = 0x0;
+	((uint32_t *) sp)[REG_A7] = 0x0;
 
-	((uint64_t *) sp)[REG_S0] = 0x0;
-	((uint64_t *) sp)[REG_S1] = 0x0;
-	((uint64_t *) sp)[REG_S2] = 0x0;
-	((uint64_t *) sp)[REG_S3] = 0x0;
-	((uint64_t *) sp)[REG_S4] = 0x0;
-	((uint64_t *) sp)[REG_S5] = 0x0;
-	((uint64_t *) sp)[REG_S6] = 0x0;
-	((uint64_t *) sp)[REG_S7] = 0x0;
-	((uint64_t *) sp)[REG_S8] = 0x0;
-	((uint64_t *) sp)[REG_S9] = 0x0;
-	((uint64_t *) sp)[REG_S10] = 0x0;
-	((uint64_t *) sp)[REG_S11] = 0x0;
+	((uint32_t *) sp)[REG_S0] = 0x0;
+	((uint32_t *) sp)[REG_S1] = 0x0;
+	((uint32_t *) sp)[REG_S2] = 0x0;
+	((uint32_t *) sp)[REG_S3] = 0x0;
+	((uint32_t *) sp)[REG_S4] = 0x0;
+	((uint32_t *) sp)[REG_S5] = 0x0;
+	((uint32_t *) sp)[REG_S6] = 0x0;
+	((uint32_t *) sp)[REG_S7] = 0x0;
+	((uint32_t *) sp)[REG_S8] = 0x0;
+	((uint32_t *) sp)[REG_S9] = 0x0;
+	((uint32_t *) sp)[REG_S10] = 0x0;
+	((uint32_t *) sp)[REG_S11] = 0x0;
 
 	if (regs) {
-		((uint64_t *) sp)[REG_A0] = ((uint64_t *) regs)[0];
-		((uint64_t *) sp)[REG_A1] = ((uint64_t *) regs)[1];
-		((uint64_t *) sp)[REG_A2] = ((uint64_t *) regs)[2];
-		((uint64_t *) sp)[REG_A3] = ((uint64_t *) regs)[3];
-		((uint64_t *) sp)[REG_A4] = ((uint64_t *) regs)[4];
+		((uint32_t *) sp)[REG_A0] = ((uint32_t *) regs)[0];
+		((uint32_t *) sp)[REG_A1] = ((uint32_t *) regs)[1];
+		((uint32_t *) sp)[REG_A2] = ((uint32_t *) regs)[2];
+		((uint32_t *) sp)[REG_A3] = ((uint32_t *) regs)[3];
+		((uint32_t *) sp)[REG_A4] = ((uint32_t *) regs)[4];
 	}
 }
 

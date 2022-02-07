@@ -35,9 +35,10 @@ end
 # Breakpoints
 define sbr
   break panic_dump_stack
+  break error.c:44
   break main
   # break kernel_thread
-  # break root_thread
+  break root_thread
   # break idle_thread
   break kerneltrap
   # break sys_ipc

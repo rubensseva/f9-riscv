@@ -157,7 +157,7 @@ static void irq_handler_ipc(struct user_irq *uirq)
 
 	ipc_write_mr(thr, 0, tag.raw);
 	ipc_write_mr(thr, IRQ_IPC_IRQN + 1, (uint32_t) uirq->irq);
-	ipc_write_mr(thr, IRQ_IPC_HANDLER + 1, (uint64_t) uirq->handler);
+	ipc_write_mr(thr, IRQ_IPC_HANDLER + 1, (uint32_t) uirq->handler);
 	ipc_write_mr(thr, IRQ_IPC_ACTION + 1, (uint32_t) uirq->action);
 	thr->utcb->sender = TID_TO_GLOBALID(THREAD_INTERRUPT);
 	thr->ipc_from = L4_NILTHREAD;
@@ -357,7 +357,7 @@ void user_irq_enable(int irq)
 void user_irq_disable(int irq)
 {
 	/* int prev = (SIE_SEIE | SIE_SSIE); */
-	/* uint64_t sie = r_sie(); */
+	/* uint32_t sie = r_sie(); */
 	/* w_sie(~prev & sie); */
 	/* w_mstatus(r_mstatus() & ~MSTATUS_SIE); */
 	// TODO: Also clear pending

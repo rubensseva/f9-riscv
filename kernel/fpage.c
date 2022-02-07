@@ -47,7 +47,7 @@ static int fp_addr_log2(memptr_t addr)
 	while ((addr <<= 1) != 0)
 		++shift;
 
-	return 63 - shift;
+	return 31 - shift;
 }
 
 /**
@@ -148,7 +148,6 @@ static void create_fpage_chain(memptr_t base, size_t size, int mpid,
 {
 	int shift, sshift, bshift;
 	fpage_t *fpage = NULL;
-	base = 33;
 
 	while (size) {
 		/* Select least of log2(base), log2(size).

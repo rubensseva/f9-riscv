@@ -38,9 +38,9 @@ void
 irqinit()
 {
   // ask the CLINT for a timer interrupt.
-  uint64_t interval = 1000000; // cycles; about 1/10th second in qemu.
-  *(uint64_t*)CLINT_MTIME = 0;
-  *(uint64_t*)CLINT_MTIMECMP = *(uint64_t*)CLINT_MTIME + interval;
+  uint32_t interval = 1000000; // cycles; about 1/10th second in qemu.
+  *(uint32_t*)CLINT_MTIME = 0;
+  *(uint32_t*)CLINT_MTIMECMP = *(uint32_t*)CLINT_MTIME + interval;
 
   // disable paging
   w_satp(0);
@@ -50,7 +50,7 @@ irqinit()
   w_sie(r_sie() | SIE_SEIE | SIE_SSIE);
   w_mstatus(r_mstatus() | MSTATUS_SIE);
 
-  w_mtvec((uint64_t)kernelvec);
+  w_mtvec((uint32_t)kernelvec);
 
   // enable machine-mode interrupts.
   // this should be enabled after the first interrupt

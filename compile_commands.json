@@ -1,8 +1,10 @@
 [
   {
     "arguments": [
-      "/home/ruben/CustomSources/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc",
+      "/home/ruben/CustomInstalledPrograms/riscv-from-sourc/bin/riscv32-unknown-elf-gcc",
       "-c",
+      "-march=rv32imc",
+      "-mabi=ilp32",
       "-Wall",
       "-Wundef",
       "-fno-toplevel-reorder",
@@ -19,9 +21,9 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"3bd1a986318fb5ba64e4a25c1ee12d2ab10c5ac0\"",
+      "-DGIT_HEAD=\"fb4c83d226a319bbdded480e37418c04ae242614\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2021-11-26T12:11:29+0100\"",
+      "-DBUILD_TIME=\"2022-02-07T09:39:44+0100\"",
       "-o",
       "build/kip.o",
       "kernel/kip.c"
@@ -32,8 +34,10 @@
   },
   {
     "arguments": [
-      "/home/ruben/CustomSources/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc",
+      "/home/ruben/CustomInstalledPrograms/riscv-from-sourc/bin/riscv32-unknown-elf-gcc",
       "-c",
+      "-march=rv32imc",
+      "-mabi=ilp32",
       "-Wall",
       "-Wundef",
       "-fno-toplevel-reorder",
@@ -50,9 +54,9 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"3bd1a986318fb5ba64e4a25c1ee12d2ab10c5ac0\"",
+      "-DGIT_HEAD=\"fb4c83d226a319bbdded480e37418c04ae242614\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2021-11-26T12:11:29+0100\"",
+      "-DBUILD_TIME=\"2022-02-07T09:39:44+0100\"",
       "-o",
       "build/bitops.o",
       "kernel/bitops.c"
@@ -63,8 +67,10 @@
   },
   {
     "arguments": [
-      "/home/ruben/CustomSources/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc",
+      "/home/ruben/CustomInstalledPrograms/riscv-from-sourc/bin/riscv32-unknown-elf-gcc",
       "-c",
+      "-march=rv32imc",
+      "-mabi=ilp32",
       "-Wall",
       "-Wundef",
       "-fno-toplevel-reorder",
@@ -81,9 +87,42 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"3bd1a986318fb5ba64e4a25c1ee12d2ab10c5ac0\"",
+      "-DGIT_HEAD=\"fb4c83d226a319bbdded480e37418c04ae242614\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2021-11-26T12:11:29+0100\"",
+      "-DBUILD_TIME=\"2022-02-07T09:39:44+0100\"",
+      "-o",
+      "build/uart.o",
+      "kernel/uart.c"
+    ],
+    "directory": "/home/ruben/Code/SpecializationProject/f9-riscv-simple",
+    "file": "/home/ruben/Code/SpecializationProject/f9-riscv-simple/kernel/uart.c",
+    "output": "/home/ruben/Code/SpecializationProject/f9-riscv-simple/build/uart.o"
+  },
+  {
+    "arguments": [
+      "/home/ruben/CustomInstalledPrograms/riscv-from-sourc/bin/riscv32-unknown-elf-gcc",
+      "-c",
+      "-march=rv32imc",
+      "-mabi=ilp32",
+      "-Wall",
+      "-Wundef",
+      "-fno-toplevel-reorder",
+      "-fno-strict-aliasing",
+      "-Werror-implicit-function-declaration",
+      "-O0",
+      "-fno-omit-frame-pointer",
+      "-ggdb3",
+      "-mcmodel=medany",
+      "-ffreestanding",
+      "-fno-common",
+      "-mno-relax",
+      "-Iinclude",
+      "-Iinclude/l4",
+      "-Iinclude/lib",
+      "-Iinclude/platform",
+      "-DGIT_HEAD=\"fb4c83d226a319bbdded480e37418c04ae242614\"",
+      "-DMACH_TYPE=\"x86_64\"",
+      "-DBUILD_TIME=\"2022-02-07T09:39:44+0100\"",
       "-o",
       "build/start.o",
       "kernel/start.c"
@@ -94,8 +133,10 @@
   },
   {
     "arguments": [
-      "/home/ruben/CustomSources/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc",
+      "/home/ruben/CustomInstalledPrograms/riscv-from-sourc/bin/riscv32-unknown-elf-gcc",
       "-c",
+      "-march=rv32imc",
+      "-mabi=ilp32",
       "-Wall",
       "-Wundef",
       "-fno-toplevel-reorder",
@@ -112,9 +153,9 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"3bd1a986318fb5ba64e4a25c1ee12d2ab10c5ac0\"",
+      "-DGIT_HEAD=\"fb4c83d226a319bbdded480e37418c04ae242614\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2021-11-26T12:11:29+0100\"",
+      "-DBUILD_TIME=\"2022-02-07T09:39:44+0100\"",
       "-o",
       "build/ksym.o",
       "kernel/ksym.c"
@@ -125,8 +166,10 @@
   },
   {
     "arguments": [
-      "/home/ruben/CustomSources/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc",
+      "/home/ruben/CustomInstalledPrograms/riscv-from-sourc/bin/riscv32-unknown-elf-gcc",
       "-c",
+      "-march=rv32imc",
+      "-mabi=ilp32",
       "-Wall",
       "-Wundef",
       "-fno-toplevel-reorder",
@@ -143,9 +186,9 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"3bd1a986318fb5ba64e4a25c1ee12d2ab10c5ac0\"",
+      "-DGIT_HEAD=\"fb4c83d226a319bbdded480e37418c04ae242614\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2021-11-26T12:11:30+0100\"",
+      "-DBUILD_TIME=\"2022-02-07T09:39:44+0100\"",
       "-o",
       "build/systhread.o",
       "kernel/systhread.c"
@@ -156,8 +199,10 @@
   },
   {
     "arguments": [
-      "/home/ruben/CustomSources/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc",
+      "/home/ruben/CustomInstalledPrograms/riscv-from-sourc/bin/riscv32-unknown-elf-gcc",
       "-c",
+      "-march=rv32imc",
+      "-mabi=ilp32",
       "-Wall",
       "-Wundef",
       "-fno-toplevel-reorder",
@@ -174,9 +219,9 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"3bd1a986318fb5ba64e4a25c1ee12d2ab10c5ac0\"",
+      "-DGIT_HEAD=\"fb4c83d226a319bbdded480e37418c04ae242614\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2021-11-26T12:11:30+0100\"",
+      "-DBUILD_TIME=\"2022-02-07T09:39:44+0100\"",
       "-o",
       "build/fpage.o",
       "kernel/fpage.c"
@@ -187,8 +232,10 @@
   },
   {
     "arguments": [
-      "/home/ruben/CustomSources/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc",
+      "/home/ruben/CustomInstalledPrograms/riscv-from-sourc/bin/riscv32-unknown-elf-gcc",
       "-c",
+      "-march=rv32imc",
+      "-mabi=ilp32",
       "-Wall",
       "-Wundef",
       "-fno-toplevel-reorder",
@@ -205,9 +252,9 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"3bd1a986318fb5ba64e4a25c1ee12d2ab10c5ac0\"",
+      "-DGIT_HEAD=\"fb4c83d226a319bbdded480e37418c04ae242614\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2021-11-26T12:11:30+0100\"",
+      "-DBUILD_TIME=\"2022-02-07T09:39:44+0100\"",
       "-o",
       "build/init.o",
       "kernel/init.c"
@@ -218,8 +265,10 @@
   },
   {
     "arguments": [
-      "/home/ruben/CustomSources/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc",
+      "/home/ruben/CustomInstalledPrograms/riscv-from-sourc/bin/riscv32-unknown-elf-gcc",
       "-c",
+      "-march=rv32imc",
+      "-mabi=ilp32",
       "-Wall",
       "-Wundef",
       "-fno-toplevel-reorder",
@@ -236,9 +285,9 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"3bd1a986318fb5ba64e4a25c1ee12d2ab10c5ac0\"",
+      "-DGIT_HEAD=\"fb4c83d226a319bbdded480e37418c04ae242614\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2021-11-26T12:11:30+0100\"",
+      "-DBUILD_TIME=\"2022-02-07T09:39:44+0100\"",
       "-o",
       "build/user-log.o",
       "kernel/user-log.c"
@@ -249,8 +298,10 @@
   },
   {
     "arguments": [
-      "/home/ruben/CustomSources/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc",
+      "/home/ruben/CustomInstalledPrograms/riscv-from-sourc/bin/riscv32-unknown-elf-gcc",
       "-c",
+      "-march=rv32imc",
+      "-mabi=ilp32",
       "-Wall",
       "-Wundef",
       "-fno-toplevel-reorder",
@@ -267,9 +318,9 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"3bd1a986318fb5ba64e4a25c1ee12d2ab10c5ac0\"",
+      "-DGIT_HEAD=\"fb4c83d226a319bbdded480e37418c04ae242614\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2021-11-26T12:11:30+0100\"",
+      "-DBUILD_TIME=\"2022-02-07T09:39:45+0100\"",
       "-o",
       "build/sched.o",
       "kernel/sched.c"
@@ -280,8 +331,10 @@
   },
   {
     "arguments": [
-      "/home/ruben/CustomSources/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc",
+      "/home/ruben/CustomInstalledPrograms/riscv-from-sourc/bin/riscv32-unknown-elf-gcc",
       "-c",
+      "-march=rv32imc",
+      "-mabi=ilp32",
       "-Wall",
       "-Wundef",
       "-fno-toplevel-reorder",
@@ -298,9 +351,9 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"3bd1a986318fb5ba64e4a25c1ee12d2ab10c5ac0\"",
+      "-DGIT_HEAD=\"fb4c83d226a319bbdded480e37418c04ae242614\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2021-11-26T12:11:30+0100\"",
+      "-DBUILD_TIME=\"2022-02-07T09:39:45+0100\"",
       "-o",
       "build/lib/queue.o",
       "kernel/lib/queue.c"
@@ -311,8 +364,10 @@
   },
   {
     "arguments": [
-      "/home/ruben/CustomSources/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc",
+      "/home/ruben/CustomInstalledPrograms/riscv-from-sourc/bin/riscv32-unknown-elf-gcc",
       "-c",
+      "-march=rv32imc",
+      "-mabi=ilp32",
       "-Wall",
       "-Wundef",
       "-fno-toplevel-reorder",
@@ -329,9 +384,9 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"3bd1a986318fb5ba64e4a25c1ee12d2ab10c5ac0\"",
+      "-DGIT_HEAD=\"fb4c83d226a319bbdded480e37418c04ae242614\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2021-11-26T12:11:30+0100\"",
+      "-DBUILD_TIME=\"2022-02-07T09:39:45+0100\"",
       "-o",
       "build/lib/bsearch.o",
       "kernel/lib/bsearch.c"
@@ -342,8 +397,10 @@
   },
   {
     "arguments": [
-      "/home/ruben/CustomSources/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc",
+      "/home/ruben/CustomInstalledPrograms/riscv-from-sourc/bin/riscv32-unknown-elf-gcc",
       "-c",
+      "-march=rv32imc",
+      "-mabi=ilp32",
       "-Wall",
       "-Wundef",
       "-fno-toplevel-reorder",
@@ -360,9 +417,9 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"3bd1a986318fb5ba64e4a25c1ee12d2ab10c5ac0\"",
+      "-DGIT_HEAD=\"fb4c83d226a319bbdded480e37418c04ae242614\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2021-11-26T12:11:30+0100\"",
+      "-DBUILD_TIME=\"2022-02-07T09:39:45+0100\"",
       "-o",
       "build/lib/memcpy.o",
       "kernel/lib/memcpy.c"
@@ -373,8 +430,10 @@
   },
   {
     "arguments": [
-      "/home/ruben/CustomSources/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc",
+      "/home/ruben/CustomInstalledPrograms/riscv-from-sourc/bin/riscv32-unknown-elf-gcc",
       "-c",
+      "-march=rv32imc",
+      "-mabi=ilp32",
       "-Wall",
       "-Wundef",
       "-fno-toplevel-reorder",
@@ -391,9 +450,9 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"3bd1a986318fb5ba64e4a25c1ee12d2ab10c5ac0\"",
+      "-DGIT_HEAD=\"fb4c83d226a319bbdded480e37418c04ae242614\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2021-11-26T12:11:31+0100\"",
+      "-DBUILD_TIME=\"2022-02-07T09:39:45+0100\"",
       "-o",
       "build/lib/strcmp.o",
       "kernel/lib/strcmp.c"
@@ -404,8 +463,10 @@
   },
   {
     "arguments": [
-      "/home/ruben/CustomSources/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc",
+      "/home/ruben/CustomInstalledPrograms/riscv-from-sourc/bin/riscv32-unknown-elf-gcc",
       "-c",
+      "-march=rv32imc",
+      "-mabi=ilp32",
       "-Wall",
       "-Wundef",
       "-fno-toplevel-reorder",
@@ -422,9 +483,9 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"3bd1a986318fb5ba64e4a25c1ee12d2ab10c5ac0\"",
+      "-DGIT_HEAD=\"fb4c83d226a319bbdded480e37418c04ae242614\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2021-11-26T12:11:31+0100\"",
+      "-DBUILD_TIME=\"2022-02-07T09:39:45+0100\"",
       "-o",
       "build/lib/ktable.o",
       "kernel/lib/ktable.c"
@@ -435,8 +496,10 @@
   },
   {
     "arguments": [
-      "/home/ruben/CustomSources/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc",
+      "/home/ruben/CustomInstalledPrograms/riscv-from-sourc/bin/riscv32-unknown-elf-gcc",
       "-c",
+      "-march=rv32imc",
+      "-mabi=ilp32",
       "-Wall",
       "-Wundef",
       "-fno-toplevel-reorder",
@@ -453,9 +516,9 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"3bd1a986318fb5ba64e4a25c1ee12d2ab10c5ac0\"",
+      "-DGIT_HEAD=\"fb4c83d226a319bbdded480e37418c04ae242614\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2021-11-26T12:11:31+0100\"",
+      "-DBUILD_TIME=\"2022-02-07T09:39:45+0100\"",
       "-o",
       "build/lib/memset.o",
       "kernel/lib/memset.c"
@@ -466,8 +529,10 @@
   },
   {
     "arguments": [
-      "/home/ruben/CustomSources/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc",
+      "/home/ruben/CustomInstalledPrograms/riscv-from-sourc/bin/riscv32-unknown-elf-gcc",
       "-c",
+      "-march=rv32imc",
+      "-mabi=ilp32",
       "-Wall",
       "-Wundef",
       "-fno-toplevel-reorder",
@@ -484,9 +549,9 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"3bd1a986318fb5ba64e4a25c1ee12d2ab10c5ac0\"",
+      "-DGIT_HEAD=\"fb4c83d226a319bbdded480e37418c04ae242614\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2021-11-26T12:11:31+0100\"",
+      "-DBUILD_TIME=\"2022-02-07T09:39:45+0100\"",
       "-o",
       "build/lib/sort.o",
       "kernel/lib/sort.c"
@@ -497,8 +562,10 @@
   },
   {
     "arguments": [
-      "/home/ruben/CustomSources/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc",
+      "/home/ruben/CustomInstalledPrograms/riscv-from-sourc/bin/riscv32-unknown-elf-gcc",
       "-c",
+      "-march=rv32imc",
+      "-mabi=ilp32",
       "-Wall",
       "-Wundef",
       "-fno-toplevel-reorder",
@@ -515,9 +582,9 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"3bd1a986318fb5ba64e4a25c1ee12d2ab10c5ac0\"",
+      "-DGIT_HEAD=\"fb4c83d226a319bbdded480e37418c04ae242614\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2021-11-26T12:11:31+0100\"",
+      "-DBUILD_TIME=\"2022-02-07T09:39:45+0100\"",
       "-o",
       "build/thread.o",
       "kernel/thread.c"
@@ -528,8 +595,10 @@
   },
   {
     "arguments": [
-      "/home/ruben/CustomSources/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc",
+      "/home/ruben/CustomInstalledPrograms/riscv-from-sourc/bin/riscv32-unknown-elf-gcc",
       "-c",
+      "-march=rv32imc",
+      "-mabi=ilp32",
       "-Wall",
       "-Wundef",
       "-fno-toplevel-reorder",
@@ -546,9 +615,9 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"3bd1a986318fb5ba64e4a25c1ee12d2ab10c5ac0\"",
+      "-DGIT_HEAD=\"fb4c83d226a319bbdded480e37418c04ae242614\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2021-11-26T12:11:31+0100\"",
+      "-DBUILD_TIME=\"2022-02-07T09:39:46+0100\"",
       "-o",
       "build/ktimer.o",
       "kernel/ktimer.c"
@@ -559,8 +628,10 @@
   },
   {
     "arguments": [
-      "/home/ruben/CustomSources/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc",
+      "/home/ruben/CustomInstalledPrograms/riscv-from-sourc/bin/riscv32-unknown-elf-gcc",
       "-c",
+      "-march=rv32imc",
+      "-mabi=ilp32",
       "-Wall",
       "-Wundef",
       "-fno-toplevel-reorder",
@@ -577,9 +648,9 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"3bd1a986318fb5ba64e4a25c1ee12d2ab10c5ac0\"",
+      "-DGIT_HEAD=\"fb4c83d226a319bbdded480e37418c04ae242614\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2021-11-26T12:11:31+0100\"",
+      "-DBUILD_TIME=\"2022-02-07T09:39:46+0100\"",
       "-o",
       "build/ipc.o",
       "kernel/ipc.c"
@@ -590,8 +661,10 @@
   },
   {
     "arguments": [
-      "/home/ruben/CustomSources/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc",
+      "/home/ruben/CustomInstalledPrograms/riscv-from-sourc/bin/riscv32-unknown-elf-gcc",
       "-c",
+      "-march=rv32imc",
+      "-mabi=ilp32",
       "-Wall",
       "-Wundef",
       "-fno-toplevel-reorder",
@@ -608,9 +681,9 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"3bd1a986318fb5ba64e4a25c1ee12d2ab10c5ac0\"",
+      "-DGIT_HEAD=\"fb4c83d226a319bbdded480e37418c04ae242614\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2021-11-26T12:11:31+0100\"",
+      "-DBUILD_TIME=\"2022-02-07T09:39:46+0100\"",
       "-o",
       "build/root_thread.o",
       "kernel/root_thread.c"
@@ -621,8 +694,10 @@
   },
   {
     "arguments": [
-      "/home/ruben/CustomSources/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc",
+      "/home/ruben/CustomInstalledPrograms/riscv-from-sourc/bin/riscv32-unknown-elf-gcc",
       "-c",
+      "-march=rv32imc",
+      "-mabi=ilp32",
       "-Wall",
       "-Wundef",
       "-fno-toplevel-reorder",
@@ -639,9 +714,9 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"3bd1a986318fb5ba64e4a25c1ee12d2ab10c5ac0\"",
+      "-DGIT_HEAD=\"fb4c83d226a319bbdded480e37418c04ae242614\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2021-11-26T12:11:32+0100\"",
+      "-DBUILD_TIME=\"2022-02-07T09:39:46+0100\"",
       "-o",
       "build/error.o",
       "kernel/error.c"
@@ -652,8 +727,10 @@
   },
   {
     "arguments": [
-      "/home/ruben/CustomSources/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc",
+      "/home/ruben/CustomInstalledPrograms/riscv-from-sourc/bin/riscv32-unknown-elf-gcc",
       "-c",
+      "-march=rv32imc",
+      "-mabi=ilp32",
       "-Wall",
       "-Wundef",
       "-fno-toplevel-reorder",
@@ -670,9 +747,9 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"3bd1a986318fb5ba64e4a25c1ee12d2ab10c5ac0\"",
+      "-DGIT_HEAD=\"fb4c83d226a319bbdded480e37418c04ae242614\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2021-11-26T12:11:32+0100\"",
+      "-DBUILD_TIME=\"2022-02-07T09:39:46+0100\"",
       "-o",
       "build/softirq.o",
       "kernel/softirq.c"
@@ -683,8 +760,10 @@
   },
   {
     "arguments": [
-      "/home/ruben/CustomSources/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc",
+      "/home/ruben/CustomInstalledPrograms/riscv-from-sourc/bin/riscv32-unknown-elf-gcc",
       "-c",
+      "-march=rv32imc",
+      "-mabi=ilp32",
       "-Wall",
       "-Wundef",
       "-fno-toplevel-reorder",
@@ -701,9 +780,9 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"3bd1a986318fb5ba64e4a25c1ee12d2ab10c5ac0\"",
+      "-DGIT_HEAD=\"fb4c83d226a319bbdded480e37418c04ae242614\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2021-11-26T12:11:32+0100\"",
+      "-DBUILD_TIME=\"2022-02-07T09:39:46+0100\"",
       "-o",
       "build/syscall.o",
       "kernel/syscall.c"
@@ -714,8 +793,10 @@
   },
   {
     "arguments": [
-      "/home/ruben/CustomSources/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc",
+      "/home/ruben/CustomInstalledPrograms/riscv-from-sourc/bin/riscv32-unknown-elf-gcc",
       "-c",
+      "-march=rv32imc",
+      "-mabi=ilp32",
       "-Wall",
       "-Wundef",
       "-fno-toplevel-reorder",
@@ -732,40 +813,9 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"3bd1a986318fb5ba64e4a25c1ee12d2ab10c5ac0\"",
+      "-DGIT_HEAD=\"fb4c83d226a319bbdded480e37418c04ae242614\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2021-11-26T12:11:32+0100\"",
-      "-o",
-      "build/kernelvec_in_c.o",
-      "kernel/kernelvec_in_c.c"
-    ],
-    "directory": "/home/ruben/Code/SpecializationProject/f9-riscv-simple",
-    "file": "/home/ruben/Code/SpecializationProject/f9-riscv-simple/kernel/kernelvec_in_c.c",
-    "output": "/home/ruben/Code/SpecializationProject/f9-riscv-simple/build/kernelvec_in_c.o"
-  },
-  {
-    "arguments": [
-      "/home/ruben/CustomSources/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc",
-      "-c",
-      "-Wall",
-      "-Wundef",
-      "-fno-toplevel-reorder",
-      "-fno-strict-aliasing",
-      "-Werror-implicit-function-declaration",
-      "-O0",
-      "-fno-omit-frame-pointer",
-      "-ggdb3",
-      "-mcmodel=medany",
-      "-ffreestanding",
-      "-fno-common",
-      "-mno-relax",
-      "-Iinclude",
-      "-Iinclude/l4",
-      "-Iinclude/lib",
-      "-Iinclude/platform",
-      "-DGIT_HEAD=\"3bd1a986318fb5ba64e4a25c1ee12d2ab10c5ac0\"",
-      "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2021-11-26T12:11:32+0100\"",
+      "-DBUILD_TIME=\"2022-02-07T09:39:46+0100\"",
       "-o",
       "build/trap.o",
       "kernel/trap.c"
@@ -776,8 +826,10 @@
   },
   {
     "arguments": [
-      "/home/ruben/CustomSources/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc",
+      "/home/ruben/CustomInstalledPrograms/riscv-from-sourc/bin/riscv32-unknown-elf-gcc",
       "-c",
+      "-march=rv32imc",
+      "-mabi=ilp32",
       "-Wall",
       "-Wundef",
       "-fno-toplevel-reorder",
@@ -794,9 +846,9 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"3bd1a986318fb5ba64e4a25c1ee12d2ab10c5ac0\"",
+      "-DGIT_HEAD=\"fb4c83d226a319bbdded480e37418c04ae242614\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2021-11-26T12:11:32+0100\"",
+      "-DBUILD_TIME=\"2022-02-07T09:39:46+0100\"",
       "-o",
       "build/memory.o",
       "kernel/memory.c"
@@ -807,8 +859,10 @@
   },
   {
     "arguments": [
-      "/home/ruben/CustomSources/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc",
+      "/home/ruben/CustomInstalledPrograms/riscv-from-sourc/bin/riscv32-unknown-elf-gcc",
       "-c",
+      "-march=rv32imc",
+      "-mabi=ilp32",
       "-Wall",
       "-Wundef",
       "-fno-toplevel-reorder",
@@ -825,9 +879,9 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"3bd1a986318fb5ba64e4a25c1ee12d2ab10c5ac0\"",
+      "-DGIT_HEAD=\"fb4c83d226a319bbdded480e37418c04ae242614\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2021-11-26T12:11:32+0100\"",
+      "-DBUILD_TIME=\"2022-02-07T09:39:47+0100\"",
       "-o",
       "build/interrupt.o",
       "kernel/interrupt.c"
@@ -838,8 +892,10 @@
   },
   {
     "arguments": [
-      "/home/ruben/CustomSources/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc",
+      "/home/ruben/CustomInstalledPrograms/riscv-from-sourc/bin/riscv32-unknown-elf-gcc",
       "-c",
+      "-march=rv32imc",
+      "-mabi=ilp32",
       "-Wall",
       "-Wundef",
       "-fno-toplevel-reorder",
@@ -856,9 +912,42 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"3bd1a986318fb5ba64e4a25c1ee12d2ab10c5ac0\"",
+      "-DGIT_HEAD=\"fb4c83d226a319bbdded480e37418c04ae242614\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2021-11-26T12:11:32+0100\"",
+      "-DBUILD_TIME=\"2022-02-07T09:39:47+0100\"",
+      "-o",
+      "build/mpu.o",
+      "kernel/mpu.c"
+    ],
+    "directory": "/home/ruben/Code/SpecializationProject/f9-riscv-simple",
+    "file": "/home/ruben/Code/SpecializationProject/f9-riscv-simple/kernel/mpu.c",
+    "output": "/home/ruben/Code/SpecializationProject/f9-riscv-simple/build/mpu.o"
+  },
+  {
+    "arguments": [
+      "/home/ruben/CustomInstalledPrograms/riscv-from-sourc/bin/riscv32-unknown-elf-gcc",
+      "-c",
+      "-march=rv32imc",
+      "-mabi=ilp32",
+      "-Wall",
+      "-Wundef",
+      "-fno-toplevel-reorder",
+      "-fno-strict-aliasing",
+      "-Werror-implicit-function-declaration",
+      "-O0",
+      "-fno-omit-frame-pointer",
+      "-ggdb3",
+      "-mcmodel=medany",
+      "-ffreestanding",
+      "-fno-common",
+      "-mno-relax",
+      "-Iinclude",
+      "-Iinclude/l4",
+      "-Iinclude/lib",
+      "-Iinclude/platform",
+      "-DGIT_HEAD=\"fb4c83d226a319bbdded480e37418c04ae242614\"",
+      "-DMACH_TYPE=\"x86_64\"",
+      "-DBUILD_TIME=\"2022-02-07T09:39:47+0100\"",
       "-o",
       "build/plic.o",
       "kernel/plic.c"
@@ -869,8 +958,10 @@
   },
   {
     "arguments": [
-      "/home/ruben/CustomSources/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc",
+      "/home/ruben/CustomInstalledPrograms/riscv-from-sourc/bin/riscv32-unknown-elf-gcc",
       "-c",
+      "-march=rv32imc",
+      "-mabi=ilp32",
       "-Wall",
       "-Wundef",
       "-fno-toplevel-reorder",
@@ -887,9 +978,9 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"3bd1a986318fb5ba64e4a25c1ee12d2ab10c5ac0\"",
+      "-DGIT_HEAD=\"fb4c83d226a319bbdded480e37418c04ae242614\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2021-11-26T12:11:33+0100\"",
+      "-DBUILD_TIME=\"2022-02-07T09:39:47+0100\"",
       "-o",
       "build/kernelvec.o",
       "kernel/kernelvec.s"
@@ -900,8 +991,10 @@
   },
   {
     "arguments": [
-      "/home/ruben/CustomSources/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc",
+      "/home/ruben/CustomInstalledPrograms/riscv-from-sourc/bin/riscv32-unknown-elf-gcc",
       "-c",
+      "-march=rv32imc",
+      "-mabi=ilp32",
       "-Wall",
       "-Wundef",
       "-fno-toplevel-reorder",
@@ -918,9 +1011,9 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"3bd1a986318fb5ba64e4a25c1ee12d2ab10c5ac0\"",
+      "-DGIT_HEAD=\"fb4c83d226a319bbdded480e37418c04ae242614\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2021-11-26T12:11:33+0100\"",
+      "-DBUILD_TIME=\"2022-02-07T09:39:47+0100\"",
       "-o",
       "build/entry.o",
       "kernel/entry.s"

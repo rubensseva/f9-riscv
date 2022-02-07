@@ -39,9 +39,9 @@ void create_root_thread(void)
 	thread_space(root, TID_TO_GLOBALID(THREAD_ROOT), &root_utcb);
 	as_map_user(root->as);
 
-	uint64_t regs[4] = {
-		[REG_A0] = (uint64_t) &kip,
-		[REG_A1] = (uint64_t) root->utcb,
+	uint32_t regs[4] = {
+		[REG_A0] = (uint32_t) &kip,
+		[REG_A1] = (uint32_t) root->utcb,
 		[REG_A2] = 0,
 		[REG_A3] = 0,
 	};
@@ -50,8 +50,8 @@ void create_root_thread(void)
 	thread_init_ctx((void *) &root_stack_end, root_thread, regs, root);
 
 	root->stack_base = (memptr_t) &root_stack_start;
-	root->stack_size = (uint64_t) &root_stack_end -
-	                   (uint64_t) &root_stack_start;
+	root->stack_size = (uint32_t) &root_stack_end -
+	                   (uint32_t) &root_stack_start;
 
 	sched_slot_dispatch(SSI_ROOT_THREAD, root);
 	root->state = T_RUNNABLE;

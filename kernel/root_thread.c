@@ -15,7 +15,7 @@ typedef void (*irq_handler_t)(void);
 void my_user_thread();
 void root_thread(kip_t *kip_ptr, utcb_t *utcb_ptr);
 
-typedef uint64_t L4_Word_t;
+typedef uint32_t L4_Word_t;
 typedef L4_Word_t L4_ThreadId_t;
 
 // TODO: Move to types.h or some other file
@@ -64,7 +64,7 @@ memptr_t __USER_TEXT get_free_base(kip_t *kip_ptr)
 }
 
 __USER_TEXT
-void L4_Ipc(uint64_t to_gid, uint64_t from_gid) {
+void L4_Ipc(uint32_t to_gid, uint32_t from_gid) {
     __asm__ __volatile__(
         "mv a0, %0\n\t\
         mv a1, %1\n\t\
@@ -115,7 +115,7 @@ void __USER_TEXT user_uart_handler() {
   }
 }
 
-void __USER_TEXT L4_map(memptr_t base, uint64_t size, L4_ThreadId_t tid) {
+void __USER_TEXT L4_map(memptr_t base, uint32_t size, L4_ThreadId_t tid) {
     ipc_msg_tag_t tag;
     tag.s.n_typed = 2;
 
@@ -187,12 +187,12 @@ void __USER_TEXT my_user_thread() {
     L4_Ipc(L4_nilthread, intr_tid);
     // At this point, the answer from IPC should be in the MRs
     // TODO: Not sure if user space should be able to view the utcb type? Maybe its ok?
-    uint64_t *mrs = ((utcb_t*)current_utcb)->mr;
+    uint32_t *mrs = ((utcb_t*)current_utcb)->mr;
 
     ipc_msg_tag_t new_tag = {.raw = mrs[0]};
-    uint64_t irqn = mrs[IRQ_IPC_IRQN + 1];
+    uint32_t irqn = mrs[IRQ_IPC_IRQN + 1];
     irq_handler_t handler = mrs[IRQ_IPC_HANDLER + 1];
-    uint64_t action = mrs[IRQ_IPC_ACTION + 1];
+    uint32_t action = mrs[IRQ_IPC_ACTION + 1];
 
     switch (action) {
     case USER_IRQ_ENABLE:
@@ -228,9 +228,9 @@ void __USER_TEXT root_thread(kip_t *kip_ptr, utcb_t *utcb_ptr) {
     ipc_msg_tag_t tag = {{0, 0, 0, 0}};
     tag.s.n_untyped = 5;
     ((utcb_t *)current_utcb)->mr[0] = tag.raw;
-    ((utcb_t *)current_utcb)->mr[1] = (uint64_t) my_user_thread; // pc
-    ((utcb_t *)current_utcb)->mr[2] = (uint64_t) &user_thread_stack_end; // sp
-    ((utcb_t *)current_utcb)->mr[3] = ((uint64_t) &user_thread_stack_end) - ((uint64_t) &user_thread_stack_start); // stack size
+    ((utcb_t *)current_utcb)->mr[1] = (uint32_t) my_user_thread; // pc
+    ((utcb_t *)current_utcb)->mr[2] = (uint32_t) &user_thread_stack_end; // sp
+    ((utcb_t *)current_utcb)->mr[3] = ((uint32_t) &user_thread_stack_end) - ((uint32_t) &user_thread_stack_start); // stack size
     ((utcb_t *)current_utcb)->mr[4] = 0;
     ((utcb_t *)current_utcb)->mr[5] = 0;
     L4_Ipc(user_thread, myself);

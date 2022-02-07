@@ -21,14 +21,14 @@ typedef struct ktimer_event {
 	ktimer_event_handler_t handler;
 
 	// uint32_t delta;
-	uint64_t delta;
+	uint32_t delta;
 	void *data;
 } ktimer_event_t;
 
 void ktimer_init_ktable();
 void ktimer_event_init(void);
 
-int ktimer_event_schedule(uint64_t ticks, ktimer_event_t *kte);
+int ktimer_event_schedule(uint32_t ticks, ktimer_event_t *kte);
 ktimer_event_t *ktimer_event_create(uint32_t ticks,
                                     ktimer_event_handler_t handler,
                                     void *data);

@@ -25,10 +25,10 @@ void supervisor_timer_interrupt_handler(void) {
 
 void machine_timer_interrupt_handler(void) {
 
-  uint64_t *clint_mtimecmp = (uint64_t*)CLINT_MTIMECMP;
-  uint64_t *clint_mtime = (uint64_t*)CLINT_MTIME;
-  uint64_t interval = 1000000; // cycles; about 1/10th second in qemu.
-  uint64_t new_val = *clint_mtime + interval;
+  uint32_t *clint_mtimecmp = (uint32_t*)CLINT_MTIMECMP;
+  uint32_t *clint_mtime = (uint32_t*)CLINT_MTIME;
+  uint32_t interval = 1000000; // cycles; about 1/10th second in qemu.
+  uint32_t new_val = *clint_mtime + interval;
   *clint_mtimecmp = new_val;
 
   ktimer_handler();
@@ -86,10 +86,10 @@ void (*sync_handler[16])() = {
   no_interrupt,
 };
 
-#define MCAUSE_INT_MASK 0x8000000000000000 // [63]=1 interrupt, else exception
+#define MCAUSE_INT_MASK 0x80000000 // [31]=1 interrupt, else exception
 #define MCAUSE_CODE_MASK 0x7FFFFFFF // low bits show code
 
-extern void kerneltrap(uint64_t* caller_sp)
+extern void kerneltrap(uint32_t* caller_sp)
 {
   unsigned long mcause_value = r_mcause();
 
@@ -102,7 +102,7 @@ extern void kerneltrap(uint64_t* caller_sp)
   }
 
   // context switch
-  current->ctx.sp = (uint64_t) caller_sp;
+  current->ctx.sp = (uint32_t) caller_sp;
   tcb_t* sel = schedule_select();
   if (sel != current) {
     thread_switch(sel);

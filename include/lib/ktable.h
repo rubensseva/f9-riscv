@@ -15,7 +15,7 @@ struct ktable {
 	char *tname;
 	bitmap_ptr_t bitmap;
 	uint32_t *data;
-	/* uint64_t *data; */
+	/* uint32_t *data; */
 	size_t num;
 	size_t size;
 };

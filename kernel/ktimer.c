@@ -31,7 +31,7 @@ ktimer_event_t *event_queue = NULL;
  * Simple ktimer implementation
  */
 
-static uint64_t ktimer_now;
+static uint32_t ktimer_now;
 static uint32_t ktimer_enabled = 0;
 static uint32_t ktimer_delta = 0;
 static long long ktimer_time = 0;
@@ -100,7 +100,7 @@ static void ktimer_event_recalc(ktimer_event_t* event, uint32_t new_delta)
 
 }
 
-int ktimer_event_schedule(uint64_t ticks, ktimer_event_t *kte)
+int ktimer_event_schedule(uint32_t ticks, ktimer_event_t *kte)
 {
 	long etime = 0, delta = 0;
 	ktimer_event_t *event = NULL, *next_event = NULL;

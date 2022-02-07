@@ -59,15 +59,15 @@ typedef enum {
 } thread_state_t;
 
 typedef struct {
-	uint64_t mepc;
+	uint32_t mepc;
 
-	uint64_t ra;
-	uint64_t sp;
-	uint64_t gp;
-	uint64_t tp;
-	uint64_t t_regs[7];
-	uint64_t _regs[12];
-	uint64_t a_regs[8];
+	uint32_t ra;
+	uint32_t sp;
+	uint32_t gp;
+	uint32_t tp;
+	uint32_t t_regs[7];
+	uint32_t _regs[12];
+	uint32_t a_regs[8];
 } context_t;
 
 /**

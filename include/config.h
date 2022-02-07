@@ -45,7 +45,7 @@ enum register_stack_t {
 
 // from /f9-kernel/include/platform/armv7m.h"
 // TODO: Need to know more about what this does
-#define RESERVED_STACK (32 * sizeof(uint64_t))
+#define RESERVED_STACK (32 * sizeof(uint32_t))
 
 #define CONFIG_BITMAP_BITBAND 0
 

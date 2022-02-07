@@ -37,7 +37,7 @@ void syscall_init()
 
 INIT_HOOK(syscall_init, INIT_LEVEL_KERNEL);
 
-static void sys_thread_control(uint64_t *param1)
+static void sys_thread_control(uint32_t *param1)
 {
 	l4_thread_t dest = param1[REG_A1];
 	l4_thread_t space = param1[REG_A2];
@@ -73,9 +73,9 @@ static void sys_thread_control(uint64_t *param1)
 
 void syscall_handler()
 {
-	uint64_t *sc_param1 = (uint64_t *) caller->ctx.sp;
-	uint64_t sc_num = sc_param1[REG_A0];
-	// uint64_t *sc_param2 = caller->ctx.a_regs;
+	uint32_t *sc_param1 = (uint32_t *) caller->ctx.sp;
+	uint32_t sc_num = sc_param1[REG_A0];
+	// uint32_t *sc_param2 = caller->ctx.a_regs;
 
 	if (sc_num == SYS_THREAD_CONTROL) {
 		/* Simply call thread_create

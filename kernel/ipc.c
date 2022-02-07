@@ -22,7 +22,7 @@ extern tcb_t *caller;
 extern tcb_t *thread_map[];
 extern int thread_count;
 
-uint64_t ipc_read_mr(tcb_t *from, int i)
+uint32_t ipc_read_mr(tcb_t *from, int i)
 {
 	/* if (i >= 8) */
 	/* 	return from->utcb->mr[i - 8]; */
@@ -31,7 +31,7 @@ uint64_t ipc_read_mr(tcb_t *from, int i)
 	return from->utcb->mr[i];
 }
 
-void ipc_write_mr(tcb_t *to, int i, uint64_t data)
+void ipc_write_mr(tcb_t *to, int i, uint32_t data)
 {
 	/* if (i >= 8) */
 	/* 	to->utcb->mr[i - 8] = data; */
@@ -205,7 +205,7 @@ static void sys_ipc_timeout(uint32_t timeout)
 	caller->timeout_event = (uint32_t) kevent;
 }
 
-void sys_ipc(uint64_t* sc_param1)
+void sys_ipc(uint32_t* sc_param1)
 {
 	/* TODO: Checking of recv-mask */
 	tcb_t *to_thr = NULL;
@@ -249,7 +249,7 @@ void sys_ipc(uint64_t* sc_param1)
 
 				memptr_t sp = ipc_read_mr(caller, 2);
 				size_t stack_size = ipc_read_mr(caller, 3);
-				uint64_t regs[4];	/* r0, r1, r2, r3 */
+				uint32_t regs[4];	/* r0, r1, r2, r3 */
 
 				/* dbg_printf(DL_IPC, */
 				/*            "IPC: %t thread start\n", to_tid); */
@@ -263,8 +263,8 @@ void sys_ipc(uint64_t* sc_param1)
 				/* TODO: This needs another look
 				 * Should be a registers or something else?
 				 * Confirm that kip is here only to point to mempool */
-				regs[REG_A0] = (uint64_t)&kip;
-				regs[REG_A1] = (uint64_t)to_thr->utcb;
+				regs[REG_A0] = (uint32_t)&kip;
+				regs[REG_A1] = (uint32_t)to_thr->utcb;
 				regs[REG_A2] = ipc_read_mr(caller, 4);
 				regs[REG_A3] = ipc_read_mr(caller, 5);
 				thread_init_ctx((void *) sp,
