@@ -11,8 +11,8 @@ GIT_HEAD = $(shell git rev-parse HEAD)
 MACH_TYPE = $(shell uname -m)
 BUILD_TIME = $(shell date +%FT%T%z)
 
-CC:=riscv64-unknown-elf-gcc
-LD:=riscv64-unknown-elf-ld
+CC:=~/CustomInstalledPrograms/riscv-from-sourc/bin/riscv32-unknown-elf-gcc
+LD:=~/CustomInstalledPrograms/riscv-from-sourc/bin/riscv32-unknown-elf-ld
 
 SRC_DIR:=kernel
 BUILD_DIR:=build
@@ -28,6 +28,8 @@ CFLAGS_MISC_DEFINE = \
 	-DMACH_TYPE=\"$(MACH_TYPE)\" \
 	-DBUILD_TIME=\"$(BUILD_TIME)\"
 
+CFLAGS += -march=rv32imc
+CFLAGS += -mabi=ilp32
 CFLAGS += -Wall -Wundef # -Wstrict-prototypes
 CFLAGS += -fno-toplevel-reorder -fno-strict-aliasing
 CFLAGS += -Werror-implicit-function-declaration
@@ -41,6 +43,8 @@ CFLAGS += -I$(INCLUDES_DIR)/platform
 CFLAGS += $(CFLAGS_MISC_DEFINE)
 
 LDFLAGS = --gc-sections
+LDLAGS += -march=rv32imc
+LDLAGS += -mabi=ilp32
 
 
 SOURCES:=$(shell find $(SRC_DIR) -name "*.c")
@@ -74,12 +78,12 @@ clean:
 
 .PHONY: qemu
 qemu: $(TARGET)
-	qemu-system-riscv64 -nographic -smp 1 -s -S -machine virt -bios none -kernel $(TARGET)
+	qemu-system-riscv32 -nographic -smp 1 -s -S -machine virt -bios none -kernel $(TARGET)
 
 .PHONY: qemu-no-dbg
 qemu-no-dbg: $(TARGET)
-	qemu-system-riscv64 -nographic -smp 1 -machine virt -bios none -kernel $(TARGET)
+	qemu-system-riscv32 -nographic -smp 1 -machine virt -bios none -kernel $(TARGET)
 
 .PHONY: gdb
 dbg: $(TARGET)
-	riscv64-unknown-elf-gdb $(TARGET)
+	riscv32-unknown-elf-gdb $(TARGET)
