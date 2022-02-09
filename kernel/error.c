@@ -56,9 +56,7 @@ void panic_impl(char *fmt, ...)
 
 	/* dbg_start_panic(); */
 
-	// irq_disable();
-	machine_intr_off();
-	intr_off();
+	interrupt_disable();
 
 	/* dbg_vprintf(DL_EMERG, fmt, va); */
 

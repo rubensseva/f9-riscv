@@ -405,10 +405,10 @@ void thread_switch(tcb_t *thr)
 
 	current = thr;
 	current_utcb = thr->utcb;
-	/* if (current->as) */
-		/* as_setup_mpu(current->as, current->ctx.sp, */
-		/*              ((uint32_t *) current->ctx.sp)[REG_PC], */
-		/*              current->stack_base, current->stack_size); */
+	if (current->as)
+		as_setup_mpu(current->as, current->ctx.sp,
+		             current->ctx.mepc,
+		             current->stack_base, current->stack_size);
 }
 
 /* Select normal thread to run

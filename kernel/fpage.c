@@ -40,15 +40,15 @@ void fpage_table_init_ktable() {
  * Helper functions
  * COMMENTARY: fp_addr_log2 finds the position of the LSB that is 1
  */
-static int fp_addr_log2(memptr_t addr)
-{
-	int shift = 0;
+/* static int fp_addr_log2(memptr_t addr) */
+/* { */
+/* 	int shift = 0; */
 
-	while ((addr <<= 1) != 0)
-		++shift;
+/* 	while ((addr <<= 1) != 0) */
+/* 		++shift; */
 
-	return 31 - shift;
-}
+/* 	return 31 - shift; */
+/* } */
 
 /**
  * Insert chain of fpages into address space
@@ -116,7 +116,7 @@ static void remove_fpage_from_as(as_t *as, fpage_t *fp)
  * @param shift (1 << shift) - fpage size
  * @param mpid - id of mpool
  */
-static fpage_t *create_fpage(memptr_t base, size_t shift, int mpid)
+static fpage_t *create_fpage(memptr_t base, size_t size, int mpid)
 {
 	fpage_t *fpage = (fpage_t *) ktable_alloc(&fpage_table);
 
@@ -130,7 +130,7 @@ static fpage_t *create_fpage(memptr_t base, size_t shift, int mpid)
 	fpage->fpage.rwx = MP_USER_PERM(mempool_getbyid(mpid)->flags);
 
 	fpage->fpage.base = base;
-	fpage->fpage.shift = shift;
+	fpage->fpage.size = size;
 
 	if (mempool_getbyid(mpid)->flags & MP_MAP_ALWAYS)
 		fpage->fpage.flags |= FPAGE_ALWAYS;
@@ -146,10 +146,19 @@ void destroy_fpage(fpage_t *fpage)
 static void create_fpage_chain(memptr_t base, size_t size, int mpid,
                                fpage_t **pfirst, fpage_t **plast)
 {
-	int shift, sshift, bshift;
+	// Make sure the base address is four-byte aligned
+	if ((base & ~0x3) != base) {
+		// ERROR
+		return;
+	}
+	/* int shift, sshift, bshift; */
 	fpage_t *fpage = NULL;
+	fpage = create_fpage(base, size, mpid);
+	*pfirst = fpage;
+	*plast = fpage;
 
-	while (size) {
+
+	/* while (size) { */
 		/* Select least of log2(base), log2(size).
 		 * Needed to make regions with correct align
          *
@@ -172,36 +181,36 @@ static void create_fpage_chain(memptr_t base, size_t size, int mpid,
 		 *     just continually adjust the base so that the total size is actually
 		 *     a power of two.
 		 */
-		bshift = fp_addr_log2(base);
-		sshift = fp_addr_log2(size);
+		/* bshift = fp_addr_log2(base); */
+		/* sshift = fp_addr_log2(size); */
 
 		/* THOUGHTS:
 		 * Why do we do "size" here instead of (1 << sshift)? I think its
 		 * because size == (1 << sshift). But why not do "bshift > sshift" then?
 		*/
-		shift = ((1 << bshift) > size) ? sshift : bshift;
+	/* 	shift = ((1 << bshift) > size) ? sshift : bshift; */
 
-		if (!*pfirst) {
-			/* Create first page */
-			fpage = create_fpage(base, shift, mpid);
-			*pfirst = fpage;
-			*plast = fpage;
-		} else {
-			/* Build chain */
-			fpage->as_next = create_fpage(base, shift, mpid);
-			fpage = fpage->as_next;
-			*plast = fpage;
-		}
+	/* 	if (!*pfirst) { */
+	/* 		/\* Create first page *\/ */
+	/* 		fpage = create_fpage(base, shift, mpid); */
+	/* 		*pfirst = fpage; */
+	/* 		*plast = fpage; */
+	/* 	} else { */
+	/* 		/\* Build chain *\/ */
+	/* 		fpage->as_next = create_fpage(base, shift, mpid); */
+	/* 		fpage = fpage->as_next; */
+	/* 		*plast = fpage; */
+	/* 	} */
 
-		size -= (1 << shift);
-		base += (1 << shift);
-	}
+	/* 	size -= (1 << shift); */
+	/* 	base += (1 << shift); */
+	/* } */
 }
 
 fpage_t *split_fpage(as_t *as, fpage_t *fpage, memptr_t split, int rl)
 {
 	memptr_t base = fpage->fpage.base,
-	         end = fpage->fpage.base + (1 << fpage->fpage.shift);
+	         end = fpage->fpage.base + fpage->fpage.size;
 	fpage_t *lfirst = NULL, *llast = NULL, *rfirst = NULL, *rlast = NULL;
 	split = mempool_align(fpage->fpage.mpid, split);
 

@@ -80,7 +80,7 @@ static memptr_t addr_align(memptr_t addr, size_t size)
 	return (addr + (size - 1)) & ~(size - 1);
 }
 
-#define CONFIG_SMALLEST_FPAGE_SIZE	(1 << CONFIG_SMALLEST_FPAGE_SHIFT)
+#define CONFIG_SMALLEST_FPAGE_SIZE	4
 
 memptr_t mempool_align(int mpid, memptr_t addr)
 {
@@ -238,8 +238,7 @@ void as_setup_mpu(as_t *as, memptr_t sp, memptr_t pc,
 
 	/* Setup MPU stack regions */
 	for (j = 0; j < mpu_first_i; ++j) {
-		// TODO: Fix this
-		// mpu_setup_region(j, mpu[j]);
+		mpu_setup_region(j, mpu[j]);
 
 		if (j < mpu_first_i - 1)
 			mpu[j]->mpu_next = mpu[j + 1];
@@ -249,8 +248,7 @@ void as_setup_mpu(as_t *as, memptr_t sp, memptr_t pc,
 
 	/* Setup MPU fifo regions */
 	for (; j < i; ++j) {
-		// TODO: Fix this
-		// mpu_setup_region(j, mpu[j]);
+		mpu_setup_region(j, mpu[j]);
 
 		if (j < i - 1)
 			mpu[j]->mpu_next = mpu[j + 1];
@@ -258,8 +256,7 @@ void as_setup_mpu(as_t *as, memptr_t sp, memptr_t pc,
 
 	/* Clean unused MPU regions */
 	for (; j < 8; ++j) {
-		// TODO: Fix this
-		// mpu_setup_region(j, NULL);
+		mpu_setup_region(j, NULL);
 	}
 }
 
@@ -383,7 +380,7 @@ int map_area(as_t *src, as_t *dst, memptr_t base, size_t size,
 				if (!addr_in_fpage(probe, fp, 1))
 					return -1;
 
-				probe += (1 << fp->fpage.shift);
+				probe += fp->fpage.size;
 			}
 
 			fp = fp->as_next;

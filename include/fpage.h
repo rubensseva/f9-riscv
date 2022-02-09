@@ -36,7 +36,7 @@ struct fpage {
 			uint32_t base;
 			uint32_t mpid : 6;
 			uint32_t flags : 6;
-			uint32_t shift : 16;
+			uint32_t size : 16;
 			uint32_t rwx : 4;
 		} fpage;
 		uint32_t raw[2];
@@ -48,7 +48,7 @@ struct fpage {
 typedef struct fpage fpage_t;
 
 #define FPAGE_BASE(fp) 	(fp)->fpage.base
-#define FPAGE_SIZE(fp)  (1 << (fp)->fpage.shift)
+#define FPAGE_SIZE(fp)  (fp)->fpage.size
 #define FPAGE_END(fp)	(FPAGE_BASE(fp) + FPAGE_SIZE(fp))
 
 static inline int addr_in_fpage(memptr_t addr, fpage_t *fpage, int incl_end)

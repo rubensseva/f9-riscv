@@ -9,6 +9,7 @@
 #include <riscv.h>
 #include <config.h>
 #include <plic.h>
+#include <interrupt.h>
 
 // #include INC_PLAT(nvic.h)
 
@@ -316,24 +317,16 @@ void user_interrupt_handler_update(tcb_t *thr)
 				user_irq_enable(irq);
 				break;
 			case USER_IRQ_DISABLE:
-				// irq_disable();
-				intr_off();
-				machine_intr_off();
+				interrupt_disable();
 				user_irq_queue_delete(irq);
-				// irq_enable();
 				// user_irq_disable(irq);
-				intr_on();
-				machine_intr_on();
+				interrupt_enable();
 				break;
 			case USER_IRQ_FREE:
-				// irq_disable();
-				intr_off();
-				machine_intr_off();
+				interrupt_disable();
 				user_irq_queue_delete(irq);
 				user_irq_release(irq);
-				// irq_enable();
-				intr_on();
-				machine_intr_on();
+				interrupt_enable();
 				/* reply ipc immediately */
 				irq_handler_ipc(uirq);
 				thr->state = T_RUNNABLE;
@@ -376,3 +369,4 @@ void user_irq_clear_pending(int irq)
 	/* 	NVIC_ClearPendingIRQ(irq); */
 	/* } */
 }
+

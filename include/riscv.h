@@ -27,8 +27,9 @@ r_mhartid()
 #define MSTATUS_MPP_S (1L << 11)
 #define MSTATUS_MPP_U (0L << 11)
 #define MSTATUS_MIE (1L << 3)    // machine-mode interrupt enable.
-#define MSTATUS_SIE (1L << 1)  // Supervisor Interrupt Enable
-#define MSTATUS_MPIE (1L << 7)  // machine-mode previous interrupt enable
+#define MSTATUS_SIE (1L << 1)    // supervisor-mode interrupt enable
+#define MSTATUS_UIE (1L << 0)    // user-mode interrupt enable
+#define MSTATUS_MPIE (1L << 7)   // machine-mode previous interrupt enable
 
 static inline uint32_t r_mstatus()
 {
@@ -108,9 +109,11 @@ static inline void w_sie(uint32_t x)
 }
 
 // Machine-mode Interrupt Enable
-#define MIE_MEIE (1L << 11) // external
-#define MIE_MTIE (1L << 7)  // timer
-#define MIE_MSIE (1L << 3)  // software
+#define MIE_MEIE (1L << 11) // m-mode external
+#define MIE_MTIE (1L << 7)  // m-mode timer
+#define MIE_MSIE (1L << 3)  // m-mode software
+#define MIE_USIE (1L << 0)  // u-mode software interrupts
+#define MIE_UEIE (1L << 8)  // u-mode external interrupts
 static inline uint32_t r_mie()
 {
   uint32_t x;
@@ -214,10 +217,22 @@ static inline uint32_t r_pmpcfg0()
   asm volatile("csrr %0, pmpcfg0" : "=r" (x) );
   return x;
 }
+static inline uint32_t r_pmpcfg1()
+{
+  uint32_t x;
+  asm volatile("csrr %0, pmpcfg1" : "=r" (x) );
+  return x;
+}
 static inline uint32_t r_pmpcfg2()
 {
   uint32_t x;
   asm volatile("csrr %0, pmpcfg2" : "=r" (x) );
+  return x;
+}
+static inline uint32_t r_pmpcfg3()
+{
+  uint32_t x;
+  asm volatile("csrr %0, pmpcfg3" : "=r" (x) );
   return x;
 }
 
@@ -361,27 +376,14 @@ static inline uint32_t r_time()
   return x;
 }
 
-// enable device interrupts
-static inline void intr_on()
-{
-  w_sstatus(r_sstatus() | SSTATUS_SIE);
-}
-static inline void machine_intr_on()
-{
-  w_mstatus(r_mstatus() | MSTATUS_SIE);
+/* requires machine-mode */
+static inline void interrupt_enable() {
+	w_mstatus(r_mstatus() | (MSTATUS_MIE | MSTATUS_UIE));
 }
 
-// disable device interrupts
-static inline void intr_off()
-{
-  w_sstatus(r_sstatus() & ~SSTATUS_SIE);
-}
-
-
-// disable machine device interrupts
-static inline void machine_intr_off()
-{
-  w_mstatus(r_mstatus() & ~MSTATUS_SIE);
+/* requires machine-mode */
+static inline void interrupt_disable() {
+	w_mstatus(r_mstatus() & ~(MSTATUS_MIE | MSTATUS_UIE));
 }
 
 // are device interrupts enabled?

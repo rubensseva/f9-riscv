@@ -42,13 +42,12 @@ irqinit()
   *(uint32_t*)CLINT_MTIME = 0;
   *(uint32_t*)CLINT_MTIMECMP = *(uint32_t*)CLINT_MTIME + interval;
 
-  // disable paging
-  w_satp(0);
-
   // enable supervisor interrupts
+  // NOTE: I dont think these are necessary at all?
+  // Should be enough with mstatus_mie, and u-mode.
   // w_sie(r_sie() | SIE_SEIE | SIE_STIE | SIE_SSIE);
-  w_sie(r_sie() | SIE_SEIE | SIE_SSIE);
-  w_mstatus(r_mstatus() | MSTATUS_SIE);
+  /* w_sie(r_sie() | SIE_SEIE | SIE_SSIE); */
+  /* w_mstatus(r_mstatus() | MSTATUS_SIE); */
 
   w_mtvec((uint32_t)kernelvec);
 
@@ -59,22 +58,39 @@ irqinit()
   // when we execute mret, mstatus.mie is set to mstatus.mpie. Therefore, we need to set
   // mstatus.mpie as well here, to prevent mstatus.mie from being disabled.
   w_mstatus(r_mstatus() | MSTATUS_MPIE);
-  // enable machine-mode timer interrupts.
-  w_mie(r_mie() | MIE_MTIE);
+  // enable m-mode timer interrupts, u-mode software interrupts, and u-mode external interrupts
+  w_mie(r_mie() | MIE_MTIE | MIE_UEIE | MIE_USIE);
 }
 
 
 int main(void)
 {
-  // disable paging for now.
+  // Disable paging
   w_satp(0);
 
-  // configure Physical Memory Protection to give supervisor mode
+  // Configure Physical Memory Protection to give supervisor mode
   // access to all of physical memory.
-  w_pmpaddr0(0x3fffffffffffffull);
-  w_pmpcfg0(0xf);
+  /* w_pmpaddr0(0x3fffffffffffffull); */
+  /* w_pmpcfg0(0xf); */
 
-  // init ktables
+
+  // OLD: write 0b00001000 to cfgs to allow rwx and enable TOR mode
+  // Turn of cfgs for now
+  /* for (int i = 0; i < 16; i += 2) { */
+  /*   w_pmpcfgi_region(i, 0x0); */
+  /* } */
+  /* for (int i = 1; i < 16; i += 2) { */
+  /*   w_pmpcfgi_region(i, 0x8); */
+  /* } */
+  w_pmpcfg0(0x0);
+  w_pmpcfg1(0x0);
+  w_pmpcfg2(0x0);
+  w_pmpcfg3(0x0);
+  /* for (int i = 0; i < 16; i += 1) { */
+  /*   w_pmpcfgi_region(i, 0x0, 0x0); */
+  /* } */
+
+  // Init ktables
   thread_init_ktable();
   user_irq_init_ktable();
   as_t_init_ktable();
@@ -88,13 +104,12 @@ int main(void)
 
   ktimer_event_create(64, ipc_deliver, NULL);
 
-  // Not creating kernel thread here because it corrupts current stack
   thread_init_subsys();
   create_idle_thread();
   create_root_thread();
 
-	create_kernel_thread();
-	current = get_kernel_thread();
+  create_kernel_thread();
+  current = get_kernel_thread();
 
   // Initialize user interrupts;
   interrupt_init();

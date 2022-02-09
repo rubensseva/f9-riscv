@@ -9,6 +9,7 @@
 #include <softirq.h>
 #include <systhread.h>
 #include <riscv.h>
+#include <interrupt.h>
 
 static softirq_t softirq[NR_SOFTIRQ];
 
@@ -55,8 +56,7 @@ retry:
 		}
 	}
 
-	// Disable interrupts
-	w_mstatus(r_mstatus() & ~(MSTATUS_MIE | MSTATUS_SIE));
+	interrupt_disable();
 
 	softirq_schedule = 0;
 	for (int i = 0; i < NR_SOFTIRQ; ++i) {
@@ -65,8 +65,7 @@ retry:
 
 	set_kernel_state((softirq_schedule) ? T_RUNNABLE : T_INACTIVE);
 
-	// Enable interrupts
-	w_mstatus(r_mstatus() | (MSTATUS_MIE | MSTATUS_SIE));
+	interrupt_enable();
 
 	if (softirq_schedule)
 		goto retry;

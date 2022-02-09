@@ -32,4 +32,7 @@ void mpu_enable(mpu_state_t i);
 void __memmanage_handler(void);
 int mpu_select_lru(as_t *as, uint32_t addr);
 
+
+void w_pmpcfgi_region(int i, uint8_t data);
+
 #endif	/* PLATFORM_MPU_H_ */
