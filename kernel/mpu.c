@@ -21,126 +21,73 @@ void (*w_pmpaddrarr[16])(uint32_t) = {
     w_pmpaddr15,
 };
 
-/* w_pmpaddri writes a pmp addr register based on the pmp entry i (1-16). */
-void w_pmpaddri(int i, uint32_t data) {
-    w_pmpaddrarr[i](data);
+/* w_pmpaddri writes a pmp addr register based on the pmp entry (1-16). */
+void w_pmpaddri(int pmp_entry, uint32_t data) {
+    w_pmpaddrarr[pmp_entry](data);
 }
 
-/* w_pmpcfgi writes a pmp cfg register based on the pmp entry i (1-16).
+/* w_pmpcfgi_region writes a pmp cfg register based on the pmp entry (1-16).
  * Its a bit complex since the cfg configuration is densly packed in
- * registers cfg0-cfg3. Four bytes in each cfg register correspond
+ * registers cfg0-cfg3 (in rv32). Four bytes in each cfg register correspond
  * to the configuration of the 16 pmp entries. */
-void w_pmpcfgi_region(int i, uint8_t data) {
-    // First, figure out what cfg register we should operate on
-    void (*__w_cfg)(uint32_t);
-    uint32_t (*__r_cfg)(void);
-    if (i < 4) {
-        __w_cfg = w_pmpcfg0;
-        __r_cfg = r_pmpcfg0;
-    } else if (i < 8) {
-        __w_cfg = w_pmpcfg1;
-        __r_cfg = r_pmpcfg1;
-    } else if (i < 12) {
-        __w_cfg = w_pmpcfg2;
-        __r_cfg = r_pmpcfg2;
-    } else {
-        __w_cfg = w_pmpcfg3;
-        __r_cfg = r_pmpcfg3;
-    }
-
+void w_pmpcfgi_region(int pmp_entry, uint8_t new_data_region, uint32_t old_data) {
     // Get the shift for the correct byte in the cfg register
-    int shift = (i % 4) * 8;
-    // Create a mask for the data region we want to operate on in the chosen cfg
+    int shift = (pmp_entry % 4) * 8;
     uint32_t mask = 0xFF << shift;
-    // Shift the input data
-    uint32_t shifted_data = data << shift;
-    // Get the previous data from the chosen cfg
-    uint32_t prev_data = __r_cfg();
+    uint32_t shifted = new_data_region << shift;
     // Clear out the old data in the region we want to operate on in the chosen cfg
-    prev_data &= ~mask;
-    // OR the prev data with the shifted data. Since the prev data has zeros in the
-    // region we want to operate on, and the shifted data has zero everywhere else
-    // than the region we want to operate on, this should have the effect of only
-    // setting the bits in the cfg in the chosen region, leaving the rest untouched.
-    __w_cfg(prev_data | shifted_data);
-}
+    uint32_t old_masked = old_data & ~mask;
+    uint32_t final = old_masked | shifted;
 
-uint32_t r_pmpcfgi(int i) {
-    // First, figure out what cfg register we should operate on
-    uint32_t (*__r_cfg)(void);
-    if (i < 4) {
-        __r_cfg = r_pmpcfg0;
-    } else if (i < 8) {
-        __r_cfg = r_pmpcfg1;
-    } else if (i < 12) {
-        __r_cfg = r_pmpcfg2;
+    if (pmp_entry < 4) {
+        w_pmpcfg0(final);
+    } else if (pmp_entry < 8) {
+        w_pmpcfg1(final);
+    } else if (pmp_entry < 12) {
+        w_pmpcfg2(final);
     } else {
-        __r_cfg = r_pmpcfg3;
+        w_pmpcfg3(final);
     }
-    return __r_cfg();
 }
 
-uint8_t r_pmpcfgi_region(int i) {
-    // Get the shift for the correct byte in the cfg register
-    int shift = (i % 4) * 8;
-    // Create a mask for the data region we want to operate on in the chosen cfg
-    uint32_t mask = 0xFF << shift;
-    // Get the previous data from the chosen cfg
-    uint32_t data = r_pmpcfgi(i);
-    // Clear out all other bits than the ones we care about
-    data &= mask;
-    // Shift so we get the value of the cfg region we care about
-    data >>= shift;
-    return data;
+uint32_t r_pmpcfgi(int pmp_entry) {
+    if (pmp_entry < 4) {
+        return r_pmpcfg0();
+    } else if (pmp_entry < 8) {
+        return r_pmpcfg1();
+    } else if (pmp_entry < 12) {
+        return r_pmpcfg2();
+    } else {
+        return r_pmpcfg3();
+    }
 }
-
 
 /* mpu_setup_region sets up pmp for an fpage.
  * n is the number for a range corresponding to two pmp entries. For example:
  *     n = 0 means pmp entries 0 and 1
  *     n = 3 means pmp entries 6 and 7 */
-void mpu_setup_region(int n, fpage_t *fp)
-{
+void mpu_setup_region(int n, fpage_t *fp) {
     if (n > 7) {
-        // REALLY SHOULDNT BE HERE
         return;
     }
-
-    int reg_lower = n * 2;
-    int reg_upper = reg_lower + 1;
+    int pmp_entry_lower = n * 2;
+    int pmp_entry_upper = pmp_entry_lower + 1;
+    uint32_t old_cfg_data = r_pmpcfgi(pmp_entry_upper);
 
     if (fp) {
-        // TODO: Check if these address are properly aligned
-        // Shift 2 to the right because pmpaddr registers encode
-        // bits 33-2 of the address.
-        w_pmpaddri(reg_lower, (FPAGE_BASE(fp) >> 2));
-        w_pmpaddri(reg_upper, (FPAGE_END(fp) >> 2));
+        w_pmpaddri(pmp_entry_lower, (FPAGE_BASE(fp) >> 2));
+        w_pmpaddri(pmp_entry_upper, (FPAGE_END(fp) >> 2));
 
-        // If region does not already have rwx, then set it
-        /* if ((r_pmpcfgi_region(reg_lower) & 0x7) != 0x7) { */
-        /*     w_pmpcfgi_region(reg_lower, (r_pmpcfgi_region(reg_lower) | 0x7)); */
-        /* } */
-        /* if ((r_pmpcfgi_region(reg_upper) & 0x7) != 0x7) { */
-        /*     w_pmpcfgi_region(reg_upper, (r_pmpcfgi_region(reg_upper) | 0x7)); */
-        /* } */
-        /* uint32_t test = r_mstatus(); */
-        /* interrupt_disable(); */
-        /* interrupt_enable(); */
-
-        if ((r_pmpcfgi_region(reg_upper) & 0x7) != 0x7) {
-            w_pmpcfgi_region(reg_upper, (r_pmpcfgi_region(reg_upper) | 0x7));
+        // Check if we need to write to cfg, perform write if necessary
+        int shift = (pmp_entry_upper % 4) * 8;
+        uint32_t mask = 0xFF << shift;
+        uint32_t masked = old_cfg_data & mask;
+        uint32_t shifted = masked >> shift;
+        if ((shifted & 0xF) != 0xF) {
+            w_pmpcfgi_region(pmp_entry_upper, 0xF, old_cfg_data);
         }
-        if ((r_pmpcfgi_region(reg_upper) & 0x8) != 0x8) {
-            /* uint32_t test = r_mstatus(); */
-            interrupt_disable();
-            interrupt_enable();
-            w_pmpcfgi_region(reg_upper, (r_pmpcfgi_region(reg_upper) | 0x8));
-        }
-
-        /* uint8_t old_data = r_pmpcfgi_region(reg_upper); */
     } else {
-        /* Clean MPU region */
-        /* w_pmpcfgi_region(reg_lower, (r_pmpcfgi_region(reg_lower) & 0xF8)); */
-        w_pmpcfgi_region(reg_upper, (r_pmpcfgi_region(reg_upper) & 0x08));
+        // Clear region
+        w_pmpcfgi_region(pmp_entry_upper, 0x8, old_cfg_data);
     }
 }

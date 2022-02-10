@@ -68,27 +68,11 @@ int main(void)
   // Disable paging
   w_satp(0);
 
-  // Configure Physical Memory Protection to give supervisor mode
-  // access to all of physical memory.
-  /* w_pmpaddr0(0x3fffffffffffffull); */
-  /* w_pmpcfg0(0xf); */
-
-
-  // OLD: write 0b00001000 to cfgs to allow rwx and enable TOR mode
-  // Turn of cfgs for now
-  /* for (int i = 0; i < 16; i += 2) { */
-  /*   w_pmpcfgi_region(i, 0x0); */
-  /* } */
-  /* for (int i = 1; i < 16; i += 2) { */
-  /*   w_pmpcfgi_region(i, 0x8); */
-  /* } */
-  w_pmpcfg0(0x0);
-  w_pmpcfg1(0x0);
-  w_pmpcfg2(0x0);
-  w_pmpcfg3(0x0);
-  /* for (int i = 0; i < 16; i += 1) { */
-  /*   w_pmpcfgi_region(i, 0x0, 0x0); */
-  /* } */
+  // Init PMP
+  w_pmpcfg0(0x08080808);
+  w_pmpcfg1(0x08080808);
+  w_pmpcfg2(0x08080808);
+  w_pmpcfg3(0x08080808);
 
   // Init ktables
   thread_init_ktable();
@@ -97,6 +81,7 @@ int main(void)
   ktimer_init_ktable();
   fpage_table_init_ktable();
 
+  // Init subsystems
   sched_init();
   syscall_init();
   ktimer_event_init();
@@ -111,15 +96,13 @@ int main(void)
   create_kernel_thread();
   current = get_kernel_thread();
 
-  // Initialize user interrupts;
+  // Init user interrupts
   interrupt_init();
 
-  // Initate interrupts. Needs to be done after threads are created,
   irqinit();
   plicinit();
   plicinithart();
   uartinit();
-
 
   switch_to_kernel();
 
@@ -127,10 +110,8 @@ int main(void)
   return 0;
 }
 
-//__attribute__((section("__l4_start_section"))) extern void __l4_start(void)
 extern void __l4_start(void)
 {
-  // run_init_hook(INIT_LEVEL_EARLIEST);
 
   /* Fill bss with zeroes */
   memset(&bss_start, 0,

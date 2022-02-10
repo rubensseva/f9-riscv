@@ -10,8 +10,8 @@
 #include <interrupt.h>
 
 void no_interrupt(void) {
+  // Do nothing
   int x = 2 + 3;
-  // do nothing
 }
 
 extern void timervec();
@@ -104,7 +104,7 @@ extern void kerneltrap(uint32_t* caller_sp)
     sync_handler[(mcause_value & MCAUSE_CODE_MASK)]();
   }
 
-  // context switch
+  // Context switch
   current->ctx.sp = (uint32_t) caller_sp;
   tcb_t* sel = schedule_select();
   if (sel != current) {
