@@ -65,14 +65,27 @@ irqinit()
 
 int main(void)
 {
+  uartputc('f');
+  uartputc('9');
+  uartputc(' ');
+  uartputc('s');
+  uartputc('t');
+  uartputc('a');
+  uartputc('r');
+  uartputc('t');
+  uartputc('i');
+  uartputc('n');
+  uartputc('g');
+  uartputc('\n');
+
   // Disable paging
   w_satp(0);
 
   // Init PMP
-  w_pmpcfg0(0x08080808);
-  w_pmpcfg1(0x08080808);
-  w_pmpcfg2(0x08080808);
-  w_pmpcfg3(0x08080808);
+  w_pmpcfg0(0x0);
+  w_pmpcfg1(0x0);
+  w_pmpcfg2(0x0);
+  w_pmpcfg3(0x0);
 
   // Init ktables
   thread_init_ktable();

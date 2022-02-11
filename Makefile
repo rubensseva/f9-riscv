@@ -21,7 +21,7 @@ INCLUDES_DIR:=include
 TARGET:=$(BUILD_DIR)/kernel.bin
 default: $(TARGET)
 
-LINKERSCRIPT:=f9.ld
+LINKERSCRIPT:=linker_scripts/esp32-c3/f9.ld
 
 CFLAGS_MISC_DEFINE = \
 	-DGIT_HEAD=\"$(GIT_HEAD)\" \

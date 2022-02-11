@@ -2,13 +2,20 @@
 file build/kernel.bin
 
 
+
 # Config
-alias re = target remote 127.0.0.1:1234
+alias reqemu = target remote 127.0.0.1:1234
+alias reesp = target extended-remote :3333
 alias pb = print /t
 alias ph = print /x
 set print pretty on
 set listsize 20
 
+reesp
+set remote hardware-watchpoint-limit 2
+mon reset halt
+flushregs
+thb app_main
 
 # Convenience functions
 # Print some common registers

@@ -88,6 +88,6 @@ void mpu_setup_region(int n, fpage_t *fp) {
         }
     } else {
         // Clear region
-        w_pmpcfgi_region(pmp_entry_upper, 0x8, old_cfg_data);
+        w_pmpcfgi_region(pmp_entry_upper, 0x0, old_cfg_data);
     }
 }
