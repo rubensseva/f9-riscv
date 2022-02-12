@@ -65,6 +65,10 @@ irqinit()
 
 int main(void)
 {
+  while (1) {
+    int x = 3;
+  }
+
   uartputc('f');
   uartputc('9');
   uartputc(' ');
@@ -125,6 +129,9 @@ int main(void)
 
 extern void __l4_start(void)
 {
+  while (1) {
+    int x = 2;
+  }
 
   /* Fill bss with zeroes */
   memset(&bss_start, 0,
