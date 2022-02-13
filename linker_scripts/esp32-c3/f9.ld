@@ -59,7 +59,7 @@ SECTIONS {
         *(.text*)
         *(.rodata*)
         kernel_text_end = .;
-    } > InternalInstructions
+    } > iram
 
     .user_text :
     ALIGN (256)
@@ -68,7 +68,7 @@ SECTIONS {
         *(.user_text*)
         . = ALIGN (256);
         user_text_end = .;
-    } > InternalInstructions
+    } > iram
     end_of_text = .;
 
     .sym_tab :
@@ -76,7 +76,7 @@ SECTIONS {
         symtab_start = .;
         KEEP(*(.sym_tab*))
         symtab_end = .;
-    } > InternalData
+    } > dram
 
     .stack :
     ALIGN (256)
@@ -86,7 +86,7 @@ SECTIONS {
         idle_stack_end = .;
         . += KERNEL_STACK_SIZE;
         kernel_stack_end = .;
-    } > InternalData
+    } > dram
 
     .data :
     ALIGN (256)
@@ -98,7 +98,7 @@ SECTIONS {
         /* Only kernel data */
         *(.data*)
         kernel_data_end = .;
-    } > InternalData
+    } > dram
 
     /* zero initialized data */
     .bss (NOLOAD) :
@@ -114,7 +114,7 @@ SECTIONS {
         *(.bitmap*)
         bitmap_end = .;
         bss_end = .;
-    } > InternalData
+    } > dram
 
 
     .user_data :
@@ -133,7 +133,7 @@ SECTIONS {
         user_runtime_end = .;
         . = ALIGN (256);
         user_data_end = .;
-    } > InternalData
+    } > dram
 
     .user_bss (NOLOAD) :
     ALIGN (256)
@@ -145,6 +145,6 @@ SECTIONS {
         mem0_start = .;
         . += MEM0_SIZE;
         mem0_end = .;
-    } > InternalData
+    } > dram
 
 }
