@@ -33,7 +33,8 @@ CFLAGS += -mabi=ilp32
 CFLAGS += -Wall -Wundef # -Wstrict-prototypes
 CFLAGS += -fno-toplevel-reorder -fno-strict-aliasing
 CFLAGS += -Werror-implicit-function-declaration
-CFLAGS += -O0 -fno-omit-frame-pointer -ggdb3
+CFLAGS += -fno-omit-frame-pointer -ggdb3
+CFLAGS += -O0
 CFLAGS += -mcmodel=medany
 CFLAGS += -ffreestanding -fno-common -nostdlib -mno-relax
 CFLAGS += -I$(INCLUDES_DIR)
@@ -43,8 +44,8 @@ CFLAGS += -I$(INCLUDES_DIR)/platform
 CFLAGS += $(CFLAGS_MISC_DEFINE)
 
 LDFLAGS = --gc-sections
-LDLAGS += -march=rv32imc
-LDLAGS += -mabi=ilp32
+# LDLAGS += -march=rv32imc
+# LDLAGS += -mabi=ilp32
 
 
 SOURCES:=$(shell find $(SRC_DIR) -name "*.c")

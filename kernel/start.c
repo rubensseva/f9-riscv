@@ -38,9 +38,9 @@ void
 irqinit()
 {
   // ask the CLINT for a timer interrupt.
-  uint32_t interval = 1000000; // cycles; about 1/10th second in qemu.
-  *(uint32_t*)CLINT_MTIME = 0;
-  *(uint32_t*)CLINT_MTIMECMP = *(uint32_t*)CLINT_MTIME + interval;
+  /* uint32_t interval = 1000000; // cycles; about 1/10th second in qemu. */
+  /* *(uint32_t*)CLINT_MTIME = 0; */
+  /* *(uint32_t*)CLINT_MTIMECMP = *(uint32_t*)CLINT_MTIME + interval; */
 
   // enable supervisor interrupts
   // NOTE: I dont think these are necessary at all?
@@ -65,31 +65,16 @@ irqinit()
 
 int main(void)
 {
-  while (1) {
-    int x = 3;
-  }
-
-  uartputc('f');
-  uartputc('9');
-  uartputc(' ');
-  uartputc('s');
-  uartputc('t');
-  uartputc('a');
-  uartputc('r');
-  uartputc('t');
-  uartputc('i');
-  uartputc('n');
-  uartputc('g');
-  uartputc('\n');
 
   // Disable paging
-  w_satp(0);
+  /* w_satp(0); */
 
   // Init PMP
-  w_pmpcfg0(0x0);
+  w_pmpcfg0(0xF);
   w_pmpcfg1(0x0);
   w_pmpcfg2(0x0);
   w_pmpcfg3(0x0);
+  w_pmpcfg0(0xFFFFFFFF);
 
   // Init ktables
   thread_init_ktable();
@@ -117,9 +102,9 @@ int main(void)
   interrupt_init();
 
   irqinit();
-  plicinit();
-  plicinithart();
-  uartinit();
+  /* plicinit(); */
+  /* plicinithart(); */
+  /* uartinit(); */
 
   switch_to_kernel();
 
@@ -129,13 +114,13 @@ int main(void)
 
 extern void __l4_start(void)
 {
-  while (1) {
-    int x = 2;
-  }
 
   /* Fill bss with zeroes */
-  memset(&bss_start, 0,
-         (&bss_end - &bss_start) * sizeof(uint32_t));
+  for (char *p = &bss_start; p < &bss_end; p++) {
+    *p = 0;
+  }
+  /* memset(&bss_start, 0, */
+  /*        (&bss_end - &bss_start) * sizeof(uint32_t)); */
 
   /* entry point */
   main();
