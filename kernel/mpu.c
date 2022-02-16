@@ -1,5 +1,6 @@
 #include "mpu.h"
 #include "riscv.h"
+#include "thread.h"
 
 
 void (*w_pmpaddrarr[16])(uint32_t) = {
@@ -20,10 +21,32 @@ void (*w_pmpaddrarr[16])(uint32_t) = {
     w_pmpaddr14,
     w_pmpaddr15,
 };
+uint32_t (*r_pmpaddrarr[16])() = {
+    r_pmpaddr0,
+    r_pmpaddr1,
+    r_pmpaddr2,
+    r_pmpaddr3,
+    r_pmpaddr4,
+    r_pmpaddr5,
+    r_pmpaddr6,
+    r_pmpaddr7,
+    r_pmpaddr8,
+    r_pmpaddr9,
+    r_pmpaddr10,
+    r_pmpaddr11,
+    r_pmpaddr12,
+    r_pmpaddr13,
+    r_pmpaddr14,
+    r_pmpaddr15,
+};
 
 /* w_pmpaddri writes a pmp addr register based on the pmp entry (1-16). */
 void w_pmpaddri(int pmp_entry, uint32_t data) {
     w_pmpaddrarr[pmp_entry](data);
+}
+/* r_pmpaddri reads a pmp addr register based on the pmp entry (1-16). */
+uint32_t r_pmpaddri(int pmp_entry) {
+    return r_pmpaddrarr[pmp_entry]();
 }
 
 /* w_pmpcfgi_region writes a pmp cfg register based on the pmp entry (1-16).
@@ -90,4 +113,73 @@ void mpu_setup_region(int n, fpage_t *fp) {
         // Clear region
         w_pmpcfgi_region(pmp_entry_upper, 0x0, old_cfg_data);
     }
+}
+
+
+int addr_in_mpu(uint32_t addr)
+{
+    for (int i = 0; i < 8; ++i) {
+        int pmp_entry_lower = i * 2;
+        int pmp_entry_upper = pmp_entry_lower + 1;
+        uint32_t lower_addr = r_pmpaddri(pmp_entry_lower);
+        uint32_t upper_addr = r_pmpaddri(pmp_entry_upper);
+
+        uint32_t cfg_data = r_pmpcfgi(pmp_entry_upper);
+        // Check if we need to write to cfg, perform write if necessary
+        int shift = (pmp_entry_upper % 4) * 8;
+        uint32_t mask = 0xFF << shift;
+        uint32_t masked = cfg_data & mask;
+        uint32_t shifted = masked >> shift;
+
+        if ((shifted & 0xF) && (addr <= lower_addr && addr < upper_addr)) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+/* mpu_select_lru checks if address addr is in the addres space as, and then
+   sets up an mpu region for it. It uses the FIFO list as->mpu_first to find
+   what fpages to remove if there are not enough mpu entries */
+int mpu_select_lru(as_t *as, uint32_t addr)
+{
+    fpage_t *fp = NULL;
+    int i;
+
+    /* Kernel fault? */
+    if (!as)
+        return 1;
+
+    if (addr_in_mpu(addr))
+        return 1;
+
+    fp = as->first;
+    while (fp) {
+        if (addr_in_fpage(addr, fp, 0)) {
+            fpage_t *sfp = as->mpu_stack_first;
+
+            fp->mpu_next = as->mpu_first;
+            as->mpu_first = fp;
+
+            /* Get first avalible MPU index */
+            i = 0;
+            while (sfp) {
+                ++i;
+                sfp = sfp->mpu_next;
+            }
+
+            /* Update MPU */
+            mpu_setup_region(i++, fp);
+
+            while (i < 8 && fp->mpu_next) {
+                mpu_setup_region(i++, fp->mpu_next);
+                fp = fp->mpu_next;
+            }
+
+            return 0;
+        }
+
+        fp = fp->as_next;
+    }
+    return 1;
 }

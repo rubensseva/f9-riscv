@@ -41,7 +41,7 @@ void thread_init_ktable() {
 
 /* Always sorted, so we can use binary search on it */
 tcb_t *thread_map[CONFIG_MAX_THREADS];
-int thread_count;
+__BSS int thread_count;
 
 /**
  * current are always points to TCB which was on processor before we had fallen

@@ -58,6 +58,13 @@ static inline uint32_t r_mepc()
   return x;
 }
 
+static inline uint32_t r_mtval()
+{
+  uint32_t x;
+  asm volatile("csrr %0, mtval" : "=r" (x));
+  return x;
+}
+
 // Supervisor Status Register, sstatus
 
 #define SSTATUS_SPP (1L << 8)  // Previous mode, 1=Supervisor, 0=User
@@ -299,6 +306,88 @@ static inline void w_pmpaddr14(uint32_t x)
 static inline void w_pmpaddr15(uint32_t x)
 {
   asm volatile("csrw pmpaddr15, %0" : : "r" (x));
+}
+
+
+static inline uint32_t r_pmpaddr0() {
+  uint32_t x;
+  asm volatile("csrr %0, pmpaddr0" : "=r" (x) );
+  return x;
+}
+static inline uint32_t r_pmpaddr1() {
+  uint32_t x;
+  asm volatile("csrr %0, pmpaddr1" : "=r" (x));
+  return x;
+}
+static inline uint32_t r_pmpaddr2() {
+  uint32_t x;
+  asm volatile("csrr %0, pmpaddr2" : "=r" (x));
+  return x;
+}
+static inline uint32_t r_pmpaddr3() {
+  uint32_t x;
+  asm volatile("csrr %0, pmpaddr3" : "=r" (x));
+  return x;
+}
+static inline uint32_t r_pmpaddr4() {
+  uint32_t x;
+  asm volatile("csrr %0, pmpaddr4" : "=r" (x));
+  return x;
+}
+static inline uint32_t r_pmpaddr5() {
+  uint32_t x;
+  asm volatile("csrr %0, pmpaddr5" : "=r" (x));
+  return x;
+}
+static inline uint32_t r_pmpaddr6() {
+  uint32_t x;
+  asm volatile("csrr %0, pmpaddr6" : "=r" (x));
+  return x;
+}
+static inline uint32_t r_pmpaddr7() {
+  uint32_t x;
+  asm volatile("csrr %0, pmpaddr7" : "=r" (x));
+  return x;
+}
+static inline uint32_t r_pmpaddr8() {
+  uint32_t x;
+  asm volatile("csrr %0, pmpaddr8" : "=r" (x));
+  return x;
+}
+static inline uint32_t r_pmpaddr9() {
+  uint32_t x;
+  asm volatile("csrr %0, pmpaddr9" : "=r" (x));
+  return x;
+}
+static inline uint32_t r_pmpaddr10() {
+  uint32_t x;
+  asm volatile("csrr %0, pmpaddr10" : "=r" (x));
+  return x;
+}
+static inline uint32_t r_pmpaddr11() {
+  uint32_t x;
+  asm volatile("csrr %0, pmpaddr11" : "=r" (x));
+  return x;
+}
+static inline uint32_t r_pmpaddr12() {
+  uint32_t x;
+  asm volatile("csrr %0, pmpaddr12" : "=r" (x));
+  return x;
+}
+static inline uint32_t r_pmpaddr13() {
+  uint32_t x;
+  asm volatile("csrr %0, pmpaddr13" : "=r" (x));
+  return x;
+}
+static inline uint32_t r_pmpaddr14() {
+  uint32_t x;
+  asm volatile("csrr %0, pmpaddr14" : "=r" (x));
+  return x;
+}
+static inline uint32_t r_pmpaddr15() {
+  uint32_t x;
+  asm volatile("csrr %0, pmpaddr15" : "=r" (x));
+  return x;
 }
 
 // use riscv's sv39 page table scheme.

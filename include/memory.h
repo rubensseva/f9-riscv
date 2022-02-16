@@ -19,9 +19,9 @@ typedef enum { MAP, GRANT, UNMAP } map_action_t;
 
 typedef struct {
 	uint32_t as_spaceid;	/*! Space Identifier */
-	struct fpage *first;	/*! head of fpage list */
+	struct fpage *first;	/*! head of fpage list, the list of all the fpages in the as */
 
-	struct fpage *mpu_first;	/*! head of MPU fpage list */
+	struct fpage *mpu_first;	/*! head of MPU fpage list, which is a FIFO list of fpages that is mapped by MPU */
 	struct fpage *mpu_stack_first;	/*! head of MPU stack fpage list */
 	uint32_t shared;	/*! shared user number */
 } as_t;

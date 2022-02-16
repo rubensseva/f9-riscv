@@ -19,6 +19,7 @@
  *
  * as_next - next in address space chain
  * map_next - next in mappings chain (cycle list)
+ * mpu_next - next fpage in the list of fpages in the as that is/(should be) setup by MPU
  *
  * base - base address of fpage
  * shift - size of fpage == 1 << shift

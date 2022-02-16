@@ -9,19 +9,52 @@
 #include <uart.h>
 #include <interrupt.h>
 
-void no_interrupt(void) {
+void machine_timer_interrupt_handler(void);
+
+
+extern void timervec();
+extern void kernel_vec_in_c_restore();
+
+void access_fault_handler(void) {
+  // mtval will contain the correct faulting address. For example, on an
+  // instruction access fault, it will contain the instruction. On a load access
+  // fault, it will contain the address that caused that load to fail.
+  uint32_t fault_addr = r_mtval();
+  // Try to setup an mpu region for the address that cause the exception.
+  // If the address is not in the threads address space, nothing will happen.
+  if (mpu_select_lru(current->as, fault_addr) != 0) {
+    // If we get here, the faulting address is not in the threads address space.
+    // TODO: What should we do here? Probably send the exception as an IPC message to pager?
+  }
+}
+
+/* interrupt handlers start */
+
+void unimplemented(void) {
   // Do nothing
   int x = 2 + 3;
 }
 
-extern void timervec();
-extern void kernel_vec_in_c_restore();
-void machine_timer_interrupt_handler(void);
-
-
 void supervisor_timer_interrupt_handler(void) {
   machine_timer_interrupt_handler();
 }
+
+/* interrupt handlers end */
+
+/* exception handlers start */
+/* access fault handlers start */
+void illegal_instruction_access_fault_handler(void) {
+  access_fault_handler();
+}
+
+void load_access_fault_handler(void) {
+  access_fault_handler();
+}
+
+void store_or_AMO_access_fault_handler(void) {
+  access_fault_handler();
+}
+/* access fault handlers end */
 
 void machine_timer_interrupt_handler(void) {
 
@@ -35,12 +68,15 @@ void machine_timer_interrupt_handler(void) {
 }
 
 void ecall_from_u_handler(void) {
+  current->ctx.mepc = r_mepc() + 4;
   svc_handler();
 }
 void ecall_from_s_handler(void) {
+  current->ctx.mepc = r_mepc() + 4;
   svc_handler();
 }
 void ecall_from_m_handler(void) {
+  current->ctx.mepc = r_mepc() + 4;
   svc_handler();
 }
 
@@ -56,37 +92,39 @@ void supervisor_external_interrupt(void) {
       plic_complete(irq);
 }
 
-void (*async_handler[12])() = {
-  no_interrupt,
-  no_interrupt,
-  no_interrupt,
-  no_interrupt,
-  no_interrupt,
+/* exception handlers end */
+
+void (*interrupt_handlers[12])() = {
+  unimplemented,
+  unimplemented,
+  unimplemented,
+  unimplemented,
+  unimplemented,
   supervisor_timer_interrupt_handler,
-  no_interrupt,
+  unimplemented,
   machine_timer_interrupt_handler,
-  no_interrupt,
+  unimplemented,
   supervisor_external_interrupt, // Interrupts to PLIC goes here
-  no_interrupt,
-  no_interrupt,
+  unimplemented,
+  unimplemented,
 };
-void (*sync_handler[16])() = {
-  no_interrupt,
-  no_interrupt,
-  no_interrupt,
-  no_interrupt,
-  no_interrupt,
-  no_interrupt,
-  no_interrupt,
-  no_interrupt,
+void (*exception_handlers[16])() = {
+  unimplemented,
+  illegal_instruction_access_fault_handler,
+  unimplemented,
+  unimplemented,
+  unimplemented,
+  load_access_fault_handler,
+  unimplemented,
+  store_or_AMO_access_fault_handler,
   ecall_from_u_handler,
   ecall_from_s_handler,
-  no_interrupt,
+  unimplemented,
   ecall_from_m_handler, // should only happen from kernel thread
-  no_interrupt,
-  no_interrupt,
-  no_interrupt,
-  no_interrupt,
+  unimplemented,
+  unimplemented,
+  unimplemented,
+  unimplemented,
 };
 
 #define MCAUSE_INT_MASK 0x80000000 // [31]=1 interrupt, else exception
@@ -96,12 +134,11 @@ extern void kerneltrap(uint32_t* caller_sp)
 {
   unsigned long mcause_value = r_mcause();
 
+  current->ctx.mepc = r_mepc();
   if (mcause_value & MCAUSE_INT_MASK) {
-    current->ctx.mepc = r_mepc();
-    async_handler[(mcause_value & MCAUSE_CODE_MASK)]();
+    interrupt_handlers[(mcause_value & MCAUSE_CODE_MASK)]();
   } else {
-    current->ctx.mepc = r_mepc() + 4;
-    sync_handler[(mcause_value & MCAUSE_CODE_MASK)]();
+    exception_handlers[(mcause_value & MCAUSE_CODE_MASK)]();
   }
 
   // Context switch

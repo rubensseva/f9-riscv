@@ -152,10 +152,12 @@ void as_setup_mpu(as_t *as, memptr_t sp, memptr_t pc,
 {
 	fpage_t *mpu[8] = { NULL };
 	fpage_t *fp;
-	int mpu_first_i;
+	int mpu_first_i; // The first available entry in mpu[] after stack fpages are inserted
 	int i, j;
 
 	fpage_t *mpu_stack_first = NULL;
+
+	/* Iterator for walking through stack */
 	memptr_t start = stack_base;
 	memptr_t end = stack_base + stack_size;
 
@@ -174,13 +176,21 @@ void as_setup_mpu(as_t *as, memptr_t sp, memptr_t pc,
 	}
 
 	as->mpu_stack_first = mpu_stack_first;
-	mpu_first_i = i;
+	mpu_first_i = i; // Save the place in mpu[] after stack fpages have been inserted
 
 	/*
 	 * We walk through fpage list
 	 * mpu_fp[0] are pc
 	 * mpu_fp[1] are always-mapped fpages
 	 * mpu_fp[2] are others
+	 *
+	 * What we do here is setup three linked lists of fpages that are meant to be setup by MPU.
+	 * For each fpage in the address space, we check what "type" it is. Is it overlapping the PC,
+	 * should it be always mapped, or all other fpages. For each of these categories, we build
+	 * a list of ->mpu_next entries, linking them together.
+
+	 * When we are done building the three different linked lists, we chain them together.
+	 * Fpages overlapping the PC goes first, then the alwyas mapped fpages, then all the others.
 	 */
 	fp = as->mpu_first;
 	if (!fp) {
@@ -188,6 +198,7 @@ void as_setup_mpu(as_t *as, memptr_t sp, memptr_t pc,
 		fpage_t *mpu_fp[3] = {NULL};
 
 		fp = as->first;
+		/* Build three linked lists of ->mpu_next entries */
 		while (fp) {
 			int priv = 2;
 
@@ -208,6 +219,7 @@ void as_setup_mpu(as_t *as, memptr_t sp, memptr_t pc,
 			fp = fp->as_next;
 		}
 
+		/* Chain together the three different linked lists to one linked list */
 		if (mpu_first[1]) {
 			mpu_fp[1]->mpu_next = mpu_first[2];
 		} else {
@@ -218,17 +230,25 @@ void as_setup_mpu(as_t *as, memptr_t sp, memptr_t pc,
 		} else {
 			mpu_first[0] = mpu_first[1];
 		}
+		/* Set the ->mpu_first of the address space to the final linked list, beginning with
+		   fpages overlapping with the PC */
 		as->mpu_first = mpu_first[0];
 	}
 
-	/* Prevent link to stack pages */
+	/* Prevent link to stack pages
+
+	 * Here, we walk through the ->mpu_first linked list (which was either newly created, or
+	 * persisted from a previous run of this function with the same address space). We check
+	 * if the fpage is a stack fpage, in which case it should already have been added to mpu[]
+	 * with an index lower than mpu_first_i. As long the fpage is NOT a stack fpage, then we
+	 * add it to the mpu[] array, with an index AFTER mpu_first_i.
+	 */
 	for (fp = as->mpu_first; i < 8 && fp; fp = fp->mpu_next) {
 		for (j = 0; j < mpu_first_i; j++) {
 			if (fp == mpu[j]) {
 				break;
 			}
 		}
-
 		if (j == mpu_first_i) {
 			mpu[i++] = fp;
 		}

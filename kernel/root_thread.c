@@ -22,8 +22,8 @@ typedef L4_Word_t L4_ThreadId_t;
 #define L4_nilthread  0UL
 // TODO: Use this instead #define L4_nilthread ((L4_ThreadId_t) { raw : 0UL})
 
-L4_ThreadId_t root_id;
-L4_ThreadId_t user_id;
+__USER_DATA L4_ThreadId_t root_id;
+__USER_DATA L4_ThreadId_t user_id;
 
 typedef struct {
     L4_Word_t base;
@@ -222,7 +222,7 @@ void __USER_TEXT root_thread(kip_t *kip_ptr, utcb_t *utcb_ptr) {
 
     // Create user thread
     char *free_mem = (char *) get_free_base(kip_ptr);
-    L4_ThreadControl(user_thread, user_thread, L4_nilthread, myself, free_mem);
+    L4_ThreadControl(user_thread, myself, L4_nilthread, myself, free_mem);
 
     // Start user thread
     ipc_msg_tag_t tag = {{0, 0, 0, 0}};

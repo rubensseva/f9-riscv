@@ -222,6 +222,7 @@ fpage_t *split_fpage(as_t *as, fpage_t *fpage, memptr_t split, int rl)
 		return fpage;
 	}
 
+	/* Since map_next is a cyclic list, if fpage->map_next == fpage then it is "empty" */
 	if (fpage->map_next != fpage) {
 		/* Splitting not supported for mapped pages */
 		/* UNIMPLIMENTED */

@@ -13,7 +13,7 @@
 #include <irq.h>
 #include <init_hook.h>
 
-tcb_t *caller;
+__BSS tcb_t *caller;
 
 void svc_handler(void)
 {

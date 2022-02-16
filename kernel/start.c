@@ -33,6 +33,7 @@ __attribute__ ((aligned (16))) char stack0[16384];
 
 // From kernelvec.S
 extern void kernelvec();
+extern void _vector_table();
 
 void
 irqinit()
@@ -49,7 +50,7 @@ irqinit()
   /* w_sie(r_sie() | SIE_SEIE | SIE_SSIE); */
   /* w_mstatus(r_mstatus() | MSTATUS_SIE); */
 
-  w_mtvec((uint32_t)kernelvec);
+  w_mtvec((uint32_t)_vector_table);
 
   // enable machine-mode interrupts.
   // this should be enabled after the first interrupt
@@ -59,7 +60,8 @@ irqinit()
   // mstatus.mpie as well here, to prevent mstatus.mie from being disabled.
   w_mstatus(r_mstatus() | MSTATUS_MPIE);
   // enable m-mode timer interrupts, u-mode software interrupts, and u-mode external interrupts
-  w_mie(r_mie() | MIE_MTIE | MIE_UEIE | MIE_USIE);
+  // I dont think we can do the next line on esp32_c3, doesnt seem like mie is available at all
+  /* w_mie(r_mie() | MIE_MTIE | MIE_UEIE | MIE_USIE); */
 }
 
 
@@ -70,11 +72,11 @@ int main(void)
   /* w_satp(0); */
 
   // Init PMP
-  w_pmpcfg0(0xF);
+  w_pmpcfg0(0x0);
   w_pmpcfg1(0x0);
   w_pmpcfg2(0x0);
   w_pmpcfg3(0x0);
-  w_pmpcfg0(0xFFFFFFFF);
+  /* w_pmpcfg0(0xFFFFFFFF); */
 
   // Init ktables
   thread_init_ktable();
