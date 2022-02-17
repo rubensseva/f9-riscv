@@ -100,11 +100,28 @@ SECTIONS {
         kernel_data_end = .;
     } > dram
 
+    /* Taken from https://www.sifive.com/blog/all-aboard-part-3-linker-relaxation-in-riscv-toolchain */
+    /* We want the small data sections together, so single-instruction offsets
+    can access them all, and initialized data all before uninitialized, so
+    we can shorten the on-disk segment size.  */
+    .sdata :
+    {
+        __global_pointer$ = . + 0x800;
+        *(.srodata.cst16) *(.srodata.cst8) *(.srodata.cst4) *(.srodata.cst2) *(.srodata .srodata.*)
+        *(.sdata .sdata.* .gnu.linkonce.s.*)
+    } > dram
+    . = .;
     /* zero initialized data */
+    bss_start = .;
+    .sbss :
+    {
+        *(.dynsbss)
+        *(.sbss .sbss.* .gnu.linkonce.sb.*)
+        *(.scommon)
+    } > dram
     .bss (NOLOAD) :
     ALIGN (256)
     {
-        bss_start = .;
         kernel_bss_start = .;
         *(.bss*)
         *(.ktable*)         /* Statically allocated kernel table */
@@ -113,8 +130,8 @@ SECTIONS {
         bitmap_start = .;
         *(.bitmap*)
         bitmap_end = .;
-        bss_end = .;
     } > dram
+    bss_end = .;
 
 
     .user_data :
