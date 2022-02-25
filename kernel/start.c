@@ -27,8 +27,21 @@
 #include <kernel_vec_in_c.h>
 #include <uart_ESP32_C3.h>
 #include <plic.h>
+#include <stdio.h>
+#include <debug.h>
 
+// TODO: Shouldnt really be here
+extern dbg_layer_t dbg_layer;
 
+static char banner[] =
+	"\n"
+	"====================================================\n"
+	" Copyright(C) 2013-2014 The F9 Microkernel Project  \n"
+	"====================================================\n"
+	"Git head: " GIT_HEAD "\n"
+	"Host: " MACH_TYPE "\n"
+	"Build: "  BUILD_TIME "\n"
+	"\n";
 
 __attribute__ ((aligned (16))) char stack0[16384];
 
@@ -108,10 +121,11 @@ int main(void)
   /* plicinit(); */
   /* plicinithart(); */
 
+  // TODO: Put these things in appropriate functions
   UART_init(115200);
-  UART_write('y');
-  UART_write('e');
-  UART_write('s');
+  dbg_layer = DL_BASIC | DL_KDB  | DL_KTABLE | DL_SOFTIRQ | DL_THREAD |
+    DL_KTIMER | DL_SYSCALL | DL_SCHEDULE | DL_MEMORY | DL_IPC;
+  __l4_printf("%s", banner);
 
   switch_to_kernel();
 

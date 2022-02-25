@@ -9,9 +9,9 @@
 #include <ipc.h>
 #include <l4/utcb.h>
 #include <memory.h>
-// #include <platform/armv7m.h>
 #include <irq.h>
 #include <init_hook.h>
+#include <debug.h>
 
 __BSS tcb_t *caller;
 
@@ -76,6 +76,10 @@ void syscall_handler()
 	uint32_t *sc_param1 = (uint32_t *) caller->ctx.sp;
 	uint32_t sc_num = sc_param1[REG_A0];
 	// uint32_t *sc_param2 = caller->ctx.a_regs;
+	dbg_printf(DL_SYSCALL,
+				"SVC: %d called [%d, %d, %d, %d]\n", sc_num,
+				sc_param1[REG_A0], sc_param1[REG_A1],
+				sc_param1[REG_A2], sc_param1[REG_A3]);
 
 	if (sc_num == SYS_THREAD_CONTROL) {
 		/* Simply call thread_create
@@ -87,10 +91,10 @@ void syscall_handler()
 	} else if (sc_num == SYS_IPC) {
 		sys_ipc(sc_param1);
 	} else {
-		/* dbg_printf(DL_SYSCALL, */
-		/*            "SVC: %d called [%d, %d, %d, %d]\n", svc_num, */
-		/*            svc_param1[REG_R0], svc_param1[REG_R1], */
-		/*            svc_param1[REG_R2], svc_param1[REG_R3]); */
+		dbg_printf(DL_SYSCALL,
+		           "SVC: %d called [%d, %d, %d, %d]\n", sc_num,
+		           sc_param1[REG_A0], sc_param1[REG_A1],
+		           sc_param1[REG_A2], sc_param1[REG_A3]);
 		caller->state = T_RUNNABLE;
 	}
 }

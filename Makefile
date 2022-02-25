@@ -11,6 +11,9 @@ GIT_HEAD = $(shell git rev-parse HEAD)
 MACH_TYPE = $(shell uname -m)
 BUILD_TIME = $(shell date +%FT%T%z)
 
+# Config vars
+CONFIG_DEBUG = y
+
 CC:=~/CustomInstalledPrograms/riscv-from-sourc/bin/riscv32-unknown-elf-gcc
 LD:=~/CustomInstalledPrograms/riscv-from-sourc/bin/riscv32-unknown-elf-ld
 
@@ -26,7 +29,8 @@ LINKERSCRIPT:=linker_scripts/esp32-c3/f9.ld
 CFLAGS_MISC_DEFINE = \
 	-DGIT_HEAD=\"$(GIT_HEAD)\" \
 	-DMACH_TYPE=\"$(MACH_TYPE)\" \
-	-DBUILD_TIME=\"$(BUILD_TIME)\"
+	-DBUILD_TIME=\"$(BUILD_TIME)\"\
+	-DCONFIG_DEBUG=\"$(CONFIG_DEBUG)\"
 
 CFLAGS += -march=rv32imc
 CFLAGS += -mabi=ilp32
