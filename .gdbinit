@@ -27,17 +27,39 @@ define pr
   print /t $mstatus
 end
 
-# Print source code that mepc points to
-define ppc
-  list *$mepc
+define pmpaddr
+  printf "%x -> %x\n", $pmpaddr0 << 2, $pmpaddr1 << 2
+  printf "%x -> %x\n", $pmpaddr2 << 2, $pmpaddr3 << 2
+  printf "%x -> %x\n", $pmpaddr4 << 2, $pmpaddr5 << 2
+  printf "%x -> %x\n", $pmpaddr6 << 2, $pmpaddr7 << 2
+  printf "%x -> %x\n", $pmpaddr8 << 2, $pmpaddr9 << 2
+  printf "%x -> %x\n", $pmpaddr10 << 2, $pmpaddr11 << 2
+  printf "%x -> %x\n", $pmpaddr12 << 2, $pmpaddr13 << 2
+  printf "%x -> %x\n", $pmpaddr14 << 2, $pmpaddr15 << 2
 end
 
-# Run nexti and disas in one command
-define nid
-  nexti
-  disas
+define pmpcfg
+  print /x $pmpcfg0
+  print /x $pmpcfg1
+  print /x $pmpcfg2
+  print /x $pmpcfg3
 end
 
+define thread_fpages
+  set var $n = $arg0->as->first
+  while $n
+    printf "%x -> %x\n", $n->fpage->base, $n->fpage->base + $n->fpage->size
+    set var $n = $n->as_next
+  end
+end
+
+define curr_fpages
+  set var $n = current->as->first
+  while $n
+    printf "%x -> %x\n", $n->fpage->base, $n->fpage->base + $n->fpage->size
+    set var $n = $n->as_next
+  end
+end
 
 # Breakpoints
 define sbr

@@ -3,7 +3,7 @@
 #include <thread.h>
 #include <syscall.h>
 #include <ipc.h>
-#include <uart.h>
+#include <uart_ESP32_C3.h>
 #include <interrupt_ipc.h>
 #include <l4/utcb.h>
 
@@ -108,12 +108,12 @@ void L4_ThreadControl(L4_ThreadId_t dest, L4_ThreadId_t SpaceSpecifier,
 }
 
 
-void __USER_TEXT user_uart_handler() {
-  int c = uartgetc();
-  if (c != -1) {
-    uartputc(c);
-  }
-}
+/* void __USER_TEXT user_uart_handler() { */
+/*   int c = uartgetc(); */
+/*   if (c != -1) { */
+/*     uartputc(c); */
+/*   } */
+/* } */
 
 void __USER_TEXT L4_map(memptr_t base, uint32_t size, L4_ThreadId_t tid) {
     ipc_msg_tag_t tag;
@@ -150,61 +150,63 @@ void __USER_TEXT map_user_sections(kip_t *kip_ptr, L4_ThreadId_t tid)
 }
 
 void __USER_TEXT my_user_thread() {
+  UART_write('n');
   // Recieve some data from root_thread
   ipc_msg_tag_t tag = {{1, 0, 0, 0}};
   ((utcb_t *)current_utcb)->mr[0] = tag.raw;
   L4_Ipc(L4_nilthread, root_id);
 
   // Send some test data through UART
-  uartputc('h');
-  uartputc('e');
-  uartputc('l');
-  uartputc('l');
-  uartputc('o');
-  uartputc(' ');
-  uartputc('w');
-  uartputc('o');
-  uartputc('r');
-  uartputc('l');
-  uartputc('d');
+  /* uartputc('h'); */
+  /* uartputc('e'); */
+  /* uartputc('l'); */
+  /* uartputc('l'); */
+  /* uartputc('o'); */
+  /* uartputc(' '); */
+  /* uartputc('w'); */
+  /* uartputc('o'); */
+  /* uartputc('r'); */
+  /* uartputc('l'); */
+  /* uartputc('d'); */
+  UART_write('y');
 
   // Request UART interrupts
-  ipc_msg_tag_t irq_tag = {{0, 0, 0, 0}};
-  irq_tag.s.n_untyped = 5;
-  irq_tag.s.label = USER_INTERRUPT_LABEL;
-  ((utcb_t *)current_utcb)->mr[0] = irq_tag.raw;
-  ((utcb_t *)current_utcb)->mr[1] = (uint16_t) 10; // IRQ_N
-  ((utcb_t *)current_utcb)->mr[2] = (l4_thread_t) user_id;
-  ((utcb_t *)current_utcb)->mr[3] = (uint16_t) USER_IRQ_ENABLE; // action
-  ((utcb_t *)current_utcb)->mr[4] = (void *) user_uart_handler;
-  ((utcb_t *)current_utcb)->mr[5] = (uint16_t) 1; // priority
-  L4_ThreadId_t irq_gid = TID_TO_GLOBALID(THREAD_IRQ_REQUEST);
-  L4_Ipc(irq_gid, L4_NILTHREAD);
+  /* ipc_msg_tag_t irq_tag = {{0, 0, 0, 0}}; */
+  /* irq_tag.s.n_untyped = 5; */
+  /* irq_tag.s.label = USER_INTERRUPT_LABEL; */
+  /* ((utcb_t *)current_utcb)->mr[0] = irq_tag.raw; */
+  /* ((utcb_t *)current_utcb)->mr[1] = (uint16_t) 10; // IRQ_N */
+  /* ((utcb_t *)current_utcb)->mr[2] = (l4_thread_t) user_id; */
+  /* ((utcb_t *)current_utcb)->mr[3] = (uint16_t) USER_IRQ_ENABLE; // action */
+  /* ((utcb_t *)current_utcb)->mr[4] = (void *) user_uart_handler; */
+  /* ((utcb_t *)current_utcb)->mr[5] = (uint16_t) 1; // priority */
+  /* L4_ThreadId_t irq_gid = TID_TO_GLOBALID(THREAD_IRQ_REQUEST); */
+  /* L4_Ipc(irq_gid, L4_NILTHREAD); */
 
-  while (1) {
-    // Wait for IPC
-    L4_ThreadId_t intr_tid = TID_TO_GLOBALID(THREAD_INTERRUPT);
-    L4_Ipc(L4_nilthread, intr_tid);
-    // At this point, the answer from IPC should be in the MRs
-    // TODO: Not sure if user space should be able to view the utcb type? Maybe its ok?
-    uint32_t *mrs = ((utcb_t*)current_utcb)->mr;
+  /* while (1) { */
+  /*   // Wait for IPC */
+  /*   L4_ThreadId_t intr_tid = TID_TO_GLOBALID(THREAD_INTERRUPT); */
+  /*   L4_Ipc(L4_nilthread, intr_tid); */
+  /*   // At this point, the answer from IPC should be in the MRs */
+  /*   // TODO: Not sure if user space should be able to view the utcb type? Maybe its ok? */
+  /*   uint32_t *mrs = ((utcb_t*)current_utcb)->mr; */
 
-    ipc_msg_tag_t new_tag = {.raw = mrs[0]};
-    uint32_t irqn = mrs[IRQ_IPC_IRQN + 1];
-    irq_handler_t handler = mrs[IRQ_IPC_HANDLER + 1];
-    uint32_t action = mrs[IRQ_IPC_ACTION + 1];
+  /*   ipc_msg_tag_t new_tag = {.raw = mrs[0]}; */
+  /*   uint32_t irqn = mrs[IRQ_IPC_IRQN + 1]; */
+  /*   irq_handler_t handler = mrs[IRQ_IPC_HANDLER + 1]; */
+  /*   uint32_t action = mrs[IRQ_IPC_ACTION + 1]; */
 
-    switch (action) {
-    case USER_IRQ_ENABLE:
-      handler();
-      break;
-      /* case USER_IRQ_FREE: */
-      /*    // return NULL; */
-      /* } */
-    }
+  /*   switch (action) { */
+  /*   case USER_IRQ_ENABLE: */
+  /*     handler(); */
+  /*     break; */
+  /*     /\* case USER_IRQ_FREE: *\/ */
+  /*     /\*    // return NULL; *\/ */
+  /*     /\* } *\/ */
+  /*   } */
 
-    // L4_Sleep();
-  }
+  /*   // L4_Sleep(); */
+  /* } */
 }
 
 

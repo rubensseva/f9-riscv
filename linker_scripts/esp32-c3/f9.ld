@@ -165,3 +165,10 @@ SECTIONS {
     } > dram
 
 }
+
+
+PROVIDE(uart_tx_one_char = 0x40000068);
+PROVIDE(uart_tx_one_char2 = 0x4000006c);
+PROVIDE(uart_rx_one_char = 0x40000070);
+PROVIDE(uart_rx_one_char_block = 0x40000074);
+PROVIDE(uart_rx_readbuff = 0x40000078);

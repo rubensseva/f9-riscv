@@ -57,7 +57,7 @@ typedef struct {
 #define MP_NO_FPAGE	0x0000		/*! Not mappable */
 #define MP_SRAM		0x0100		/*! Fpage in SRAM: granularity 1 << */
 // #define MP_AHB_RAM	0x0200		/*! Fpage in AHB SRAM: granularity 64 words, bit bang mappings */
-// #define MP_DEVICES	0x0400		/*! Fpage in AHB/APB0/AHB0: granularity 16 kB */
+#define MP_DEVICES	0x0400		/*! Fpage in AHB/APB0/AHB0: granularity 16 kB */
 #define MP_MEMPOOL	0x0800		/*! Entire mempool is mapped  */
 
 /* Map memory from mempool always (for example text is mapped always because

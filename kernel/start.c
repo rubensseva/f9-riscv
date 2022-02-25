@@ -25,8 +25,9 @@
 #include <thread.h>
 #include <interrupt.h>
 #include <kernel_vec_in_c.h>
-#include <uart.h>
+#include <uart_ESP32_C3.h>
 #include <plic.h>
+
 
 
 __attribute__ ((aligned (16))) char stack0[16384];
@@ -106,7 +107,11 @@ int main(void)
   irqinit();
   /* plicinit(); */
   /* plicinithart(); */
-  /* uartinit(); */
+
+  UART_init(115200);
+  UART_write('y');
+  UART_write('e');
+  UART_write('s');
 
   switch_to_kernel();
 

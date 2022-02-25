@@ -39,6 +39,9 @@
  * so for large ASes, we will often receive memmanage faults), and fpage table.
  */
 
+#define PERIPHERAL_MEM_START 0x60000000
+#define PERIPHERAL_MEM_SIZE 836000 // 836KB
+
 /**
  * Memory map of MPU.
  * Translated into memdesc array in KIP by memory_init
@@ -59,7 +62,9 @@ static mempool_t memmap[] = {
 	DECLARE_MEMPOOL_2("UBSS",  user_bss,
 		MP_UR | MP_UW | MP_MEMPOOL  | MP_MAP_ALWAYS, MPT_USER_DATA),
 	DECLARE_MEMPOOL_2("MEM0",  mem0,
-					  MP_UR | MP_UW | MP_SRAM, MPT_AVAILABLE)
+					  MP_UR | MP_UW | MP_SRAM, MPT_AVAILABLE),
+	DECLARE_MEMPOOL("PERI",  PERIPHERAL_MEM_START, PERIPHERAL_MEM_START + PERIPHERAL_MEM_SIZE,
+					MP_KR | MP_KW | MP_UR | MP_UW | MP_DEVICES, MPT_DEVICES),
 	// DECLARE_MEMPOOL("MEM0",  &mem0_start, 0x2001c000,
 	// MP_UR | MP_UW | MP_SRAM, MPT_AVAILABLE),
 };

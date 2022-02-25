@@ -6,7 +6,6 @@
 #include <riscv.h>
 #include <plic.h>
 #include <irq.h>
-#include <uart.h>
 #include <interrupt.h>
 
 void machine_timer_interrupt_handler(void);

@@ -62,6 +62,11 @@ static fpage_t *kip_fpage, *kip_extra_fpage;
 extern kip_t kip;
 extern char *kip_extra;
 
+/* Peripheral mem declarations */
+static fpage_t *perip_fpage;
+uint32_t perip = 0x60000000;
+uint32_t perip_size = 836000;
+
 static tcb_t *thread_sched(sched_slot_t *);
 
 void thread_init_subsys()
@@ -81,6 +86,11 @@ void thread_init_subsys()
 	assign_fpages_ext(-1, NULL,
 	                  (memptr_t) kip_extra, CONFIG_KIP_EXTRA_SIZE,
 	                  &kip_extra_fpage, &last);
+
+	/* Create perip fpages */
+	assign_fpages_ext(-1, NULL,
+	                  (memptr_t) perip, perip_size,
+	                  &perip_fpage, &last);
 
 	sched_slot_set_handler(SSI_NORMAL_THREAD, thread_sched);
 }
@@ -278,6 +288,9 @@ void thread_space(tcb_t *thr, l4_thread_t spaceid, utcb_t *utcb)
 		/* Grant kip_fpage & kip_ext_fpage only to new AS */
 		map_fpage(NULL, thr->as, kip_fpage, GRANT);
 		map_fpage(NULL, thr->as, kip_extra_fpage, GRANT);
+
+		/* Grant perip mem */
+		map_fpage(NULL, thr->as, perip_fpage, GRANT);
 
 		/* dbg_printf(DL_THREAD, */
 		/*            "\tNew space: as: %p, utcb: %p \n", thr->as, utcb); */
