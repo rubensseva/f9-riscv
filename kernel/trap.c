@@ -7,12 +7,22 @@
 #include <plic.h>
 #include <irq.h>
 #include <interrupt.h>
+#include <debug.h>
+#include <thread.h>
+#include <memory.h>
+#include <mpu.h>
 
 void machine_timer_interrupt_handler(void);
 
 
 extern void timervec();
 extern void kernel_vec_in_c_restore();
+
+void dump_state() {
+    dump_threads();
+    dump_mpu();
+    dump_current_thread();
+}
 
 void access_fault_handler(void) {
   // mtval will contain the correct faulting address. For example, on an
@@ -22,8 +32,14 @@ void access_fault_handler(void) {
   // Try to setup an mpu region for the address that cause the exception.
   // If the address is not in the threads address space, nothing will happen.
   if (mpu_select_lru(current->as, fault_addr) != 0) {
-    // If we get here, the faulting address is not in the threads address space.
     // TODO: What should we do here? Probably send the exception as an IPC message to pager?
+    uint32_t mcause = r_mcause();
+    uint32_t mstatus = r_mstatus();
+    uint32_t mepc = r_mepc();
+    dbg_printf(DL_EMERG,
+               "\n------ACCESS FAULT------\nmcause: 0x%x, mstaus: 0x%x, mepc: 0x%x, mtval: 0x%x, thread_id: %d\n",
+               mcause, mstatus, mepc, fault_addr, current->t_globalid);
+    dump_state();
   }
 }
 
@@ -55,6 +71,27 @@ void store_or_AMO_access_fault_handler(void) {
 }
 /* access fault handlers end */
 
+void instruction_address_misaligned_handler(void) {
+  dbg_printf(DL_EMERG, "Instruction address misaligned exception. mepc: %x, mtval: %x\n",
+             r_mepc(), r_mtval());
+  dump_state();
+}
+void illegal_instruction_handler(void) {
+  dbg_printf(DL_EMERG, "Illegal instruction exception. mepc: %x, mtval: %x\n",
+             r_mepc(), r_mtval());
+  dump_state();
+}
+void load_address_misaligned_handler(void) {
+  dbg_printf(DL_EMERG, "Load address misalgined exception. mepc: %x, mtval: %x\n",
+             r_mepc(), r_mtval());
+  dump_state();
+}
+void store_or_AMO_address_misaligned_handler(void) {
+  dbg_printf(DL_EMERG, "Store/AMO address misaligned exception. mepc: %x, mtval: %x\n",
+             r_mepc(), r_mtval());
+  dump_state();
+}
+
 void machine_timer_interrupt_handler(void) {
 
   uint32_t *clint_mtimecmp = (uint32_t*)CLINT_MTIMECMP;
@@ -71,6 +108,9 @@ void ecall_from_u_handler(void) {
   svc_handler();
 }
 void ecall_from_s_handler(void) {
+  dbg_printf(DL_EMERG, "Ecall from supervisor mode, this should never happen. Trying to proceed. mepc: %x, mstatus: %x\n",
+             r_mepc(), r_mstatus());
+  dump_state();
   current->ctx.mepc = r_mepc() + 4;
   svc_handler();
 }
@@ -108,13 +148,13 @@ void (*interrupt_handlers[12])() = {
   unimplemented,
 };
 void (*exception_handlers[16])() = {
-  unimplemented,
+  instruction_address_misaligned_handler,
   illegal_instruction_access_fault_handler,
-  unimplemented,
-  unimplemented,
-  unimplemented,
+  illegal_instruction_handler,
+  unimplemented, // breakpoint
+  load_address_misaligned_handler,
   load_access_fault_handler,
-  unimplemented,
+  store_or_AMO_address_misaligned_handler,
   store_or_AMO_access_fault_handler,
   ecall_from_u_handler,
   ecall_from_s_handler,

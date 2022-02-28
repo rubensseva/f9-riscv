@@ -122,4 +122,7 @@ tcb_t *thread_current(void);
 
 int schedule(void);
 
+void dump_threads(void);
+void dump_current_thread(void);
+
 #endif /* THREAD_H_ */

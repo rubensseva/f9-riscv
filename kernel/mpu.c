@@ -1,6 +1,7 @@
-#include "mpu.h"
-#include "riscv.h"
-#include "thread.h"
+#include <mpu.h>
+#include <riscv.h>
+#include <thread.h>
+#include <debug.h>
 
 
 void (*w_pmpaddrarr[16])(uint32_t) = {
@@ -182,4 +183,39 @@ int mpu_select_lru(as_t *as, uint32_t addr)
         fp = fp->as_next;
     }
     return 1;
+}
+
+
+void dump_mpu()
+{
+    // dbg_printf(DL_EMERG, "-------MPU------\n");
+    dbg_printf(DL_EMERG,
+               "pmp config:\n");
+    dbg_printf(DL_EMERG,
+               "0: %x", r_pmpcfg0());
+    dbg_printf(DL_EMERG,
+               "1: %x", r_pmpcfg1());
+    dbg_printf(DL_EMERG,
+               "2: %x", r_pmpcfg2());
+    dbg_printf(DL_EMERG,
+               "3: %x\n", r_pmpcfg3());
+
+    dbg_printf(DL_EMERG,
+               "pmp address regions:\n");
+    dbg_printf(DL_EMERG,
+               "0-1: %p -> %p\n", r_pmpaddr0() << 2, r_pmpaddr1() << 2);
+    dbg_printf(DL_EMERG,
+               "2-3: %p -> %p\n", r_pmpaddr2() << 2, r_pmpaddr3() << 2);
+    dbg_printf(DL_EMERG,
+               "4-5: %p -> %p\n", r_pmpaddr4() << 2, r_pmpaddr5() << 2);
+    dbg_printf(DL_EMERG,
+               "6-7: %p -> %p\n", r_pmpaddr6() << 2, r_pmpaddr7() << 2);
+    dbg_printf(DL_EMERG,
+               "8-9: %p -> %p\n", r_pmpaddr8() << 2, r_pmpaddr9() << 2);
+    dbg_printf(DL_EMERG,
+               "10-11: %p -> %p\n", r_pmpaddr10() << 2, r_pmpaddr11() << 2);
+    dbg_printf(DL_EMERG,
+               "12-13: %p -> %p\n", r_pmpaddr12() << 2, r_pmpaddr13() << 2);
+    dbg_printf(DL_EMERG,
+               "14-15: %p -> %p\n", r_pmpaddr14() << 2, r_pmpaddr15() << 2);
 }

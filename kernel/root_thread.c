@@ -204,9 +204,12 @@ void __USER_TEXT my_user_thread() {
   /*     /\*    // return NULL; *\/ */
   /*     /\* } *\/ */
   /*   } */
+  int *x = 0x0;
+  int y = *x;
 
   /*   // L4_Sleep(); */
   /* } */
+  while (1) {}
 }
 
 

@@ -4,44 +4,25 @@
  */
 
 #include <lib/ktable.h>
+#include <debug.h>
 
-#ifdef CONFIG_KDB
-#include <kdb.h>
-
-#define KTABLE_NUM 16
-static ktable_t *kdb_ktables[KTABLE_NUM];
-static uint8_t kdb_ktable_cnt;
-
-static void kdb_register_ktable(ktable_t *kt)
+void dump_ktable(ktable_t *kt)
 {
-	if (kdb_ktable_cnt < (KTABLE_NUM - 1)) {
-		kdb_ktables[kdb_ktable_cnt++] = kt;
+	int j;
+
+	dbg_printf(DL_KDB, "\nKT: %s\nbitmap:%p, data:%p, num: %d size: %d\n",
+				kt->tname, kt->bitmap, kt->data, kt->num, kt->size);
+	/* Dump bitmap */
+	for (j = 0; j < kt->num; ++j) {
+		if (j % 64 == 0)
+			dbg_printf(DL_KDB, "%5d: ", j);
+
+		dbg_puts((bitmap_get_bit(bitmap_cursor(kt->bitmap, j))) ? 'X' : '-');
+
+		if ((j + 1) % 64 == 0)
+			dbg_puts("\n");
 	}
 }
-
-void kdb_dump_ktable(void)
-{
-	int i = 0, j;
-	ktable_t *kt;
-
-	for (; i < kdb_ktable_cnt; ++i) {
-		kt = kdb_ktables[i];
-		/* dbg_printf(DL_KDB, "\nKT: %s\nbitmap:%p, data:%p, num: %d size: %d\n", */
-		/*            kt->tname, kt->bitmap, kt->data, kt->num, kt->size); */
-		/* Dump bitmap */
-		for (j = 0; j < kt->num; ++j) {
-			if (j % 64 == 0)
-				/* dbg_printf(DL_KDB, "%5d: ", j); */
-
-			/* dbg_putchar((bitmap_get_bit(bitmap_cursor(kt->bitmap, j))) ? 'X' : '-'); */
-
-			if ((j + 1) % 64 == 0)
-				/* dbg_puts("\n"); */
-		}
-	}
-}
-
-#endif	/* CONFIG_KDB */
 
 /**
  * Initialize kernel table kt

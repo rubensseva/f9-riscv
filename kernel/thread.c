@@ -11,6 +11,7 @@
 // #include <platform/armv7m.h>
 #include <fpage_impl.h>
 #include <init_hook.h>
+#include <debug.h>
 
 /**
  * @file    thread.c
@@ -465,3 +466,42 @@ static tcb_t *thread_sched(sched_slot_t *slot)
 	return thread_select(root);
 }
 
+void dump_threads(void)
+{
+	tcb_t *thr;
+	int idx;
+
+	char *state[] = { "FREE", "RUN", "SVC", "RECV", "SEND" };
+
+	dbg_printf(DL_KDB, "thread dump:\n");
+
+	dbg_printf(DL_KDB, "%8s %8s %6s %s\n",
+	           "global", "local", "state", "parent");
+
+	for_each_in_ktable(thr, idx, (&thread_table)) {
+		dbg_printf(DL_KDB, "%t %t %6s %t\n",
+		           thr->t_globalid, thr->t_localid, state[thr->state],
+		           (thr->t_parent) ? thr->t_parent->t_globalid : 0);
+	}
+}
+
+void dump_current_thread(void)
+{
+	char *state[] = { "FREE", "RUN", "SVC", "RECV", "SEND" };
+
+	dbg_printf(DL_KDB, "current thread:\n");
+
+	dbg_printf(DL_KDB, "%8s %8s %6s %s\n",
+	           "global", "local", "state", "parent");
+	dbg_printf(DL_KDB, "%t %t %6s %t\n",
+				current->t_globalid, current->t_localid, state[current->state],
+				(current->t_parent) ? current->t_parent->t_globalid : 0);
+
+	dbg_printf(DL_KDB, "current thread fpages:\n");
+	fpage_t *fpage = current->as->first;
+	while (fpage) {
+		dbg_printf(DL_KDB, "%x -> %x\n",
+				   fpage->fpage.base, fpage->fpage.base + fpage->fpage.size);
+		fpage = fpage->as_next;
+	};
+}
