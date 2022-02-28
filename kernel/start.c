@@ -26,6 +26,7 @@
 #include <interrupt.h>
 #include <kernel_vec_in_c.h>
 #include <uart_ESP32_C3.h>
+#include <ESP32_C3.h>
 #include <plic.h>
 #include <stdio.h>
 #include <debug.h>
@@ -49,9 +50,7 @@ __attribute__ ((aligned (16))) char stack0[16384];
 extern void kernelvec();
 extern void _vector_table();
 
-void
-irqinit()
-{
+void irqinit() {
   // ask the CLINT for a timer interrupt.
   /* uint32_t interval = 1000000; // cycles; about 1/10th second in qemu. */
   /* *(uint32_t*)CLINT_MTIME = 0; */
@@ -78,10 +77,31 @@ irqinit()
   /* w_mie(r_mie() | MIE_MTIE | MIE_UEIE | MIE_USIE); */
 }
 
+void timerinit() {
+  /* Following the steps in 10.5.3 in TRM */
+  /* 1. Set SYSTIMER_TARGETx_TIMER_UNIT_SEL to select the counter (UNIT0 or UNIT1) used for COMPx. */
+  uint32_t *systimer_target0_conf = SYSTEM_TIMER_BASE + SYSTIMER_TARGET0_CONF_REG;
+  *systimer_target0_conf |= (1 << SYSTIMER_TARGET0_CONF_REG__SYSTIMER_TARGET0_TIMER_UNIT_SEL);
+  /* 2. Set an alarm period (δt), and fill it to SYSTIMER_TARGETx_PERIOD. */
+  int alarm = 1000;
+  *systimer_target0_conf &= ~0x3ffffff; // zero out whatever is in period field (bits 0 - 25)
+  *systimer_target0_conf |= alarm;
+  /* 3. Set SYSTIMER_TIMER_COMPx_LOAD to synchronize the alarm period (δt) to COMPx, i.e. load the alarm period (δt) to COMPx. */
+  uint32_t *systimer_comp0_load = SYSTEM_TIMER_BASE + SYSTIMER_COMP0_LOAD_REG;
+  *systimer_comp0_load = 1;
+  /* 4. Set SYSTIMER_TARGETx_PERIOD_MODE to configure COMPx into period mode. */
+  *systimer_target0_conf |= (1 << SYSTIMER_TARGET0_CONF_REG__SYSTIMER_TARGET0_PERIOD_MODE);
+  /* 5. Set SYSTIMER_TARGETx_WORK_EN to enable the selected COMPx. COMPx starts comparing the count value with the sum of start value + n*δt (n = 1, 2, 3...). */
+  uint32_t *systimer_conf_reg = SYSTEM_TIMER_BASE + SYSTIMER_CONF_REG;
+  *systimer_conf_reg |= (1 << SYSTIMER_CONF_REG__SYSTIMER_TARGET0_WORK_EN);
+  /* 6. Set SYSTIMER_TARGETx_INT_ENA to enable timer interrupt. A SYSTIMER_TARGETx_INT interrupt is triggered when Unitn counts to start value + n*δt (n = 1, 2, 3...) set in step 2. */
+  uint32_t *systimer_int_ena = SYSTEM_TIMER_BASE + SYSTIMER_INT_ENA_REG;
+  *systimer_int_ena |= 1; // enable interrups for target 0
+}
+
 
 int main(void)
 {
-
   // Disable paging
   /* w_satp(0); */
 
@@ -118,6 +138,8 @@ int main(void)
   interrupt_init();
 
   irqinit();
+
+  timerinit();
   /* plicinit(); */
   /* plicinithart(); */
 
