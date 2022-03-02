@@ -7,9 +7,11 @@
 #include <thread.h>
 #include <irq.h>
 #include <riscv.h>
-// #include <platform/armv7m.h>
 #include <link.h>
 #include <lib/stdarg.h>
+#include <debug.h>
+
+
 
 #ifdef LOADER
 extern uint32_t stack_end;
@@ -39,13 +41,13 @@ static void panic_dump_stack(void)
 	uint32_t *current_sp = (uint32_t *) r_sp();
 	int word = 0;
 
-	/* dbg_puts("\n\nStack dump:\n"); */
+	dbg_puts("\n\nStack dump:\n");
 
 	while (current_sp < &kernel_stack_end) {
-		/* dbg_printf(DL_EMERG, "%p ", *(++current_sp)); */
+		dbg_printf(DL_EMERG, "%p ", *(++current_sp));
 
-		// if (++word % 8 == 0)
-			/* dbg_putchar('\n'); */
+		if (++word % 8 == 0)
+			dbg_puts("\n");
 	}
 }
 
@@ -54,11 +56,12 @@ void panic_impl(char *fmt, ...)
 	va_list va;
 	va_start(va, fmt);
 
+	/* TODO: Flush queue before panicing */
 	/* dbg_start_panic(); */
 
 	interrupt_disable();
 
-	/* dbg_vprintf(DL_EMERG, fmt, va); */
+	dbg_vprintf(DL_EMERG, fmt, va);
 
 #ifdef CONFIG_PANIC_DUMP_STACK
 	panic_dump_stack();

@@ -8,7 +8,6 @@
 #include <error.h>
 #include <sched.h>
 #include <irq.h>
-// #include <platform/armv7m.h>
 #include <fpage_impl.h>
 #include <init_hook.h>
 #include <debug.h>
@@ -36,7 +35,8 @@
 
 DECLARE_KTABLE(tcb_t, thread_table, CONFIG_MAX_THREADS);
 
-void thread_init_ktable() {
+void thread_init_ktable()
+{
 	ktable_init(&thread_table, kt_thread_table_data);
 }
 
@@ -74,8 +74,7 @@ void thread_init_subsys()
 	kip.thread_info.s.user_base = THREAD_USER;
 
 	/* Create KIP fpages
-	 * last is ignored, because kip fpages is aligned
-	 */
+	 * last is ignored, because kip fpages is aligned */
 	assign_fpages_ext(-1, NULL,
 	                  (memptr_t) &kip, sizeof(kip_t),
 	                  &kip_fpage, &last);
@@ -86,7 +85,7 @@ void thread_init_subsys()
 	sched_slot_set_handler(SSI_NORMAL_THREAD, thread_sched);
 }
 
-INIT_HOOK(thread_init_subsys, INIT_LEVEL_KERNEL);
+/* INIT_HOOK(thread_init_subsys, INIT_LEVEL_KERNEL); */
 
 extern tcb_t *caller;
 

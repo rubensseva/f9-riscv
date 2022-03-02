@@ -12,13 +12,11 @@
 #include <fpage.h>
 #include <fpage_impl.h>
 #include <debug.h>
+#include <config.h>
 
 #include <error.h>
 
 DECLARE_KTABLE(fpage_t, fpage_table, CONFIG_MAX_FPAGES);
-
-/* Only have 16 bits to set size of fpage */
-#define FPAGE_MAX_SIZE 65535
 
 void fpage_table_init_ktable() {
 	ktable_init(&fpage_table, kt_fpage_table_data);
@@ -108,7 +106,7 @@ static void remove_fpage_from_as(as_t *as, fpage_t *fp)
  */
 static fpage_t *create_fpage(memptr_t base, size_t size, int mpid)
 {
-	if (size > FPAGE_MAX_SIZE) {
+	if (size > CONFIG_FPAGE_MAX_SIZE) {
 		dbg_printf(DL_EMERG, "ERROR: fpage is too large. base: 0x%p, size: %d\n", base, size);
 	}
 

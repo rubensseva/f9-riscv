@@ -5,8 +5,9 @@
 
 #define BIT(x) ((uint32_t) 1 << (x))
 
-// This is working
-__USER_TEXT void UART_init(int baud) {
+
+__USER_TEXT void UART_init(int baud)
+{
   uint32_t *uart_clk_div = UART_CONTROLLER_0_BASE + UART_CLKDIV_REG;
   uint32_t div = (uint32_t) (4000U * 1000000 / (uint32_t) baud);
   *uart_clk_div = div / 100;                        // Integral part
@@ -19,7 +20,8 @@ __USER_TEXT void UART_init(int baud) {
   *uart_clk_conf = BIT(25) | BIT(24) | BIT(22) | BIT(21) | BIT(20);  // Use APB NOTE: Is this APB? Seems to be XTAL_CLK...
 }
 
-__USER_TEXT void UART_write(char c) {
+__USER_TEXT void UART_write(char c)
+{
     uint32_t *uart_rxfifo_rd_byte = UART_CONTROLLER_0_BASE + UART_FIFO_REG;
     uint32_t *uart_status_reg = UART_CONTROLLER_0_BASE + UART_STATUS_REG;
 

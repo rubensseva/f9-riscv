@@ -3,23 +3,19 @@
  * found in the LICENSE file.
  */
 
-// #include INC_PLAT(systick.h)
-
 #include <ktimer.h>
 #include <lib/ktable.h>
 #include <softirq.h>
-// #include <platform/armv7m.h>
 #include <bitops.h>
 #include <irq.h>
 #include <init_hook.h>
 #include <riscv.h>
-#if defined(CONFIG_KTIMER_TICKLESS) && defined(CONFIG_KTIMER_TICKLESS_VERIFY)
-#include <tickless-verify.h>
-#endif
+#include <debug.h>
 
 DECLARE_KTABLE(ktimer_event_t, ktimer_event_table, CONFIG_MAX_KT_EVENTS);
 
-void ktimer_init_ktable() {
+void ktimer_init_ktable()
+{
 	ktable_init(&ktimer_event_table, kt_ktimer_event_table_data);
 }
 
@@ -71,30 +67,12 @@ void ktimer_handler(void)
 }
 
 
-#if defined(CONFIG_KTIMER_TICKLESS) && defined(CONFIG_KTIMER_TICKLESS_VERIFY)
-void kdb_show_tickless_verify(void)
-{
-	static int init = 0;
-	int32_t avg;
-	int times;
-
-	if (init == 0) {
-		// dbg_printf(DL_KDB, "Init tickless verification...\n");
-		tickless_verify_init();
-		init++;
-	} else {
-		avg = tickless_verify_stat(&times);
-		// dbg_printf(DL_KDB, "Times: %d\nAverage: %d\n", times, avg);
-	}
-}
-#endif
-
 static void ktimer_event_recalc(ktimer_event_t* event, uint32_t new_delta)
 {
 	if (event) {
-		/* dbg_printf(DL_KTIMER, */
-		/*            "KTE: Recalculated event %p D=%d -> %d\n", */
-		/*            event, event->delta, event->delta - new_delta); */
+		dbg_printf(DL_KTIMER,
+		           "KTE: Recalculated event %p D=%d -> %d\n",
+		           event, event->delta, event->delta - new_delta);
 		event->delta -= new_delta;
 	}
 
@@ -211,7 +189,7 @@ void ktimer_event_handler()
 
 	if (!event_queue) {
 		/* That is bug if we are here */
-		/* dbg_printf(DL_KTIMER, "KTE: OOPS! handler found no events\n"); */
+		dbg_printf(DL_KTIMER, "KTE: OOPS! handler found no events\n");
 
 		ktimer_disable();
 		return;
@@ -234,14 +212,14 @@ void ktimer_event_handler()
 		next_event = event->next;
 
 		if (h_retvalue != 0x0) {
-			/* dbg_printf(DL_KTIMER, */
-			/*            "KTE: Handled and rescheduled event %p @%ld\n", */
-			/*            event, ktimer_now); */
+			dbg_printf(DL_KTIMER,
+			           "KTE: Handled and rescheduled event %p @%ld\n",
+			           event, ktimer_now);
 			ktimer_event_schedule(h_retvalue, event);
 		} else {
-			/* dbg_printf(DL_KTIMER, */
-			/*            "KTE: Handled event %p @%ld\n", */
-			/*            event, ktimer_now); */
+			dbg_printf(DL_KTIMER,
+			           "KTE: Handled event %p @%ld\n",
+			           event, ktimer_now);
 			ktable_free(&ktimer_event_table, event);
 		}
 

@@ -24,9 +24,6 @@ tcb_t *get_kernel_thread() {
 	return kernel;
 }
 
-// TODO: Fixme
-// extern void root_thread(void);
-
 utcb_t root_utcb __KIP;
 
 static void kernel_thread(void);
@@ -46,7 +43,6 @@ void create_root_thread(void)
 		[REG_A3] = 0,
 	};
 
-	// TODO: Fixme
 	thread_init_ctx((void *) &root_stack_end, root_thread, regs, root);
 
 	root->stack_base = (memptr_t) &root_stack_start;
@@ -65,8 +61,7 @@ void create_kernel_thread(void)
 	thread_init_kernel_ctx(&kernel_stack_end, kernel);
 
 	/* This will prevent running other threads
-	 * than kernel until it will be initialized
-	 */
+	 * than kernel until it will be initialized */
 	sched_slot_dispatch(SSI_SOFTIRQ, kernel);
 	kernel->state = T_RUNNABLE;
 }
@@ -83,8 +78,8 @@ void create_idle_thread(void)
 
 void switch_to_kernel(void)
 {
-	// Set previous privilege level to M mode for kernel thread
-	// (kernel thread runs in m-mode, other threads run in s-mode)
+	/* Set previous privilege level to M mode for kernel thread
+	   (kernel thread runs in m-mode, other threads run in s-mode) */
 	unsigned long x = r_mstatus();
 	x &= ~MSTATUS_MPP_MASK;
 	x |= MSTATUS_MPP_M;
@@ -101,8 +96,7 @@ static void kernel_thread(void)
 {
 	while (1) {
 		/* If all softirqs processed, call SVC to
-		 * switch context immediately
-		 */
+		 * switch context immediately */
 		softirq_execute();
 		__asm__ __volatile__ ("ecall");
 	}

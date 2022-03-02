@@ -23,9 +23,9 @@ void root_thread(kip_t *kip_ptr, utcb_t *utcb_ptr);
 typedef uint32_t L4_Word_t;
 typedef L4_Word_t L4_ThreadId_t;
 
-// TODO: Move to types.h or some other file
+/* TODO: Move to types.h or some other file */
 #define L4_nilthread  0UL
-// TODO: Use this instead #define L4_nilthread ((L4_ThreadId_t) { raw : 0UL})
+/* TODO: Use this instead #define L4_nilthread ((L4_ThreadId_t) { raw : 0UL}) */
 
 __USER_DATA L4_ThreadId_t root_id;
 __USER_DATA L4_ThreadId_t user_id;
@@ -60,7 +60,7 @@ memptr_t __USER_TEXT get_free_base(kip_t *kip_ptr)
   int i = 0;
 
   for (i = 0; i < n; ++i) {
-    // get the tag from size field (last 6 bits contains tag
+    /* get the tag from size field (last 6 bits contains tag */
     if ((desc[i].size & 0x3F) == 4)
       return desc[i].base & 0xFFFFFFC0;
   }
@@ -68,8 +68,8 @@ memptr_t __USER_TEXT get_free_base(kip_t *kip_ptr)
   return 0;
 }
 
-__USER_TEXT
-void L4_Ipc(uint32_t to_gid, uint32_t from_gid) {
+__USER_TEXT void L4_Ipc(uint32_t to_gid, uint32_t from_gid)
+{
     __asm__ __volatile__(
         "mv a0, %0\n\t\
         mv a1, %1\n\t\
@@ -81,8 +81,8 @@ void L4_Ipc(uint32_t to_gid, uint32_t from_gid) {
         : "a0", "a1", "a2", "a3");
 }
 
-__USER_TEXT
-void L4_Sleep() {
+__USER_TEXT void L4_Sleep()
+{
     __asm__ __volatile__(
         "mv a0, %0\n\t\
         mv a1, %1\n\t\
@@ -95,10 +95,10 @@ void L4_Sleep() {
 }
 
 
-__USER_TEXT
-void L4_ThreadControl(L4_ThreadId_t dest, L4_ThreadId_t SpaceSpecifier,
+__USER_TEXT void L4_ThreadControl(L4_ThreadId_t dest, L4_ThreadId_t SpaceSpecifier,
                       L4_ThreadId_t Scheduler, L4_ThreadId_t Pager,
-                      void *UtcbLocation) {
+                                  void *UtcbLocation)
+{
   __asm__ __volatile__("mv a0, %0\n\t\
         mv a1, %1\n\t\
         mv a2, %2\n\t\
@@ -120,7 +120,8 @@ void L4_ThreadControl(L4_ThreadId_t dest, L4_ThreadId_t SpaceSpecifier,
 /*   } */
 /* } */
 
-void __USER_TEXT L4_map(memptr_t base, uint32_t size, L4_ThreadId_t tid) {
+void __USER_TEXT L4_map(memptr_t base, uint32_t size, L4_ThreadId_t tid)
+{
     ipc_msg_tag_t tag = {.raw = 0};
     tag.s.n_typed = 2;
 
@@ -155,7 +156,8 @@ void __USER_TEXT map_user_sections(kip_t *kip_ptr, L4_ThreadId_t tid)
   }
 }
 
-void __USER_TEXT my_user_thread() {
+void __USER_TEXT my_user_thread()
+{
   UART_write('n');
   /* Receive some data from root_thread */
   ipc_msg_tag_t tag = {{1, 0, 0, 0}};
@@ -211,7 +213,8 @@ void __USER_TEXT my_user_thread() {
 
 
 /* kip_ptr and utcb_ptr will be passed through a0 and a1 by create_root_thread() */
-void __USER_TEXT root_thread(kip_t *kip_ptr, utcb_t *utcb_ptr) {
+void __USER_TEXT root_thread(kip_t *kip_ptr, utcb_t *utcb_ptr)
+{
     L4_ThreadId_t myself = utcb_ptr->t_globalid;
     root_id = myself;
     L4_ThreadId_t user_thread = TID_TO_GLOBALID(24);

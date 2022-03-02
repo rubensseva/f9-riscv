@@ -11,6 +11,11 @@
 
 dbg_layer_t dbg_layer;
 
+void dbg_init(int layer) {
+    dbg_layer = layer;
+};
+
+
 void dbg_printf(dbg_layer_t layer, char* fmt, ...)
 {
     va_list va;

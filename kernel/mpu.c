@@ -102,7 +102,7 @@ void mpu_setup_region(int n, fpage_t *fp) {
         w_pmpaddri(pmp_entry_lower, (FPAGE_BASE(fp) >> 2));
         w_pmpaddri(pmp_entry_upper, (FPAGE_END(fp) >> 2));
 
-        // Check if we need to write to cfg, perform write if necessary
+        /* Check if we need to write to cfg, perform write if necessary */
         int shift = (pmp_entry_upper % 4) * 8;
         uint32_t mask = 0xFF << shift;
         uint32_t masked = old_cfg_data & mask;
@@ -111,7 +111,7 @@ void mpu_setup_region(int n, fpage_t *fp) {
             w_pmpcfgi_region(pmp_entry_upper, 0xF, old_cfg_data);
         }
     } else {
-        // Clear region
+        /* Clear region */
         w_pmpcfgi_region(pmp_entry_upper, 0x0, old_cfg_data);
     }
 }
@@ -126,7 +126,7 @@ int addr_in_mpu(uint32_t addr)
         uint32_t upper_addr = r_pmpaddri(pmp_entry_upper);
 
         uint32_t cfg_data = r_pmpcfgi(pmp_entry_upper);
-        // Check if we need to write to cfg, perform write if necessary
+        /* Check if we need to write to cfg, perform write if necessary */
         int shift = (pmp_entry_upper % 4) * 8;
         uint32_t mask = 0xFF << shift;
         uint32_t masked = cfg_data & mask;
@@ -188,7 +188,6 @@ int mpu_select_lru(as_t *as, uint32_t addr)
 
 void dump_mpu()
 {
-    // dbg_printf(DL_EMERG, "-------MPU------\n");
     dbg_printf(DL_EMERG,
                "pmp config:\n");
     dbg_printf(DL_EMERG,

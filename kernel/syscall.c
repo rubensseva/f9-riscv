@@ -35,7 +35,7 @@ void syscall_init()
 	softirq_register(SYSCALL_SOFTIRQ, syscall_handler);
 }
 
-INIT_HOOK(syscall_init, INIT_LEVEL_KERNEL);
+/* INIT_HOOK(syscall_init, INIT_LEVEL_KERNEL); */
 
 static void sys_thread_control(uint32_t *param1)
 {
@@ -46,8 +46,8 @@ static void sys_thread_control(uint32_t *param1)
 
 	if (space != L4_NILTHREAD) {
 		/* Creation of thread */
-		// TODO: Fix this, what register to use? What does param2 represent?
-		// void *utcb = (void *) param2[0];	/* R4 */
+		/* TODO: Fix this, what register to use? What does param2 represent? */
+		/* void *utcb = (void *) param2[0];	/\* R4 *\/ */
 		void *utcb = (void*) param1[REG_A5];
 		mempool_t *utcb_pool = mempool_getbyid(mempool_search((memptr_t) utcb,
 		                                       UTCB_SIZE));
@@ -60,8 +60,8 @@ static void sys_thread_control(uint32_t *param1)
 		tcb_t *thr = thread_create(dest, utcb);
 		thread_space(thr, space, utcb);
 		thr->utcb->t_pager = pager;
-		// TODO: This needs another look
-		// What reg to use? Whats this for? Set destination register to one.. no idea why?
+		/* TODO: This needs another look
+		   What reg to use? Whats this for? Set destination register to one.. no idea why? */
 		param1[REG_A1] = 1;
 	} else {
 		/* Removal of thread */

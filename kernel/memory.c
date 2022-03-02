@@ -40,13 +40,6 @@
  * so for large ASes, we will often receive memmanage faults), and fpage table.
  */
 
-#define PERIPHERAL_MEM_START 0x60000000
-/* HACK: Peripheral size is actually 836KB, but we only have 16 bit fpage and we dont
-   need the peripherals at higher addresses for now, so lets just say that peripheral
-   memory is smaller than it actually is */
-/* FIXME: allow for larger fpages, or split them if size is too large */
-#define PERIPHERAL_MEM_SIZE 60000
-
 /**
  * Memory map of MPU.
  * Translated into memdesc array in KIP by memory_init
@@ -68,15 +61,14 @@ static mempool_t memmap[] = {
 		MP_UR | MP_UW | MP_MEMPOOL  | MP_MAP_ALWAYS, MPT_USER_DATA),
 	DECLARE_MEMPOOL_2("MEM0",  mem0,
 					  MP_UR | MP_UW | MP_SRAM, MPT_AVAILABLE),
-	DECLARE_MEMPOOL("PERI",  PERIPHERAL_MEM_START, PERIPHERAL_MEM_START + PERIPHERAL_MEM_SIZE,
+	DECLARE_MEMPOOL("PERI",  CONFIG_PERIPHERAL_MEM_START, CONFIG_PERIPHERAL_MEM_START + CONFIG_PERIPHERAL_MEM_SIZE,
 					MP_KR | MP_KW | MP_UR | MP_UW | MP_DEVICES, MPT_DEVICES),
-	// DECLARE_MEMPOOL("MEM0",  &mem0_start, 0x2001c000,
-	// MP_UR | MP_UW | MP_SRAM, MPT_AVAILABLE),
 };
 
 DECLARE_KTABLE(as_t, as_table, CONFIG_MAX_ADRESS_SPACES);
 
-void as_t_init_ktable() {
+void as_t_init_ktable()
+{
 	ktable_init(&as_table, kt_as_table_data);
 }
 
@@ -405,8 +397,7 @@ int map_area(as_t *src, as_t *dst, memptr_t base, size_t size,
 
 			if (first) {
 				/* Check weather if addresses in fpage list
-				 * are sequental
-				 */
+				 * are sequental */
 				if (!addr_in_fpage(probe, fp, 1)) {
 					dbg_printf(DL_EMERG,
 							"ERROR: Addresses in fpage list not sequential");

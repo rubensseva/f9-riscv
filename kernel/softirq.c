@@ -10,6 +10,7 @@
 #include <systhread.h>
 #include <riscv.h>
 #include <interrupt.h>
+#include <debug.h>
 
 static softirq_t softirq[NR_SOFTIRQ];
 
@@ -21,8 +22,7 @@ void softirq_register(softirq_type_t type, softirq_handler_t handler)
 
 void softirq_schedule(softirq_type_t type)
 {
-	// TODO: Do this atomically
-	// old: atomic_set(&(softirq[type].schedule), 1);
+	/* TODO: Consider doing this atomically */
 	softirq[type].schedule = 1;
 	set_kernel_state(T_RUNNABLE);
 }
@@ -41,18 +41,16 @@ int softirq_execute()
 	uint32_t softirq_schedule = 0, executed = 0;
 retry:
 	for (int i = 0; i < NR_SOFTIRQ; ++i) {
-		// TODO: Do this atomically
-		// OLD: if (atomic_get(&(softirq[i].schedule)) != 0 &&
+		/* TODO: Consider doing this atomically */
 		if (softirq[i].schedule != 0 && softirq[i].handler) {
 			softirq[i].handler();
 
 			executed = 1;
-			// TODO: Do this atomically
-			// OLD: atomic_set(&(softirq[i].schedule), 0);
+			/* TODO: Consider doing this atomically */
 			softirq[i].schedule = 0;
 
-			/* dbg_printf(DL_SOFTIRQ, */
-			/*            "SOFTIRQ: executing %s\n", softirq_names[i]); */
+			dbg_printf(DL_SOFTIRQ,
+			           "SOFTIRQ: executing %s\n", softirq_names[i]);
 		}
 	}
 

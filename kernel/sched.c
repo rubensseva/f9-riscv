@@ -25,7 +25,7 @@ void sched_init()
 	}
 }
 
-// INIT_HOOK(sched_init, INIT_LEVEL_KERNEL_EARLY);
+/* INIT_HOOK(sched_init, INIT_LEVEL_KERNEL_EARLY); */
 
 tcb_t *schedule_select()
 {

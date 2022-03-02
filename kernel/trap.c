@@ -12,13 +12,10 @@
 #include <memory.h>
 #include <mpu.h>
 
-void machine_timer_interrupt_handler(void);
-
-
 extern void timervec();
 extern void kernel_vec_in_c_restore();
 
-/* TODO: Move this to its own file */
+/* TODO: Should this function really be here? Would be nice to have available in other files as well */
 void dump_state() {
     dump_threads();
     dump_mpu();
@@ -26,14 +23,14 @@ void dump_state() {
 }
 
 void access_fault_handler(void) {
-  // mtval will contain the correct faulting address. For example, on an
-  // instruction access fault, it will contain the instruction. On a load access
-  // fault, it will contain the address that caused that load to fail.
+  /* mtval will contain the correct faulting address. For example, on an
+     instruction access fault, it will contain the instruction. On a load access
+     fault, it will contain the address that caused that load to fail. */
   uint32_t fault_addr = r_mtval();
-  // Try to setup an mpu region for the address that cause the exception.
-  // If the address is not in the threads address space, nothing will happen.
+  /* Try to setup an mpu region for the address that cause the exception.
+     If the address is not in the threads address space, nothing will happen. */
   if (mpu_select_lru(current->as, fault_addr) != 0) {
-    // TODO: What should we do here? Probably send the exception as an IPC message to pager?
+    /* TODO: What should we do here? Probably send the exception as an IPC message to pager? */
     uint32_t mcause = r_mcause();
     uint32_t mstatus = r_mstatus();
     uint32_t mepc = r_mepc();
@@ -44,15 +41,38 @@ void access_fault_handler(void) {
   }
 }
 
+void unimplemented(void) {
+  /* Do nothing */
+  int x = 2 + 3;
+}
+
 /* interrupt handlers start */
 
-void unimplemented(void) {
-  // Do nothing
-  int x = 2 + 3;
+void machine_timer_interrupt_handler(void) {
+
+  uint32_t *clint_mtimecmp = (uint32_t*)CLINT_MTIMECMP;
+  uint32_t *clint_mtime = (uint32_t*)CLINT_MTIME;
+  uint32_t interval = 1000000; // cycles; about 1/10th second in qemu.
+  uint32_t new_val = *clint_mtime + interval;
+  *clint_mtimecmp = new_val;
+
+  ktimer_handler();
 }
 
 void supervisor_timer_interrupt_handler(void) {
   machine_timer_interrupt_handler();
+}
+
+void supervisor_external_interrupt(void) {
+    int irq = plic_claim();
+
+    __interrupt_handler(irq);
+
+    /* the PLIC allows each device to raise at most one
+       interrupt at a time; tell the PLIC the device is
+       now allowed to interrupt again. */
+    if(irq)
+      plic_complete(irq);
 }
 
 /* interrupt handlers end */
@@ -93,17 +113,6 @@ void store_or_AMO_address_misaligned_handler(void) {
   dump_state();
 }
 
-void machine_timer_interrupt_handler(void) {
-
-  uint32_t *clint_mtimecmp = (uint32_t*)CLINT_MTIMECMP;
-  uint32_t *clint_mtime = (uint32_t*)CLINT_MTIME;
-  uint32_t interval = 1000000; // cycles; about 1/10th second in qemu.
-  uint32_t new_val = *clint_mtime + interval;
-  *clint_mtimecmp = new_val;
-
-  ktimer_handler();
-}
-
 void ecall_from_u_handler(void) {
   current->ctx.mepc = r_mepc() + 4;
   svc_handler();
@@ -120,19 +129,8 @@ void ecall_from_m_handler(void) {
   svc_handler();
 }
 
-void supervisor_external_interrupt(void) {
-    int irq = plic_claim();
-
-    __interrupt_handler(irq);
-
-    // the PLIC allows each device to raise at most one
-    // interrupt at a time; tell the PLIC the device is
-    // now allowed to interrupt again.
-    if(irq)
-      plic_complete(irq);
-}
-
 /* exception handlers end */
+
 
 void (*interrupt_handlers[12])() = {
   unimplemented,
@@ -167,6 +165,7 @@ void (*exception_handlers[16])() = {
   unimplemented,
 };
 
+
 #define MCAUSE_INT_MASK 0x80000000 // [31]=1 interrupt, else exception
 #define MCAUSE_CODE_MASK 0x7FFFFFFF // low bits show code
 
@@ -181,7 +180,7 @@ extern void kerneltrap(uint32_t* caller_sp)
     exception_handlers[(mcause_value & MCAUSE_CODE_MASK)]();
   }
 
-  // Context switch
+  /* Context switch */
   current->ctx.sp = (uint32_t) caller_sp;
   tcb_t* sel = schedule_select();
   if (sel != current) {

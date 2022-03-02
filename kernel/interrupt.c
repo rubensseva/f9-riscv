@@ -11,7 +11,6 @@
 #include <plic.h>
 #include <interrupt.h>
 
-// #include INC_PLAT(nvic.h)
 
 void __interrupt_handler(int n);
 
@@ -29,7 +28,6 @@ void __interrupt_handler(int n);
 #undef USER_INTERRUPT_USED
 #define USER_INTERRUPT
 #define IRQ_VEC_N_OP	USER_IRQ_VEC
-// #include INC_PLAT(nvic_private.h)
 #undef IRQ_VEC_N_OP
 #undef USER_INTERRUPT
 
@@ -53,7 +51,8 @@ static struct user_irq *user_irqs[IRQn_NUM];
 
 DECLARE_KTABLE(struct user_irq, user_irq_table, IRQn_NUM);
 
-void user_irq_init_ktable() {
+void user_irq_init_ktable()
+{
 	ktable_init(&user_irq_table, kt_user_irq_table_data);
 }
 
@@ -132,8 +131,7 @@ static inline struct user_irq *user_irq_fetch(int irq)
 	return user_irqs[irq];
 }
 
-static void user_irq_release(int irq)
-{
+static void user_irq_release(int irq) {
 	if (IS_VALID_IRQ_NUM(irq)) {
 		struct user_irq *uirq = user_irqs[irq];
 
@@ -191,32 +189,18 @@ static void irq_schedule(int irq)
 {
 	struct user_irq *uirq = user_irq_fetch(irq);
 
-	// Interrupts should already be disabled since we are in kernel thread, no need to disable them
-	// irq_disable();
-	/* intr_off(); */
-	/* machine_intr_off(); */
-	// w_mstatus(r_mstatus() & ~(MSTATUS_MIE | MSTATUS_SIE));
+	/* Normally we would need to disable interrupts here, but in the current state of the
+	   code, they should already have been disabled at this point */
 
 	user_irq_queue_push(uirq);
-
-	// Interrupts should already be disabled since we are in kernel thread, no need to disable them
-	// irq_enable();
-	/* intr_on(); */
-	/* machine_intr_on(); */
-	// w_mstatus(r_mstatus() | (MSTATUS_MIE | MSTATUS_SIE));
-
 	irq_handler_enable(irq);
 }
 
-static tcb_t *irq_handler_sched(struct sched_slot *slot)
-{
+static tcb_t *irq_handler_sched(struct sched_slot *slot) {
 	tcb_t *thr = NULL;
 
-	// We are in the interrupt handler, so no need to disable interrupts
-	// irq_disable();
-	/* intr_off(); */
-	/* machine_intr_off(); */
-	// w_mstatus(r_mstatus() & ~(MSTATUS_MIE | MSTATUS_SIE));
+	/* Normally we would need to disable interrupts here, but in the current state of the
+	   code, they should already have been disabled at this point */
 
 	struct user_irq *uirq = user_irq_queue_pop();
 
@@ -225,11 +209,6 @@ static tcb_t *irq_handler_sched(struct sched_slot *slot)
 		thr->state = T_RUNNABLE;
 		sched_slot_dispatch(SSI_INTR_THREAD, thr);
 	}
-
-	// We are in the interrupt handler, so no need to disable interrupts
-	/* intr_on(); */
-	/* machine_intr_on(); */
-	// w_mstatus(r_mstatus() | (MSTATUS_MIE | MSTATUS_SIE));
 
 	return thr;
 }
@@ -249,13 +228,13 @@ void __interrupt_handler(int irq)
 	irq_schedule(irq);
 }
 
-void interrupt_init(void)
+void user_irq_init(void)
 {
 	user_irq_reset_all();
 	sched_slot_set_handler(SSI_INTR_THREAD, irq_handler_sched);
 }
 
-INIT_HOOK(interrupt_init, INIT_LEVEL_KERNEL_EARLY);
+/* INIT_HOOK(user_irq_init, INIT_LEVEL_KERNEL_EARLY); */
 
 void user_interrupt_config(tcb_t *from)
 {
@@ -346,7 +325,7 @@ void user_irq_enable(int irq)
 	/* } */
 }
 
-// TODO: Fixme
+/* FIXME: Need prober implementation */
 void user_irq_disable(int irq)
 {
 	/* int prev = (SIE_SEIE | SIE_SSIE); */

@@ -63,6 +63,14 @@ enum register_stack_t {
 // CONFIG_DBGPORT_USE_USART2 is not set
 // CONFIG_DBGPORT_USE_USART4=y
 
+// Memory regions
+#define CONFIG_PERIPHERAL_MEM_START 0x60000000
+/* HACK: Peripheral size is actually 836KB, but we only have 16 bit fpage and we dont
+   need the peripherals at higher addresses for now, so lets just say that peripheral
+   memory is smaller than it actually is */
+/* FIXME: allow for larger fpages, or split them if size is too large */
+#define CONFIG_PERIPHERAL_MEM_SIZE 60000
+
 //
 // Limitations
 //
@@ -71,6 +79,8 @@ enum register_stack_t {
 #define CONFIG_MAX_ASYNC_EVENTS 32
 #define CONFIG_MAX_ADRESS_SPACES 16
 #define CONFIG_MAX_FPAGES 256
+/* Only have 16 bits to set size of fpage */
+#define CONFIG_FPAGE_MAX_SIZE 65535
 
 //
 // Kernel Timer
