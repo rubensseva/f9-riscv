@@ -158,14 +158,13 @@ void __USER_TEXT map_user_sections(kip_t *kip_ptr, L4_ThreadId_t tid)
 
 void __USER_TEXT my_user_thread()
 {
-  UART_write('n');
   /* Receive some data from root_thread */
   ipc_msg_tag_t tag = {{1, 0, 0, 0}};
   ((utcb_t *)current_utcb)->mr[0] = tag.raw;
   L4_Ipc(L4_nilthread, root_id);
 
   char *curr = txt;
-  while (*curr != '\n') {
+  while (*curr != '\0') {
     UART_write(*curr);
     curr++;
   }
