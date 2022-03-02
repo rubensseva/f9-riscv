@@ -50,13 +50,13 @@ LDFLAGS = --gc-sections
 
 
 SOURCES:=$(shell find $(SRC_DIR) -name "*.c")
-ASSEMBLY:=$(shell find $(SRC_DIR) -name "*.s")
+ASSEMBLY:=$(shell find $(SRC_DIR) -name "*.S")
 $(info $$SOURCES is [${SOURCES}])
 
 
 # OBJECTS := $(addprefix $(BUILD_DIR)/,$(SOURCES:%.c=%.o))
 SOURCE_OBJECTS = $(SOURCES:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
-ASSEMBLY_OBJECTS = $(ASSEMBLY:$(SRC_DIR)/%.s=$(BUILD_DIR)/%.o)
+ASSEMBLY_OBJECTS = $(ASSEMBLY:$(SRC_DIR)/%.S=$(BUILD_DIR)/%.o)
 $(info $$OBJECTS is [${OBJECTS}])
 $(info $$SOURCE_OBJECTS is [${SOURCE_OBJECTS}])
 $(info $$ASSEMBLY_OBJECTS is [${ASSEMBLY_OBJECTS}])
@@ -67,7 +67,7 @@ $(SOURCE_OBJECTS) : $$(patsubst $(BUILD_DIR)/%.o,$(SRC_DIR)/%.c,$$@)
 	mkdir -p $(@D)
 	$(CC) -c -o $@ $(CFLAGS) $<
 
-$(ASSEMBLY_OBJECTS) : $$(patsubst $(BUILD_DIR)/%.o,$(SRC_DIR)/%.s,$$@)
+$(ASSEMBLY_OBJECTS) : $$(patsubst $(BUILD_DIR)/%.o,$(SRC_DIR)/%.S,$$@)
 	mkdir -p $(@D)
 	$(CC) -c -o $@ $(CFLAGS) $<
 
