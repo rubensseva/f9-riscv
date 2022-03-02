@@ -18,6 +18,7 @@ void machine_timer_interrupt_handler(void);
 extern void timervec();
 extern void kernel_vec_in_c_restore();
 
+/* TODO: Move this to its own file */
 void dump_state() {
     dump_threads();
     dump_mpu();

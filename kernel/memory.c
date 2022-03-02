@@ -41,7 +41,11 @@
  */
 
 #define PERIPHERAL_MEM_START 0x60000000
-#define PERIPHERAL_MEM_SIZE 836000 // 836KB
+/* HACK: Peripheral size is actually 836KB, but we only have 16 bit fpage and we dont
+   need the peripherals at higher addresses for now, so lets just say that peripheral
+   memory is smaller than it actually is */
+/* FIXME: allow for larger fpages, or split them if size is too large */
+#define PERIPHERAL_MEM_SIZE 60000
 
 /**
  * Memory map of MPU.
@@ -355,7 +359,7 @@ int map_area(as_t *src, as_t *dst, memptr_t base, size_t size,
 	/* Most complicated part of mapping subsystem */
 	memptr_t end = base + size, probe = base;
 	fpage_t *fp = src->first, *first = NULL, *last = NULL;
-	int last_invalid = 0;
+	int first_last_equal = 0;
 
 	/* FIXME: reverse mappings (i.e. thread 1 maps 0x1000 to thread 2,
 	 * than thread 2 does the same to thread 1).
@@ -403,8 +407,11 @@ int map_area(as_t *src, as_t *dst, memptr_t base, size_t size,
 				/* Check weather if addresses in fpage list
 				 * are sequental
 				 */
-				if (!addr_in_fpage(probe, fp, 1))
+				if (!addr_in_fpage(probe, fp, 1)) {
+					dbg_printf(DL_EMERG,
+							"ERROR: Addresses in fpage list not sequential");
 					return -1;
+				}
 
 				probe += fp->fpage.size;
 			}
@@ -414,38 +421,41 @@ int map_area(as_t *src, as_t *dst, memptr_t base, size_t size,
 	}
 
 	if (!last || !first) {
-		/* Not in address space or error */
+		dbg_printf(DL_EMERG,
+		           "ERROR: Requested map area not in address space of mapper thread, or other error\n");
 		return -1;
 	}
 
+	/* Since the mapped memory area doesnt have to follow fpage borders, we need to split them up */
+
 	if (first == last)
-		last_invalid = 1;
+		first_last_equal = 1;
 
-	/* That is a problem because we should split
-	 * fpages into two (and split all mappings too)
-	 */
+	first = split_fpage(src, first, base);
 
-	first = split_fpage(src, first, base, 1);
-
-	/* If first and last were same pages, after first split,
-	 * last fpage will be invalidated, so we search it again
-	 */
-	if (last_invalid) {
-		fp = first;
-		while (fp) {
-			if (addr_in_fpage(end, fp, 1)) {
-				last = fp;
-				break;
-			}
-			fp = fp->as_next;
-		}
+	/* If we performed a split, then we need to grab the second fpage of the new pair of fpages from the split */
+	if (first != last) {
+		first = first->as_next;
 	}
 
-	last  = split_fpage(src, last, end, 0);
+	/* If first was equal to last, then last fpage is invalidated at this point, so we update it */
+	if (first_last_equal) {
+		last = first;
+	}
+
+	last = split_fpage(src, last, end);
+	/* If first was equal to last, then first fpage is invalidated at this point, so we update it */
+	if (first_last_equal) {
+		first = last;
+	}
+
 
 	if (!last || !first) {
 		/* Splitting not supported for mapped pages */
 		/* UNIMPLIMENTED */
+		/* TODO: Why does this condition mean that we do not support splitting of mapped pages? */
+		dbg_printf(DL_EMERG,
+		           "ERROR: Splitting not supported for mapped pages\n");
 		return -1;
 	}
 

@@ -6,8 +6,7 @@ file build/kernel.bin
 # Config
 alias reqemu = target remote 127.0.0.1:1234
 alias reesp = target extended-remote :3333
-alias pb = print /t
-alias ph = print /x
+alias lk = load build/kernel.bin
 set print pretty on
 set listsize 20
 

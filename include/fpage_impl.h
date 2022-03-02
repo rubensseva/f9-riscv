@@ -8,7 +8,7 @@
 
 void fpages_init(void);
 
-fpage_t *split_fpage(as_t *as, fpage_t *fpage, memptr_t split, int rl);
+fpage_t *split_fpage(as_t *as, fpage_t *fpage, memptr_t split);
 
 int assign_fpages(as_t *as, memptr_t base, size_t size);
 int assign_fpages_ext(int mpid, as_t *as, memptr_t base, size_t size,

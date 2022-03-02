@@ -11,10 +11,14 @@
 #include <memory.h>
 #include <fpage.h>
 #include <fpage_impl.h>
+#include <debug.h>
 
 #include <error.h>
 
 DECLARE_KTABLE(fpage_t, fpage_table, CONFIG_MAX_FPAGES);
+
+/* Only have 16 bits to set size of fpage */
+#define FPAGE_MAX_SIZE 65535
 
 void fpage_table_init_ktable() {
 	ktable_init(&fpage_table, kt_fpage_table_data);
@@ -22,7 +26,7 @@ void fpage_table_init_ktable() {
 
 #define remove_fpage_from_list(as, fpage, first, next) {	\
 	fpage_t *fpprev = (as)->first;				\
-	int end;						\
+	int end = 0;						\
 	if (fpprev == (fpage)) {				\
 		(as)->first = fpprev->next;			\
 	}							\
@@ -35,20 +39,6 @@ void fpage_table_init_ktable() {
 		fpprev->next = (fpage)->next;			\
 	}							\
 }
-
-/*
- * Helper functions
- * COMMENTARY: fp_addr_log2 finds the position of the LSB that is 1
- */
-/* static int fp_addr_log2(memptr_t addr) */
-/* { */
-/* 	int shift = 0; */
-
-/* 	while ((addr <<= 1) != 0) */
-/* 		++shift; */
-
-/* 	return 31 - shift; */
-/* } */
 
 /**
  * Insert chain of fpages into address space
@@ -106,7 +96,7 @@ static void insert_fpage_to_as(as_t *as, fpage_t *fpage)
 static void remove_fpage_from_as(as_t *as, fpage_t *fp)
 {
 	remove_fpage_from_list(as, fp, first, as_next);
-	// remove_fpage_from_list(as, fp, mpu_first, mpu_next);
+	remove_fpage_from_list(as, fp, mpu_first, mpu_next);
 }
 
 /* FIXME: Support for bit-bang regions. */
@@ -118,6 +108,10 @@ static void remove_fpage_from_as(as_t *as, fpage_t *fp)
  */
 static fpage_t *create_fpage(memptr_t base, size_t size, int mpid)
 {
+	if (size > FPAGE_MAX_SIZE) {
+		dbg_printf(DL_EMERG, "ERROR: fpage is too large. base: 0x%p, size: %d\n", base, size);
+	}
+
 	fpage_t *fpage = (fpage_t *) ktable_alloc(&fpage_table);
 
 	assert((intptr_t) fpage);
@@ -148,70 +142,26 @@ static void create_fpage_chain(memptr_t base, size_t size, int mpid,
 {
 	// Make sure the base address is four-byte aligned
 	if ((base & ~0x3) != base) {
-		// ERROR
+		dbg_printf(DL_EMERG, "ERROR: cant create fpage chaing since address is not four-byte aligned. base: 0x%p, size: %d\n", base, size);
 		return;
 	}
+	if (size > 65535) {
+		dbg_printf(DL_EMERG, "ERROR: fpage is too large. base: 0x%p, size: %d\n", base, size);
+		return;
+	}
+
 	/* int shift, sshift, bshift; */
 	fpage_t *fpage = NULL;
 	fpage = create_fpage(base, size, mpid);
 	*pfirst = fpage;
 	*plast = fpage;
-
-
-	/* while (size) { */
-		/* Select least of log2(base), log2(size).
-		 * Needed to make regions with correct align
-         *
-		 * COMMENTARY:
-		 *     We "chomp" of pieces from the beginning of the region, then
-		 *     we add to base, and subtract from size to adjust. We do this
-		 *     continually until we have a set of fpages that are aligned and
-		 *     fit the memory region.
-		 *
-		 *     fp_addr_log2 finds the position of the LSB that is 1.
-		 *
-		 *     I think the idea here is that we choose bshift as the size
-		 *     as long as it is smaller then sshift / size. This is because
-		 *     when we choose sshift, we actually use up the rest of the region.
-		 *     And we dont want that if we are not in alignment. So first we
-	     *     piece it up with bshift, and when we are aligned, then we potentially
-		 *     use sshift.
-		 *
-		 *     The reason this works is that size is already a power of two, so we
-		 *     just continually adjust the base so that the total size is actually
-		 *     a power of two.
-		 */
-		/* bshift = fp_addr_log2(base); */
-		/* sshift = fp_addr_log2(size); */
-
-		/* THOUGHTS:
-		 * Why do we do "size" here instead of (1 << sshift)? I think its
-		 * because size == (1 << sshift). But why not do "bshift > sshift" then?
-		*/
-	/* 	shift = ((1 << bshift) > size) ? sshift : bshift; */
-
-	/* 	if (!*pfirst) { */
-	/* 		/\* Create first page *\/ */
-	/* 		fpage = create_fpage(base, shift, mpid); */
-	/* 		*pfirst = fpage; */
-	/* 		*plast = fpage; */
-	/* 	} else { */
-	/* 		/\* Build chain *\/ */
-	/* 		fpage->as_next = create_fpage(base, shift, mpid); */
-	/* 		fpage = fpage->as_next; */
-	/* 		*plast = fpage; */
-	/* 	} */
-
-	/* 	size -= (1 << shift); */
-	/* 	base += (1 << shift); */
-	/* } */
 }
 
-fpage_t *split_fpage(as_t *as, fpage_t *fpage, memptr_t split, int rl)
+fpage_t *split_fpage(as_t *as, fpage_t *fpage, memptr_t split)
 {
 	memptr_t base = fpage->fpage.base,
 	         end = fpage->fpage.base + fpage->fpage.size;
-	fpage_t *lfirst = NULL, *llast = NULL, *rfirst = NULL, *rlast = NULL;
+	/* fpage_t *lfirst = NULL, *llast = NULL, *rfirst = NULL, *rlast = NULL; */
 	split = mempool_align(fpage->fpage.mpid, split);
 
 	if (!as)
@@ -226,24 +176,24 @@ fpage_t *split_fpage(as_t *as, fpage_t *fpage, memptr_t split, int rl)
 	if (fpage->map_next != fpage) {
 		/* Splitting not supported for mapped pages */
 		/* UNIMPLIMENTED */
+		dbg_printf(DL_MEMORY,
+					"ERROR: Splitting not supported for mapped pages. as: 0x%p, fpage: 0x%p, split: 0x%p\n",
+				   as, fpage, split);
 		return NULL;
 	}
 
-	/* Split fpage into two chains of fpages */
-	create_fpage_chain(base, (split - base),
-	                   fpage->fpage.mpid, &lfirst, &llast);
-	create_fpage_chain(split, (end - split),
-	                   fpage->fpage.mpid, &rfirst, &rlast);
+	fpage_t *first = create_fpage(base, (split - base),
+	                   fpage->fpage.mpid);
+	fpage_t *last = create_fpage(split, (end - split),
+	                   fpage->fpage.mpid);
 
 	remove_fpage_from_as(as, fpage);
 	ktable_free(&fpage_table, fpage);
 
-	insert_fpage_chain_to_as(as, lfirst, llast);
-	insert_fpage_chain_to_as(as, rfirst, rlast);
+	first->as_next = last;
+	insert_fpage_chain_to_as(as, first, last);
 
-	if (rl == 0)
-		return llast;
-	return rfirst;
+	return first;
 }
 
 
@@ -260,6 +210,9 @@ int assign_fpages_ext(int mpid, as_t *as, memptr_t base, size_t size,
 	if (mpid == -1) {
 		if ((mpid = mempool_search(base, size)) == -1) {
 			/* Cannot find appropriate mempool, return error */
+			dbg_printf(DL_MEMORY,
+					   "ERROR: Cannot find appropriate mempool. mpid: %d, base: 0x%p, size: %d\n",
+					   mpid, base, size);
 			return -1;
 		}
 	}
@@ -274,9 +227,9 @@ int assign_fpages_ext(int mpid, as_t *as, memptr_t base, size_t size,
 				fpage_t *first = NULL, *last = NULL;
 				size = (end < FPAGE_BASE(*fp) ? end : FPAGE_BASE(*fp)) - base;
 
-				/* dbg_printf(DL_MEMORY, */
-				/*            "MEM: fpage chain %s [b:%p, sz:%p] as %p\n", */
-				/*            mempool_getbyid(mpid)->name, base, size, as); */
+				dbg_printf(DL_MEMORY,
+				           "MEM: fpage chain %s [b:%p, sz:%p] as %p\n",
+				           mempool_getbyid(mpid)->name, base, size, as);
 
 				create_fpage_chain(mempool_align(mpid, base),
 				                   mempool_align(mpid, size),
@@ -306,9 +259,9 @@ int assign_fpages_ext(int mpid, as_t *as, memptr_t base, size_t size,
 			fpage_t *first = NULL, *last = NULL;
 			size = end - base;
 
-			/* dbg_printf(DL_MEMORY, */
-			/*            "MEM: fpage chain %s [b:%p, sz:%p] as %p\n", */
-			/*            mempool_getbyid(mpid)->name, base, size, as); */
+			dbg_printf(DL_MEMORY,
+			           "MEM: fpage chain %s [b:%p, sz:%p] as %p\n",
+			           mempool_getbyid(mpid)->name, base, size, as);
 
 			create_fpage_chain(mempool_align(mpid, base),
 			                   mempool_align(mpid, size),
@@ -321,9 +274,9 @@ int assign_fpages_ext(int mpid, as_t *as, memptr_t base, size_t size,
 			*plast = last;
 		}
 	} else {
-		/* dbg_printf(DL_MEMORY, */
-		/*            "MEM: fpage chain %s [b:%p, sz:%p] as %p\n", */
-		/*            mempool_getbyid(mpid)->name, base, size, as); */
+		dbg_printf(DL_MEMORY,
+		           "MEM: fpage chain %s [b:%p, sz:%p] as %p\n",
+		           mempool_getbyid(mpid)->name, base, size, as);
 
 		create_fpage_chain(mempool_align(mpid, base),
 		                   mempool_align(mpid, size),
@@ -364,8 +317,8 @@ int map_fpage(as_t *src, as_t *dst, fpage_t *fpage, map_action_t action)
 	/* Insert into AS */
 	insert_fpage_to_as(dst, fpmap);
 
-	/* dbg_printf(DL_MEMORY, "MEM: %s fpage %p from %p to %p\n", */
-	/*            (action == MAP) ? "mapped" : "granted", fpage, src, dst); */
+	dbg_printf(DL_MEMORY, "MEM: %s fpage 0x%p (base 0x%x) from 0x%p to 0x%p\n",
+	           (action == MAP) ? "mapped" : "granted", fpage, fpage->fpage.base, src, dst);
 
 	return 0;
 }
@@ -374,7 +327,7 @@ int unmap_fpage(as_t *as, fpage_t *fpage)
 {
 	fpage_t *fpprev = fpage;
 
-	/* dbg_printf(DL_MEMORY, "MEM: unmapped fpage %p from %p\n", fpage, as); */
+	dbg_printf(DL_MEMORY, "MEM: unmapped fpage %p from %p\n", fpage, as);
 
 	/* Fpages that are not mapped or granted
 	 * are destroyed with its AS

@@ -8,6 +8,11 @@
 #include <l4/utcb.h>
 
 
+__USER_DATA uint32_t uart_mem_base = 0x60000000;
+__USER_DATA uint32_t uart_mem_size = 0xFFF;
+
+__USER_DATA char txt[] = "hello world\n";
+
 extern void* current_utcb;
 
 typedef void (*irq_handler_t)(void);
@@ -116,12 +121,12 @@ void L4_ThreadControl(L4_ThreadId_t dest, L4_ThreadId_t SpaceSpecifier,
 /* } */
 
 void __USER_TEXT L4_map(memptr_t base, uint32_t size, L4_ThreadId_t tid) {
-    ipc_msg_tag_t tag;
+    ipc_msg_tag_t tag = {.raw = 0};
     tag.s.n_typed = 2;
 
-    // 0xA is 0b1010, it decides what operation to do for typed argument:
-    //     - 1xxx means that this is a grant or a map instead of a normal typed IPC.
-    //     - xx1x means that this is a grant.
+    /* 0xA is 0b1010, 0x8 is 0b1000, it decides what operation to do for typed argument:
+         - 1xxx means that this is a grant or a map instead of a normal typed IPC.
+         - xx1x means that this is a grant. */
     L4_Word_t page[2] = {
       (base & 0xFFFFFFC0) | 0xA,
       size & 0xFFFFFFC0
@@ -143,7 +148,8 @@ void __USER_TEXT map_user_sections(kip_t *kip_ptr, L4_ThreadId_t tid)
 
   for (i = 0; i < n; ++i) {
     uint32_t tag = desc[i].size & 0x3F;
-    if (tag == 2 || tag == 3) {
+    uint32_t size = desc[i].size & ~0x3F;
+    if (size > 0 && (tag == 2 || tag == 3)) { // tag 2 and 3 is user_text and user_data, from memory.h
       L4_map(desc[i].base, desc[i].size, tid);
     }
   }
@@ -151,26 +157,18 @@ void __USER_TEXT map_user_sections(kip_t *kip_ptr, L4_ThreadId_t tid)
 
 void __USER_TEXT my_user_thread() {
   UART_write('n');
-  // Recieve some data from root_thread
+  /* Receive some data from root_thread */
   ipc_msg_tag_t tag = {{1, 0, 0, 0}};
   ((utcb_t *)current_utcb)->mr[0] = tag.raw;
   L4_Ipc(L4_nilthread, root_id);
 
-  // Send some test data through UART
-  /* uartputc('h'); */
-  /* uartputc('e'); */
-  /* uartputc('l'); */
-  /* uartputc('l'); */
-  /* uartputc('o'); */
-  /* uartputc(' '); */
-  /* uartputc('w'); */
-  /* uartputc('o'); */
-  /* uartputc('r'); */
-  /* uartputc('l'); */
-  /* uartputc('d'); */
-  UART_write('y');
+  char *curr = txt;
+  while (*curr != '\n') {
+    UART_write(*curr);
+    curr++;
+  }
 
-  // Request UART interrupts
+  /* Request UART interrupts */
   /* ipc_msg_tag_t irq_tag = {{0, 0, 0, 0}}; */
   /* irq_tag.s.n_untyped = 5; */
   /* irq_tag.s.label = USER_INTERRUPT_LABEL; */
@@ -212,22 +210,23 @@ void __USER_TEXT my_user_thread() {
 
 
 
-// kip_ptr and utcb_ptr will be passed through a0 and a1 by create_root_thread()
+/* kip_ptr and utcb_ptr will be passed through a0 and a1 by create_root_thread() */
 void __USER_TEXT root_thread(kip_t *kip_ptr, utcb_t *utcb_ptr) {
     L4_ThreadId_t myself = utcb_ptr->t_globalid;
     root_id = myself;
     L4_ThreadId_t user_thread = TID_TO_GLOBALID(24);
     user_id = user_thread;
 
-    // Map all user sections to root thread.
-    // When creating other threads, they will share the address space.
-    map_user_sections(kip_ptr, root_id);
-
-    // Create user thread
+    /* Create user thread */
     char *free_mem = (char *) get_free_base(kip_ptr);
-    L4_ThreadControl(user_thread, myself, L4_nilthread, myself, free_mem);
+    /* Let threadid = spaceid, to tell the kernel to create a new address space, instead of sharing an existing one. */
+    L4_ThreadControl(user_thread, user_thread, L4_nilthread, myself, free_mem);
+    /* Give user thread all user sections */
+    map_user_sections(kip_ptr, user_thread);
+    /* Give user thread uart space */
+    L4_map(uart_mem_base, uart_mem_size, user_thread);
 
-    // Start user thread
+    /* Start user thread */
     ipc_msg_tag_t tag = {{0, 0, 0, 0}};
     tag.s.n_untyped = 5;
     ((utcb_t *)current_utcb)->mr[0] = tag.raw;
@@ -238,13 +237,13 @@ void __USER_TEXT root_thread(kip_t *kip_ptr, utcb_t *utcb_ptr) {
     ((utcb_t *)current_utcb)->mr[5] = 0;
     L4_Ipc(user_thread, myself);
 
-    // Send some data to user thread
+    /* Send some data to user thread */
     tag.s.n_untyped = 1;
     ((utcb_t *)current_utcb)->mr[0] = tag.raw;
     ((utcb_t *)current_utcb)->mr[1] = 1337;
     L4_Ipc(user_thread, myself);
 
-    // Sleep to allow user thread to be scheduled.
+    /* Sleep to allow user thread to be scheduled. */
     while (1) {
       L4_Sleep();
     }

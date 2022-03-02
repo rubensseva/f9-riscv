@@ -75,12 +75,6 @@ void syscall_handler()
 {
 	uint32_t *sc_param1 = (uint32_t *) caller->ctx.sp;
 	uint32_t sc_num = sc_param1[REG_A0];
-	// uint32_t *sc_param2 = caller->ctx.a_regs;
-	dbg_printf(DL_SYSCALL,
-				"SVC: %d called [%d, %d, %d, %d]\n", sc_num,
-				sc_param1[REG_A0], sc_param1[REG_A1],
-				sc_param1[REG_A2], sc_param1[REG_A3]);
-
 	if (sc_num == SYS_THREAD_CONTROL) {
 		/* Simply call thread_create
 		 * TODO: checking globalid

@@ -192,11 +192,11 @@ void dump_mpu()
     dbg_printf(DL_EMERG,
                "pmp config:\n");
     dbg_printf(DL_EMERG,
-               "0: %x", r_pmpcfg0());
+               "0: %x ", r_pmpcfg0());
     dbg_printf(DL_EMERG,
-               "1: %x", r_pmpcfg1());
+               "1: %x ", r_pmpcfg1());
     dbg_printf(DL_EMERG,
-               "2: %x", r_pmpcfg2());
+               "2: %x ", r_pmpcfg2());
     dbg_printf(DL_EMERG,
                "3: %x\n", r_pmpcfg3());
 
