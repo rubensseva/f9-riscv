@@ -16,7 +16,7 @@ DECLARE_KTABLE(ktimer_event_t, ktimer_event_table, CONFIG_MAX_KT_EVENTS);
 
 void ktimer_init_ktable()
 {
-	ktable_init(&ktimer_event_table, kt_ktimer_event_table_data);
+	ktable_init(&ktimer_event_table, (ptr_t) kt_ktimer_event_table_data);
 }
 
 

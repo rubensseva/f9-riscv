@@ -22,6 +22,7 @@
 #include <interrupt.h>
 #include <uart_ESP32_C3.h>
 #include <ESP32_C3.h>
+#include <utility.h>
 #include <stdio.h>
 #include <debug.h>
 
@@ -51,22 +52,22 @@ void irq_init() {
 void system_timer_init() {
   /* Following the steps in 10.5.3 in TRM */
   /* 1. Set SYSTIMER_TARGETx_TIMER_UNIT_SEL to select the counter (UNIT0 or UNIT1) used for COMPx. */
-  uint32_t *systimer_target0_conf = SYSTEM_TIMER_BASE + SYSTIMER_TARGET0_CONF_REG;
+  volatile uint32_t *systimer_target0_conf = REG(SYSTEM_TIMER_BASE + SYSTIMER_TARGET0_CONF_REG);
   *systimer_target0_conf |= (1 << SYSTIMER_TARGET0_CONF_REG__SYSTIMER_TARGET0_TIMER_UNIT_SEL);
   /* 2. Set an alarm period (δt), and fill it to SYSTIMER_TARGETx_PERIOD. */
   int alarm = 1000;
   *systimer_target0_conf &= ~0x3ffffff; // zero out whatever is in period field (bits 0 - 25)
   *systimer_target0_conf |= alarm;
   /* 3. Set SYSTIMER_TIMER_COMPx_LOAD to synchronize the alarm period (δt) to COMPx, i.e. load the alarm period (δt) to COMPx. */
-  uint32_t *systimer_comp0_load = SYSTEM_TIMER_BASE + SYSTIMER_COMP0_LOAD_REG;
+  volatile uint32_t *systimer_comp0_load = REG(SYSTEM_TIMER_BASE + SYSTIMER_COMP0_LOAD_REG);
   *systimer_comp0_load = 1;
   /* 4. Set SYSTIMER_TARGETx_PERIOD_MODE to configure COMPx into period mode. */
   *systimer_target0_conf |= (1 << SYSTIMER_TARGET0_CONF_REG__SYSTIMER_TARGET0_PERIOD_MODE);
   /* 5. Set SYSTIMER_TARGETx_WORK_EN to enable the selected COMPx. COMPx starts comparing the count value with the sum of start value + n*δt (n = 1, 2, 3...). */
-  uint32_t *systimer_conf_reg = SYSTEM_TIMER_BASE + SYSTIMER_CONF_REG;
+  volatile uint32_t *systimer_conf_reg = REG(SYSTEM_TIMER_BASE + SYSTIMER_CONF_REG);
   *systimer_conf_reg |= (1 << SYSTIMER_CONF_REG__SYSTIMER_TARGET0_WORK_EN);
   /* 6. Set SYSTIMER_TARGETx_INT_ENA to enable timer interrupt. A SYSTIMER_TARGETx_INT interrupt is triggered when Unitn counts to start value + n*δt (n = 1, 2, 3...) set in step 2. */
-  uint32_t *systimer_int_ena = SYSTEM_TIMER_BASE + SYSTIMER_INT_ENA_REG;
+  volatile uint32_t *systimer_int_ena = REG(SYSTEM_TIMER_BASE + SYSTIMER_INT_ENA_REG);
   *systimer_int_ena |= 1; // enable interrups for target 0
 }
 
@@ -98,7 +99,7 @@ int main(void)
            DL_KTIMER | DL_SYSCALL | DL_SCHEDULE | DL_MEMORY | DL_IPC);
   __l4_printf("%s", banner);
 
-  ktimer_event_create(64, ipc_deliver, NULL);
+  ktimer_event_create(64, ipc_deliver, (ktimer_event_t *) NULL);
 
   create_idle_thread();
   create_root_thread();
@@ -120,7 +121,7 @@ extern void __l4_start(void)
 {
 
   /* Fill bss with zeroes */
-  for (char *p = &bss_start; p < &bss_end; p++) {
+  for (char *p = (char *)&bss_start; p < (char *)&bss_end; p++) {
     *p = 0;
   }
 

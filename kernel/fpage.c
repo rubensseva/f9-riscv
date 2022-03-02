@@ -19,7 +19,7 @@
 DECLARE_KTABLE(fpage_t, fpage_table, CONFIG_MAX_FPAGES);
 
 void fpage_table_init_ktable() {
-	ktable_init(&fpage_table, kt_fpage_table_data);
+	ktable_init(&fpage_table, (ptr_t)kt_fpage_table_data);
 }
 
 #define remove_fpage_from_list(as, fpage, first, next) {	\

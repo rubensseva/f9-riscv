@@ -41,7 +41,7 @@ static void sys_thread_control(uint32_t *param1)
 {
 	l4_thread_t dest = param1[REG_A1];
 	l4_thread_t space = param1[REG_A2];
-	l4_thread_t scheduler = param1[REG_A3];
+	/* l4_thread_t scheduler = param1[REG_A3]; */
 	l4_thread_t pager = param1[REG_A4];
 
 	if (space != L4_NILTHREAD) {

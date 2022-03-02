@@ -37,7 +37,7 @@ DECLARE_KTABLE(tcb_t, thread_table, CONFIG_MAX_THREADS);
 
 void thread_init_ktable()
 {
-	ktable_init(&thread_table, kt_thread_table_data);
+	ktable_init(&thread_table, (ptr_t) kt_thread_table_data);
 }
 
 /* Always sorted, so we can use binary search on it */

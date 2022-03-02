@@ -17,7 +17,7 @@ void dump_ktable(ktable_t *kt)
 		if (j % 64 == 0)
 			dbg_printf(DL_KDB, "%5d: ", j);
 
-		dbg_puts((bitmap_get_bit(bitmap_cursor(kt->bitmap, j))) ? 'X' : '-');
+		dbg_puts((bitmap_get_bit(bitmap_cursor(kt->bitmap, j))) ? "X" : "-");
 
 		if ((j + 1) % 64 == 0)
 			dbg_puts("\n");
@@ -32,7 +32,7 @@ void dump_ktable(ktable_t *kt)
  * */
 void ktable_init(ktable_t *kt, ptr_t data)
 {
-	kt->data = data;
+	kt->data = (uint32_t *)data;
 	char *kt_ptr = (char *) kt->bitmap;
 	char *kt_end = (char *) kt->bitmap + kt->num / 8;
 

@@ -52,7 +52,7 @@ DECLARE_KTABLE(struct user_irq, user_irq_table, IRQn_NUM);
 
 void user_irq_init_ktable()
 {
-	ktable_init(&user_irq_table, kt_user_irq_table_data);
+	ktable_init(&user_irq_table, (ptr_t) kt_user_irq_table_data);
 }
 
 struct user_irq_queue {
@@ -317,8 +317,8 @@ void user_interrupt_handler_update(tcb_t *thr)
 
 void user_irq_enable(int irq)
 {
-	int enable_bits = (SIE_SEIE | SIE_SSIE);
-	w_sie(SIE_SEIE | SIE_SSIE);
+	/* int enable_bits = (SIE_SEIE | SIE_SSIE); */
+	/* w_sie(SIE_SEIE | SIE_SSIE); */
 	/* if (nvic_is_setup(irq)) { */
 	/* 	NVIC_EnableIRQ(irq); */
 	/* } */

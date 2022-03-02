@@ -40,8 +40,14 @@ void access_fault_handler(void) {
 }
 
 void unimplemented(void) {
-  /* Do nothing */
-  int x = 2 + 3;
+  uint32_t mtval = r_mtval();
+  uint32_t mcause = r_mcause();
+  uint32_t mstatus = r_mstatus();
+  uint32_t mepc = r_mepc();
+  dbg_printf(DL_EMERG,
+              "\n------UNIMPLEMENTED TRAP------\nmcause: 0x%x, mstaus: 0x%x, mepc: 0x%x, mtval: 0x%x, thread_id: %d\n",
+              mcause, mstatus, mepc, mtval, current->t_globalid);
+  dump_state();
 }
 
 /* interrupt handlers start */

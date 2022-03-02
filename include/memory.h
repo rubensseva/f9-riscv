@@ -9,6 +9,7 @@
 #include <types.h>
 #include <fpage.h>
 #include <link.h>
+#include <config.h>
 
 /*
  * Each address space is associated with one or more thread.

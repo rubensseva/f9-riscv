@@ -31,9 +31,6 @@ static char *softirq_names[NR_SOFTIRQ] __attribute__((used)) = {
 	"Kernel timer events",
 	"Asynchronous events",
 	"System calls",
-#ifdef CONFIG_KDB
-	"KDB enters",
-#endif
 };
 
 int softirq_execute()

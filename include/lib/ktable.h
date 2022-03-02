@@ -28,7 +28,7 @@ typedef struct ktable ktable_t;
 	ktable_t name = {					\
 			.tname = #name,				\
 			.bitmap = kt_ ## name ## _bitmap,	\
-			.data = kt_ ## name ## _data,	\
+			.data = (uint32_t *) kt_ ## name ## _data,	\
 			.num = num_, .size = sizeof(type)	\
 	}
 

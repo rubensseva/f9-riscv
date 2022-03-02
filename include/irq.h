@@ -27,13 +27,13 @@ void irq_init(void);
  * is it not possible that an interrupt can occur between enabling interrupts and
  * the mret instruction? It seems to work for now, but this should be kept in mind
  * in case some suspicious error appears in the initialization code */
-#define init_ctx_switch(sp, pc) \
+#define init_ctx_switch(sp, pc)							\
 	__asm__ __volatile__ ("mv sp, %0" : : "r" (sp));	\
     __asm__ __volatile__ ("csrw mepc, %0" : : "r" (pc));     \
 	__asm__ __volatile__ (    \
-        "csrr t0, mstatus         \n\t\    \
-        ori t0, t0, 1             \n\t\    \
-        csrw mstatus, t0          \n\t\    \
+        "csrr t0, mstatus         \n\t\
+        ori t0, t0, 1             \n\t\
+        csrw mstatus, t0          \n\t\
         mret                      \n\t");
 
 #define irq_ecall() \

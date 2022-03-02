@@ -69,7 +69,7 @@ DECLARE_KTABLE(as_t, as_table, CONFIG_MAX_ADRESS_SPACES);
 
 void as_t_init_ktable()
 {
-	ktable_init(&as_table, kt_as_table_data);
+	ktable_init(&as_table, (ptr_t) kt_as_table_data);
 }
 
 extern kip_mem_desc_t *mem_desc;
@@ -501,9 +501,9 @@ void kdb_dump_mempool(void)
 
 void kdb_dump_as(void)
 {
-	extern enum {
+	enum {
 		DBG_ASYNC, DBG_PANIC
-			};
+	};
 	/* dbg_state; */
 	int idx = 0, nl = 0, i;
 	as_t *as = NULL;

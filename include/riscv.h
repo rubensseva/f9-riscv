@@ -2,26 +2,16 @@
 
 static inline void wait_for_interrupt(void)
 {
-  // TODO: Verify that wfi is correct way to wait for interrupts
   __asm__ __volatile__ ("wfi");
 }
 
-// which hart (core) is this?
-static inline uint32_t
-r_mhartid()
-{
-  uint32_t x;
-  asm volatile("csrr %0, mhartid" : "=r" (x) );
-  return x;
-}
-
-// privilege levels encodings
-// privileged spec, 20190608, page 3
+/* privilege levels encodings
+   privileged spec, 20190608, page 3 */
 #define U_MODE_LEVEL 0
 #define S_MODE_LEVEL 1
 #define M_MODE_LEVEL 3
 
-// machine Status Register, mstatus
+/* machine Status Register, mstatus */
 #define MSTATUS_MPP_MASK (3L << 11) // previous mode.
 #define MSTATUS_MPP_M (3L << 11)
 #define MSTATUS_MPP_S (1L << 11)
@@ -43,9 +33,9 @@ static inline void w_mstatus(uint32_t x)
   asm volatile("csrw mstatus, %0" : : "r" (x));
 }
 
-// machine exception program counter, holds the
-// instruction address to which a return from
-// exception will go.
+/* machine exception program counter, holds the
+   instruction address to which a return from
+   exception will go. */
 static inline void w_mepc(uint32_t x)
 {
   asm volatile("csrw mepc, %0" : : "r" (x));
@@ -192,14 +182,6 @@ static inline uint32_t r_stvec()
 static inline void w_mtvec(uint32_t x)
 {
   asm volatile("csrw mtvec, %0" : : "r" (x));
-}
-
-// static inline uint32_t
-static uint32_t r_mtvec()
-{
-  uint32_t x;
-  asm volatile("csrr %0, mtvec" : "=r" (x) );
-  return x;
 }
 
 static inline void w_pmpcfg0(uint32_t x)

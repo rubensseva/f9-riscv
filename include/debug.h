@@ -9,6 +9,7 @@
 #include <types.h>
 #include <lib/stdarg.h>
 #include <lib/stdio.h>
+#include <config.h>
 // #include <platform/debug_device.h>
 
 typedef enum {
