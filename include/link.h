@@ -30,8 +30,6 @@ extern uint32_t kernel_data_start;
 extern uint32_t kernel_data_end;
 extern uint32_t kernel_bss_start;
 extern uint32_t kernel_bss_end;
-// extern uint32_t kernel_ahb_start;
-// extern uint32_t kernel_ahb_end;
 
 extern uint32_t idle_stack_start;
 extern uint32_t idle_stack_end;
@@ -67,22 +65,22 @@ extern uint32_t mem0_end;
 extern uint32_t mem1_start;
 #endif
 
-#define __BSS 			__attribute__ ((section(".bss")))
-#define __ISR_VECTOR		__attribute__ ((section(".isr_vector")))
+#define __BSS           __attribute__ ((section(".bss")))
+#define __ISR_VECTOR        __attribute__ ((section(".isr_vector")))
 #ifndef LOADER
-#define __KIP 			__attribute__ ((section(".kip")))
-#define __KTABLE		__attribute__ ((section(".ktable")))
+#define __KIP           __attribute__ ((section(".kip")))
+#define __KTABLE        __attribute__ ((section(".ktable")))
 
-#define __BITMAP		__attribute__ ((section(".bitmap")))
+#define __BITMAP        __attribute__ ((section(".bitmap")))
 
-#define __USER_TEXT		__attribute__ ((section(".user_text")))
-#define __USER_DATA		__attribute__ ((section(".user_data")))
-#define __USER_BSS		__attribute__ ((section(".user_bss")))
-#define __USER_SC		__attribute__ ((section(".syscall")))
+#define __USER_TEXT         __attribute__ ((section(".user_text")))
+#define __USER_DATA         __attribute__ ((section(".user_data")))
+#define __USER_BSS      __attribute__ ((section(".user_bss")))
+#define __USER_SC       __attribute__ ((section(".syscall")))
 #endif
 
-#define __PACKED		__attribute__ ((packed))
+#define __PACKED        __attribute__ ((packed))
 
-#define __NAKED 		__attribute__ ((naked))
+#define __NAKED         __attribute__ ((naked))
 
-#endif	/* PLATFORM_LINK_H_ */
+#endif  /* PLATFORM_LINK_H_ */

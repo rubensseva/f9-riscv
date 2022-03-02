@@ -58,6 +58,4 @@ static inline int addr_in_fpage(memptr_t addr, fpage_t *fpage, int incl_end)
 			(incl_end && addr == FPAGE_END(fpage)));
 }
 
-void fpage_table_init_ktable();
-
 #endif /* FPAGE_H_ */

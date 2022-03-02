@@ -5,14 +5,13 @@
 
 #include <systick.h>
 
-// #include <platform/armv7m.h>
 #include <error.h>
 #include <types.h>
 #include <thread.h>
 #include <memory.h>
 #include <ipc.h>
 #include <sched.h>
-#include <user-log.h>
+#include <user_log.h>
 #include <ktimer.h>
 #include <interrupt.h>
 #include <debug.h>

@@ -6,7 +6,7 @@
 #ifndef FPAGE_IMPL_H_
 #define FPAGE_IMPL_H_
 
-void fpages_init(void);
+void fpage_table_init_ktable();
 
 fpage_t *split_fpage(as_t *as, fpage_t *fpage, memptr_t split);
 

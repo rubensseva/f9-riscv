@@ -3,7 +3,7 @@
  * found in the LICENSE file.
  */
 
-#include <user-log.h>
+#include <user_log.h>
 #include <debug.h>
 #include <thread.h>
 

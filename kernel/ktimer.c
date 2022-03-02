@@ -238,9 +238,9 @@ void ktimer_event_init()
 	softirq_register(KTE_SOFTIRQ, ktimer_event_handler);
 }
 
-// INIT_HOOK(ktimer_event_init, INIT_LEVEL_KERNEL);
+/* INIT_HOOK(ktimer_event_init, INIT_LEVEL_KERNEL); */
 
 
-// TODO: Find a sensible value, or delete this
+/* TODO: Find a sensible value, or delete this */
 #define KTIMER_MAXTICKS 9999999999
 

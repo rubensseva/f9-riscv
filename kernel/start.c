@@ -8,6 +8,7 @@
 #include <types.h>
 #include <riscv.h>
 #include <ipc.h>
+#include <fpage_impl.h>
 #include <ktimer.h>
 #include <softirq.h>
 #include <syscall.h>
@@ -16,14 +17,11 @@
 #include <init_hook.h>
 #include <lib/string.h>
 #include <config.h>
-#include <memlayout.h>
 #include <mpu.h>
 #include <thread.h>
 #include <interrupt.h>
-#include <kernel_vec_in_c.h>
 #include <uart_ESP32_C3.h>
 #include <ESP32_C3.h>
-#include <plic.h>
 #include <stdio.h>
 #include <debug.h>
 

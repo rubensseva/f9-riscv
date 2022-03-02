@@ -8,7 +8,6 @@
 #include <lib/ktable.h>
 #include <riscv.h>
 #include <config.h>
-#include <plic.h>
 #include <interrupt.h>
 
 
@@ -325,14 +324,13 @@ void user_irq_enable(int irq)
 	/* } */
 }
 
-/* FIXME: Need prober implementation */
+/* FIXME: Need proper implementation */
 void user_irq_disable(int irq)
 {
 	/* int prev = (SIE_SEIE | SIE_SSIE); */
 	/* uint32_t sie = r_sie(); */
 	/* w_sie(~prev & sie); */
 	/* w_mstatus(r_mstatus() & ~MSTATUS_SIE); */
-	// TODO: Also clear pending
 
 	/* if (nvic_is_setup(irq)) { */
 	/* 	NVIC_ClearPendingIRQ(irq); */
@@ -342,8 +340,7 @@ void user_irq_disable(int irq)
 
 void user_irq_clear_pending(int irq)
 {
-	plic_clear_pending(irq);
-	// TODO: fillmein
+	/* plic_clear_pending(irq); */
 	/* if (nvic_is_setup(irq)) { */
 	/* 	NVIC_ClearPendingIRQ(irq); */
 	/* } */

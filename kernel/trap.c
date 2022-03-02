@@ -1,10 +1,8 @@
 #include <stdint.h>
 #include <syscall.h>
-#include <memlayout.h>
 #include <ktimer.h>
 #include <syscall.h>
 #include <riscv.h>
-#include <plic.h>
 #include <irq.h>
 #include <interrupt.h>
 #include <debug.h>
@@ -50,11 +48,11 @@ void unimplemented(void) {
 
 void machine_timer_interrupt_handler(void) {
 
-  uint32_t *clint_mtimecmp = (uint32_t*)CLINT_MTIMECMP;
-  uint32_t *clint_mtime = (uint32_t*)CLINT_MTIME;
-  uint32_t interval = 1000000; // cycles; about 1/10th second in qemu.
-  uint32_t new_val = *clint_mtime + interval;
-  *clint_mtimecmp = new_val;
+  /* uint32_t *clint_mtimecmp = (uint32_t*)CLINT_MTIMECMP; */
+  /* uint32_t *clint_mtime = (uint32_t*)CLINT_MTIME; */
+  /* uint32_t interval = 1000000; // cycles; about 1/10th second in qemu. */
+  /* uint32_t new_val = *clint_mtime + interval; */
+  /* *clint_mtimecmp = new_val; */
 
   ktimer_handler();
 }
@@ -64,15 +62,7 @@ void supervisor_timer_interrupt_handler(void) {
 }
 
 void supervisor_external_interrupt(void) {
-    int irq = plic_claim();
-
-    __interrupt_handler(irq);
-
-    /* the PLIC allows each device to raise at most one
-       interrupt at a time; tell the PLIC the device is
-       now allowed to interrupt again. */
-    if(irq)
-      plic_complete(irq);
+  dbg_printf(DL_EMERG, "ERROR: Got supervisor external interrupt, shouldnt happen\n");
 }
 
 /* interrupt handlers end */
