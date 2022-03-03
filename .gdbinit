@@ -10,6 +10,21 @@ alias lk = load build/kernel.bin
 set print pretty on
 set listsize 20
 
+set $intr_matr = 0x600C2000
+set $intr_pend = $intr_matr + 0x0110
+set $intr_ena = $intr_matr + 0x0104
+set $intr_perip_pend_0 = $intr_matr + 0x00F8
+set $intr_perip_pend_1 = $intr_matr + 0x00FC
+
+define intr_dump
+  printf "enabled interrupts: \n"
+  print /t *$intr_ena
+  printf "pending interrupts: \n"
+  print /t *$intr_pend
+  print /t *$intr_perip_pend_0
+  print /t *$intr_perip_pend_1
+end
+
 reesp
 set remote hardware-watchpoint-limit 2
 mon reset halt
@@ -71,6 +86,6 @@ define sbr
   break kerneltrap
   # break sys_ipc
   # when we return from kerneltrap:
-  break kernelvec.s:91
+  break kernelvec.S:91
 end
 sbr

@@ -52,10 +52,11 @@ void irq_init() {
 void system_timer_init() {
   /* Following the steps in 10.5.3 in TRM */
   /* 1. Set SYSTIMER_TARGETx_TIMER_UNIT_SEL to select the counter (UNIT0 or UNIT1) used for COMPx. */
+  /* NOTE: We will set this to 0, which I believe will select UNIT0 */
   volatile uint32_t *systimer_target0_conf = REG(SYSTEM_TIMER_BASE + SYSTIMER_TARGET0_CONF_REG);
-  *systimer_target0_conf |= (1 << SYSTIMER_TARGET0_CONF_REG__SYSTIMER_TARGET0_TIMER_UNIT_SEL);
+  *systimer_target0_conf &= ~(1 << SYSTIMER_TARGET0_CONF_REG__SYSTIMER_TARGET0_TIMER_UNIT_SEL);
   /* 2. Set an alarm period (δt), and fill it to SYSTIMER_TARGETx_PERIOD. */
-  int alarm = 1000;
+  int alarm = 16000000;
   *systimer_target0_conf &= ~0x3ffffff; // zero out whatever is in period field (bits 0 - 25)
   *systimer_target0_conf |= alarm;
   /* 3. Set SYSTIMER_TIMER_COMPx_LOAD to synchronize the alarm period (δt) to COMPx, i.e. load the alarm period (δt) to COMPx. */
@@ -69,6 +70,30 @@ void system_timer_init() {
   /* 6. Set SYSTIMER_TARGETx_INT_ENA to enable timer interrupt. A SYSTIMER_TARGETx_INT interrupt is triggered when Unitn counts to start value + n*δt (n = 1, 2, 3...) set in step 2. */
   volatile uint32_t *systimer_int_ena = REG(SYSTEM_TIMER_BASE + SYSTIMER_INT_ENA_REG);
   *systimer_int_ena |= 1; // enable interrups for target 0
+
+  /* Then, after configuring the system timer, we need to enable interrupts for the system timer */
+  /* First, we map peripheral interrupt system timer to CPU interrupt number 1 */
+  volatile uint32_t *interrupt_core0_systimer_target0_int_map_reg = REG(INTERRUPT_MATRIX_BASE + INTERRUPT_CORE0_SYSTIMER_TARGET0_INT_MAP_REG);
+  *interrupt_core0_systimer_target0_int_map_reg = 5;
+
+  /* Set the priority of the interrupt */
+  /* volatile uint32_t *interrupt_core0_cpu_int_pri = REG(INTERRUPT_MATRIX_BASE + INTERRUPT_CORE0_CPU_INT_PRI_n_REG + 0x4 * 5); */
+  volatile uint32_t *interrupt_core0_cpu_int_pri = REG(INTERRUPT_MATRIX_BASE + 0x128);
+  *interrupt_core0_cpu_int_pri = 15; // Set hightes priority for now TODO: Set a more sensible priority
+
+  /* Set the threshold of interrupt priorities to 1, so that all interrupts are taken */
+  volatile uint32_t *interrupt_core0_cpu_int_thresh = REG(INTERRUPT_MATRIX_BASE + INTERRUPT_CORE0_CPU_INT_THRESH_REG);
+  *interrupt_core0_cpu_int_thresh = 1;
+
+  /* After mapping system timer to CPU interrupt number 1, we enable CPU interrupt number 1 */
+  int system_timer_target0_intr_num = 5;
+  volatile uint32_t *interrupt_core0_cpi_in_enable = REG(INTERRUPT_MATRIX_BASE + INTERRUPT_CORE0_CPU_INT_ENABLE_REG);
+  *interrupt_core0_cpi_in_enable |= (1 << system_timer_target0_intr_num);
+
+
+  /* And finally start the counter */
+  *systimer_conf_reg |= (1 << SYSTIMER_CONF_REG__SYSTIMER_TIMER_UNIT0_WORK_EN);
+
 }
 
 

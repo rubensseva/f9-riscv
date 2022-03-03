@@ -274,4 +274,16 @@
 #define GPIO_FUNCn_IN_INV_SEL_BIT 5
 #define GPIO_SIGn_IN_SEL_BIT 6
 
+
+/* INTERRUPT MATRIX */
+#define INTERRUPT_CORE0_CPU_INT_ENABLE_REG 0x0104
+
+/* Interrupt mapping registers */
+#define INTERRUPT_CORE0_SYSTIMER_TARGET0_INT_MAP_REG 0x0094
+
+#define INTERRUPT_CORE0_CPU_INT_PRI_n_REG 0x0118 // to get intr n, use + 0x4*n. BUT WATCH OUT! n goes from 1 - 31, but I believe this formula assumes 0 - 30
+
+#define INTERRUPT_CORE0_CPU_INT_THRESH_REG 0x0194
+
+
 #endif // ESP32_C3_H_

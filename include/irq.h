@@ -21,7 +21,7 @@ void irq_init(void);
  *    this "fake" context switch does not get interrupted and a "real" context
  *    switch is attempted
  * 3. Enabling of interrupts is done by setting the MIE bit in mstatus, by orring
- *    mstatus with 1.
+ *    mstatus with 3.
  *
  * I'm not really sure how safe it is to just delay enabling interrupts to the end,
  * is it not possible that an interrupt can occur between enabling interrupts and
@@ -32,7 +32,7 @@ void irq_init(void);
     __asm__ __volatile__ ("csrw mepc, %0" : : "r" (pc));     \
 	__asm__ __volatile__ (    \
         "csrr t0, mstatus         \n\t\
-        ori t0, t0, 1             \n\t\
+        ori t0, t0, 3             \n\t\
         csrw mstatus, t0          \n\t\
         mret                      \n\t");
 
