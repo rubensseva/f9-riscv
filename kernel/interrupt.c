@@ -278,6 +278,7 @@ void user_interrupt_config(tcb_t *from)
 
 void user_interrupt_handler_update(tcb_t *thr)
 {
+    uint32_t prev_mstatus;
 	if (!thr)
 		return;
 
@@ -295,16 +296,16 @@ void user_interrupt_handler_update(tcb_t *thr)
 				user_irq_enable(irq);
 				break;
 			case USER_IRQ_DISABLE:
-				interrupt_disable();
+				prev_mstatus = interrupt_disable();
 				user_irq_queue_delete(irq);
 				// user_irq_disable(irq);
-				interrupt_enable();
+				interrupt_restore(prev_mstatus);
 				break;
 			case USER_IRQ_FREE:
-				interrupt_disable();
+				prev_mstatus = interrupt_disable();
 				user_irq_queue_delete(irq);
 				user_irq_release(irq);
-				interrupt_enable();
+				interrupt_restore(prev_mstatus);
 				/* reply ipc immediately */
 				irq_handler_ipc(uirq);
 				thr->state = T_RUNNABLE;

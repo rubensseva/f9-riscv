@@ -35,7 +35,7 @@ static char *softirq_names[NR_SOFTIRQ] __attribute__((used)) = {
 
 int softirq_execute()
 {
-	uint32_t softirq_schedule = 0, executed = 0;
+	uint32_t softirq_schedule = 0, executed = 0, prev_mstatus;
 retry:
 	for (int i = 0; i < NR_SOFTIRQ; ++i) {
 		/* TODO: Consider doing this atomically */
@@ -51,7 +51,7 @@ retry:
 		}
 	}
 
-	interrupt_disable();
+	prev_mstatus = interrupt_disable();
 
 	softirq_schedule = 0;
 	for (int i = 0; i < NR_SOFTIRQ; ++i) {
@@ -60,7 +60,7 @@ retry:
 
 	set_kernel_state((softirq_schedule) ? T_RUNNABLE : T_INACTIVE);
 
-	interrupt_enable();
+	interrupt_restore(prev_mstatus);
 
 	if (softirq_schedule)
 		goto retry;

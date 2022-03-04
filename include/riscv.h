@@ -111,11 +111,18 @@ static inline uint32_t r_satp()
     return x;
 }
 
-/* Machine-mode interrupt vector */
-static inline void w_mtvec(uint32_t x)
-{
-    asm volatile("csrw mtvec, %0" : : "r" (x));
+/* Returns the previous mstatus value */
+static inline uint32_t interrupt_disable() {
+    uint32_t prev_mstatus = r_mstatus();
+    w_mstatus(r_mstatus() & ~(MSTATUS_MIE | MSTATUS_UIE));
+    return prev_mstatus;
 }
+
+/* Restores interrupt enable status to a previous state */
+static inline void interrupt_restore(uint32_t prev_mstatus) {
+    w_mstatus(r_mstatus() | ((MSTATUS_MIE | MSTATUS_UIE) & prev_mstatus));
+}
+
 
 static inline void w_pmpcfg0(uint32_t x)
 {
