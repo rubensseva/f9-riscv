@@ -42,11 +42,12 @@ __attribute__ ((aligned (16))) char stack0[16384];
 extern void _vector_table();
 
 void irq_init() {
-  w_mtvec((uint32_t)_vector_table);
+    w_mtvec((uint32_t)_vector_table);
 
-  /* When we execute mret, mstatus.mie is set to mstatus.mpie. Therefore, we need to set
-     mstatus.mpie as well here, to prevent mstatus.mie from being disabled. */
-  w_mstatus(r_mstatus() | MSTATUS_MPIE);
+    /* When we execute mret, mstatus.mie is set to mstatus.mpie. Therefore, we
+       need to set mstatus.mpie as well here, to prevent mstatus.mie from being
+       disabled. */
+    w_mstatus(r_mstatus() | MSTATUS_MPIE);
 }
 
 void system_timer_init() {
@@ -74,11 +75,11 @@ void system_timer_init() {
   /* Then, after configuring the system timer, we need to enable interrupts for the system timer */
   /* First, we map peripheral interrupt system timer to CPU interrupt number 1 */
   volatile uint32_t *interrupt_core0_systimer_target0_int_map_reg = REG(INTERRUPT_MATRIX_BASE + INTERRUPT_CORE0_SYSTIMER_TARGET0_INT_MAP_REG);
-  *interrupt_core0_systimer_target0_int_map_reg = 5;
+  *interrupt_core0_systimer_target0_int_map_reg = CONFIG_SYSTEM_TIMER_CPU_INTR;
 
   /* Set the priority of the interrupt */
-  /* volatile uint32_t *interrupt_core0_cpu_int_pri = REG(INTERRUPT_MATRIX_BASE + INTERRUPT_CORE0_CPU_INT_PRI_n_REG + 0x4 * 5); */
-  volatile uint32_t *interrupt_core0_cpu_int_pri = REG(INTERRUPT_MATRIX_BASE + 0x128);
+  volatile uint32_t *interrupt_core0_cpu_int_pri = REG(INTERRUPT_MATRIX_BASE + INTERRUPT_CORE0_CPU_INT_PRI_n_REG + 0x4 * (CONFIG_SYSTEM_TIMER_CPU_INTR - 1));
+  /* volatile uint32_t *interrupt_core0_cpu_int_pri = REG(INTERRUPT_MATRIX_BASE + 0x128); */
   *interrupt_core0_cpu_int_pri = 15; // Set hightes priority for now TODO: Set a more sensible priority
 
   /* Set the threshold of interrupt priorities to 1, so that all interrupts are taken */
@@ -86,9 +87,8 @@ void system_timer_init() {
   *interrupt_core0_cpu_int_thresh = 1;
 
   /* After mapping system timer to CPU interrupt number 1, we enable CPU interrupt number 1 */
-  int system_timer_target0_intr_num = 5;
   volatile uint32_t *interrupt_core0_cpi_in_enable = REG(INTERRUPT_MATRIX_BASE + INTERRUPT_CORE0_CPU_INT_ENABLE_REG);
-  *interrupt_core0_cpi_in_enable |= (1 << system_timer_target0_intr_num);
+  *interrupt_core0_cpi_in_enable |= (1 << CONFIG_SYSTEM_TIMER_CPU_INTR);
 
 
   /* And finally start the counter */

@@ -23,14 +23,14 @@ static inline void wait_for_interrupt(void)
 
 static inline uint32_t r_mstatus()
 {
-  uint32_t x;
-  asm volatile("csrr %0, mstatus" : "=r" (x) );
-  return x;
+    uint32_t x;
+    asm volatile("csrr %0, mstatus" : "=r" (x) );
+    return x;
 }
 
 static inline void w_mstatus(uint32_t x)
 {
-  asm volatile("csrw mstatus, %0" : : "r" (x));
+    asm volatile("csrw mstatus, %0" : : "r" (x));
 }
 
 /* machine exception program counter, holds the
@@ -38,24 +38,24 @@ static inline void w_mstatus(uint32_t x)
    exception will go. */
 static inline void w_mepc(uint32_t x)
 {
-  asm volatile("csrw mepc, %0" : : "r" (x));
+    asm volatile("csrw mepc, %0" : : "r" (x));
 }
 
 static inline uint32_t r_mepc()
 {
-  uint32_t x;
-  asm volatile("csrr %0, mepc" : "=r" (x));
-  return x;
+    uint32_t x;
+    asm volatile("csrr %0, mepc" : "=r" (x));
+    return x;
 }
 
 static inline uint32_t r_mtval()
 {
-  uint32_t x;
-  asm volatile("csrr %0, mtval" : "=r" (x));
-  return x;
+    uint32_t x;
+    asm volatile("csrr %0, mtval" : "=r" (x));
+    return x;
 }
 
-// Supervisor Status Register, sstatus
+/* Supervisor Status Register, sstatus */
 
 #define SSTATUS_SPP (1L << 8)  // Previous mode, 1=Supervisor, 0=User
 #define SSTATUS_SPIE (1L << 5) // Supervisor Previous Interrupt Enable
@@ -63,49 +63,48 @@ static inline uint32_t r_mtval()
 #define SSTATUS_SIE (1L << 1)  // Supervisor Interrupt Enable
 #define SSTATUS_UIE (1L << 0)  // User Interrupt Enable
 
-
 static inline uint32_t r_sstatus()
 {
-  uint32_t x;
-  asm volatile("csrr %0, sstatus" : "=r" (x) );
-  return x;
+    uint32_t x;
+    asm volatile("csrr %0, sstatus" : "=r"(x));
+    return x;
 }
 
 static inline void w_sstatus(uint32_t x)
 {
-  asm volatile("csrw sstatus, %0" : : "r" (x));
+    asm volatile("csrw sstatus, %0" : : "r" (x));
 }
 
-// Supervisor Interrupt Pending
+/* Supervisor Interrupt Pending */
 static inline uint32_t r_sip()
 {
-  uint32_t x;
-  asm volatile("csrr %0, sip" : "=r" (x) );
-  return x;
+    uint32_t x;
+    asm volatile("csrr %0, sip" : "=r" (x) );
+    return x;
 }
 
 static inline void w_sip(uint32_t x)
 {
-  asm volatile("csrw sip, %0" : : "r" (x));
+    asm volatile("csrw sip, %0" : : "r" (x));
 }
 
-// Supervisor Interrupt Enable
+/* Supervisor Interrupt Enable */
 #define SIE_SEIE (1L << 9) // external
 #define SIE_STIE (1L << 5) // timer
 #define SIE_SSIE (1L << 1) // software
 static inline uint32_t r_sie()
 {
-  uint32_t x;
-  asm volatile("csrr %0, sie" : "=r" (x) );
-  return x;
+    uint32_t x;
+    asm volatile("csrr %0, sie" : "=r" (x) );
+    return x;
 }
 
 static inline void w_sie(uint32_t x)
 {
-  asm volatile("csrw sie, %0" : : "r" (x));
+    asm volatile("csrw sie, %0" : : "r" (x));
 }
 
-// Machine-mode Interrupt Enable
+/* Machine-mode Interrupt Enable */
 #define MIE_MEIE (1L << 11) // m-mode external
 #define MIE_MTIE (1L << 7)  // m-mode timer
 #define MIE_MSIE (1L << 3)  // m-mode software
@@ -113,98 +112,97 @@ static inline void w_sie(uint32_t x)
 #define MIE_UEIE (1L << 8)  // u-mode external interrupts
 static inline uint32_t r_mie()
 {
-  uint32_t x;
-  asm volatile("csrr %0, mie" : "=r" (x) );
-  return x;
+    uint32_t x;
+    asm volatile("csrr %0, mie" : "=r" (x) );
+    return x;
 }
 
 static inline void w_mie(uint32_t x)
 {
-  asm volatile("csrw mie, %0" : : "r" (x));
+    asm volatile("csrw mie, %0" : : "r" (x));
 }
 
-// supervisor exception program counter, holds the
-// instruction address to which a return from
-// exception will go.
+/* Supervisor exception program counter, holds the
+   instruction address to which a return from
+   exception will go. */
 static inline void w_sepc(uint32_t x)
 {
-  asm volatile("csrw sepc, %0" : : "r" (x));
+    asm volatile("csrw sepc, %0" : : "r" (x));
 }
 
 static inline uint32_t r_sepc()
 {
-  uint32_t x;
-  asm volatile("csrr %0, sepc" : "=r" (x) );
-  return x;
+    uint32_t x;
+    asm volatile("csrr %0, sepc" : "=r" (x) );
+    return x;
 }
 
-// Machine Exception Delegation
+/* Machine Exception Delegation */
 static inline uint32_t r_medeleg()
 {
-  uint32_t x;
-  asm volatile("csrr %0, medeleg" : "=r" (x) );
-  return x;
+    uint32_t x;
+    asm volatile("csrr %0, medeleg" : "=r" (x) );
+    return x;
 }
 
 static inline void w_medeleg(uint32_t x)
 {
-  asm volatile("csrw medeleg, %0" : : "r" (x));
+    asm volatile("csrw medeleg, %0" : : "r" (x));
 }
 
-// Machine Interrupt Delegation
+/* Machine Interrupt Delegation */
 static inline uint32_t r_mideleg()
 {
-  uint32_t x;
-  asm volatile("csrr %0, mideleg" : "=r" (x) );
-  return x;
+    uint32_t x;
+    asm volatile("csrr %0, mideleg" : "=r" (x) );
+    return x;
 }
 
 static inline void w_mideleg(uint32_t x)
 {
-  asm volatile("csrw mideleg, %0" : : "r" (x));
+    asm volatile("csrw mideleg, %0" : : "r" (x));
 }
 
-// Supervisor Trap-Vector Base Address
-// low two bits are mode.
+/* Supervisor Trap-Vector Base Address low two bits are mode. */
 static inline void w_stvec(uint32_t x)
 {
-  asm volatile("csrw stvec, %0" : : "r" (x));
+    asm volatile("csrw stvec, %0" : : "r" (x));
 }
 
 static inline uint32_t r_stvec()
 {
-  uint32_t x;
-  asm volatile("csrr %0, stvec" : "=r" (x) );
-  return x;
+    uint32_t x;
+    asm volatile("csrr %0, stvec" : "=r" (x) );
+    return x;
 }
 
-// Machine-mode interrupt vector
+/* Machine-mode interrupt vector */
 static inline void w_mtvec(uint32_t x)
 {
-  asm volatile("csrw mtvec, %0" : : "r" (x));
+    asm volatile("csrw mtvec, %0" : : "r" (x));
 }
 
 static inline void w_pmpcfg0(uint32_t x)
 {
-  asm volatile("csrw pmpcfg0, %0" : : "r" (x));
+    asm volatile("csrw pmpcfg0, %0" : : "r" (x));
 }
 static inline void w_pmpcfg1(uint32_t x)
 {
-  asm volatile("csrw pmpcfg1, %0" : : "r" (x));
+    asm volatile("csrw pmpcfg1, %0" : : "r" (x));
 }
 static inline void w_pmpcfg2(uint32_t x)
 {
-  asm volatile("csrw pmpcfg2, %0" : : "r" (x));
+    asm volatile("csrw pmpcfg2, %0" : : "r" (x));
 }
 static inline void w_pmpcfg3(uint32_t x)
 {
-  asm volatile("csrw pmpcfg3, %0" : : "r" (x));
+    asm volatile("csrw pmpcfg3, %0" : : "r" (x));
 }
 static inline uint32_t r_pmpcfg0()
 {
-  uint32_t x;
-  asm volatile("csrr %0, pmpcfg0" : "=r" (x) );
-  return x;
+    uint32_t x;
+    asm volatile("csrr %0, pmpcfg0" : "=r" (x) );
+    return x;
 }
 static inline uint32_t r_pmpcfg1()
 {
@@ -448,13 +446,13 @@ static inline uint32_t r_time()
 }
 
 /* requires machine-mode */
-static inline void interrupt_enable() {
-	w_mstatus(r_mstatus() | (MSTATUS_MIE | MSTATUS_UIE));
+static inline void interrupt_disable() {
+  w_mstatus(r_mstatus() & ~(MSTATUS_MIE | MSTATUS_UIE));
 }
 
 /* requires machine-mode */
-static inline void interrupt_disable() {
-	w_mstatus(r_mstatus() & ~(MSTATUS_MIE | MSTATUS_UIE));
+static inline void interrupt_enable() {
+  w_mstatus(r_mstatus() | (MSTATUS_MIE | MSTATUS_UIE));
 }
 
 // are device interrupts enabled?

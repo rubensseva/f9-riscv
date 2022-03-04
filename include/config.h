@@ -49,6 +49,8 @@ enum register_stack_t {
 
 #define CONFIG_BITMAP_BITBAND 0
 
+#define CONFIG_SYSTEM_TIMER_CPU_INTR 7
+
 // From old kconfig
 // -----------------------------
 // platform

@@ -64,7 +64,7 @@ void machine_timer_interrupt_handler(void) {
 }
 
 void supervisor_timer_interrupt_handler(void) {
-  machine_timer_interrupt_handler();
+  dbg_printf(DL_EMERG, "ERROR: Got supervisor timer interrupt, shouldnt happen\n");
 }
 
 void supervisor_external_interrupt(void) {
@@ -171,7 +171,12 @@ extern void kerneltrap(uint32_t* caller_sp)
 
   current->ctx.mepc = r_mepc();
   if (mcause_value & MCAUSE_INT_MASK) {
-    interrupt_handlers[(mcause_value & MCAUSE_CODE_MASK)]();
+    if ((mcause_value & MCAUSE_CODE_MASK) == CONFIG_SYSTEM_TIMER_CPU_INTR) {
+      machine_timer_interrupt_handler();
+    } else {
+      __interrupt_handler(mcause_value & MCAUSE_CODE_MASK);
+    }
+    // interrupt_handlers[(mcause_value & MCAUSE_CODE_MASK)]();
   } else {
     exception_handlers[(mcause_value & MCAUSE_CODE_MASK)]();
   }
