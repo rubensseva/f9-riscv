@@ -21,54 +21,54 @@ void dump_state() {
 }
 
 void access_fault_handler(void) {
-  /* mtval will contain the correct faulting address. For example, on an
-     instruction access fault, it will contain the instruction. On a load access
-     fault, it will contain the address that caused that load to fail. */
-  uint32_t fault_addr = r_mtval();
-  /* Try to setup an mpu region for the address that cause the exception.
-     If the address is not in the threads address space, nothing will happen. */
-  if (mpu_select_lru(current->as, fault_addr) != 0) {
-    /* TODO: What should we do here? Probably send the exception as an IPC message to pager? */
+    /* mtval will contain the correct faulting address. For example, on an
+       instruction access fault, it will contain the instruction. On a load access
+       fault, it will contain the address that caused that load to fail. */
+    uint32_t fault_addr = r_mtval();
+    /* Try to setup an mpu region for the address that cause the exception.
+       If the address is not in the threads address space, nothing will happen. */
+    if (mpu_select_lru(current->as, fault_addr) != 0) {
+        /* TODO: What should we do here? Probably send the exception as an IPC message to pager? */
+        uint32_t mcause = r_mcause();
+        uint32_t mstatus = r_mstatus();
+        uint32_t mepc = r_mepc();
+        dbg_printf(DL_EMERG,
+                   "\n------ACCESS FAULT------\nmcause: 0x%x, mstaus: 0x%x, mepc: 0x%x, mtval: 0x%x, thread_id: %d\n",
+                   mcause, mstatus, mepc, fault_addr, current->t_globalid);
+        dump_state();
+    }
+}
+
+void unimplemented(void) {
+    uint32_t mtval = r_mtval();
     uint32_t mcause = r_mcause();
     uint32_t mstatus = r_mstatus();
     uint32_t mepc = r_mepc();
     dbg_printf(DL_EMERG,
-               "\n------ACCESS FAULT------\nmcause: 0x%x, mstaus: 0x%x, mepc: 0x%x, mtval: 0x%x, thread_id: %d\n",
-               mcause, mstatus, mepc, fault_addr, current->t_globalid);
+               "\n------UNIMPLEMENTED TRAP------\nmcause: 0x%x, mstaus: 0x%x, mepc: 0x%x, mtval: 0x%x, thread_id: %d\n",
+               mcause, mstatus, mepc, mtval, current->t_globalid);
     dump_state();
-  }
-}
-
-void unimplemented(void) {
-  uint32_t mtval = r_mtval();
-  uint32_t mcause = r_mcause();
-  uint32_t mstatus = r_mstatus();
-  uint32_t mepc = r_mepc();
-  dbg_printf(DL_EMERG,
-              "\n------UNIMPLEMENTED TRAP------\nmcause: 0x%x, mstaus: 0x%x, mepc: 0x%x, mtval: 0x%x, thread_id: %d\n",
-              mcause, mstatus, mepc, mtval, current->t_globalid);
-  dump_state();
 }
 
 /* interrupt handlers start */
 
 void machine_timer_interrupt_handler(void) {
 
-  /* uint32_t *clint_mtimecmp = (uint32_t*)CLINT_MTIMECMP; */
-  /* uint32_t *clint_mtime = (uint32_t*)CLINT_MTIME; */
-  /* uint32_t interval = 1000000; // cycles; about 1/10th second in qemu. */
-  /* uint32_t new_val = *clint_mtime + interval; */
-  /* *clint_mtimecmp = new_val; */
+    /* uint32_t *clint_mtimecmp = (uint32_t*)CLINT_MTIMECMP; */
+    /* uint32_t *clint_mtime = (uint32_t*)CLINT_MTIME; */
+    /* uint32_t interval = 1000000; // cycles; about 1/10th second in qemu. */
+    /* uint32_t new_val = *clint_mtime + interval; */
+    /* *clint_mtimecmp = new_val; */
 
-  ktimer_handler();
+    ktimer_handler();
 }
 
 void supervisor_timer_interrupt_handler(void) {
-  dbg_printf(DL_EMERG, "ERROR: Got supervisor timer interrupt, shouldnt happen\n");
+    dbg_printf(DL_EMERG, "ERROR: Got supervisor timer interrupt, shouldnt happen\n");
 }
 
 void supervisor_external_interrupt(void) {
-  dbg_printf(DL_EMERG, "ERROR: Got supervisor external interrupt, shouldnt happen\n");
+    dbg_printf(DL_EMERG, "ERROR: Got supervisor external interrupt, shouldnt happen\n");
 }
 
 /* interrupt handlers end */
@@ -76,89 +76,89 @@ void supervisor_external_interrupt(void) {
 /* exception handlers start */
 /* access fault handlers start */
 void illegal_instruction_access_fault_handler(void) {
-  access_fault_handler();
+    access_fault_handler();
 }
 
 void load_access_fault_handler(void) {
-  access_fault_handler();
+    access_fault_handler();
 }
 
 void store_or_AMO_access_fault_handler(void) {
-  access_fault_handler();
+    access_fault_handler();
 }
 /* access fault handlers end */
 
 void instruction_address_misaligned_handler(void) {
-  dbg_printf(DL_EMERG, "Instruction address misaligned exception. mepc: %x, mtval: %x\n",
-             r_mepc(), r_mtval());
-  dump_state();
+    dbg_printf(DL_EMERG, "Instruction address misaligned exception. mepc: %x, mtval: %x\n",
+               r_mepc(), r_mtval());
+    dump_state();
 }
 void illegal_instruction_handler(void) {
-  dbg_printf(DL_EMERG, "Illegal instruction exception. mepc: %x, mtval: %x\n",
-             r_mepc(), r_mtval());
-  dump_state();
+    dbg_printf(DL_EMERG, "Illegal instruction exception. mepc: %x, mtval: %x\n",
+               r_mepc(), r_mtval());
+    dump_state();
 }
 void load_address_misaligned_handler(void) {
-  dbg_printf(DL_EMERG, "Load address misalgined exception. mepc: %x, mtval: %x\n",
-             r_mepc(), r_mtval());
-  dump_state();
+    dbg_printf(DL_EMERG, "Load address misalgined exception. mepc: %x, mtval: %x\n",
+               r_mepc(), r_mtval());
+    dump_state();
 }
 void store_or_AMO_address_misaligned_handler(void) {
-  dbg_printf(DL_EMERG, "Store/AMO address misaligned exception. mepc: %x, mtval: %x\n",
-             r_mepc(), r_mtval());
-  dump_state();
+    dbg_printf(DL_EMERG, "Store/AMO address misaligned exception. mepc: %x, mtval: %x\n",
+               r_mepc(), r_mtval());
+    dump_state();
 }
 
 void ecall_from_u_handler(void) {
-  current->ctx.mepc = r_mepc() + 4;
-  svc_handler();
+    current->ctx.mepc = r_mepc() + 4;
+    svc_handler();
 }
 void ecall_from_s_handler(void) {
-  dbg_printf(DL_EMERG, "Ecall from supervisor mode, this should never happen. Trying to proceed. mepc: %x, mstatus: %x\n",
-             r_mepc(), r_mstatus());
-  dump_state();
-  current->ctx.mepc = r_mepc() + 4;
-  svc_handler();
+    dbg_printf(DL_EMERG, "Ecall from supervisor mode, this should never happen. Trying to proceed. mepc: %x, mstatus: %x\n",
+               r_mepc(), r_mstatus());
+    dump_state();
+    current->ctx.mepc = r_mepc() + 4;
+    svc_handler();
 }
 void ecall_from_m_handler(void) {
-  current->ctx.mepc = r_mepc() + 4;
-  svc_handler();
+    current->ctx.mepc = r_mepc() + 4;
+    svc_handler();
 }
 
 /* exception handlers end */
 
 
 void (*interrupt_handlers[12])() = {
-  unimplemented,
-  unimplemented,
-  unimplemented,
-  unimplemented,
-  unimplemented,
-  supervisor_timer_interrupt_handler,
-  unimplemented,
-  machine_timer_interrupt_handler,
-  unimplemented,
-  supervisor_external_interrupt, // Interrupts to PLIC goes here
-  unimplemented,
-  unimplemented,
+    unimplemented,
+    unimplemented,
+    unimplemented,
+    unimplemented,
+    unimplemented,
+    supervisor_timer_interrupt_handler,
+    unimplemented,
+    machine_timer_interrupt_handler,
+    unimplemented,
+    supervisor_external_interrupt, // Interrupts to PLIC goes here
+    unimplemented,
+    unimplemented,
 };
 void (*exception_handlers[16])() = {
-  instruction_address_misaligned_handler,
-  illegal_instruction_access_fault_handler,
-  illegal_instruction_handler,
-  unimplemented, // breakpoint
-  load_address_misaligned_handler,
-  load_access_fault_handler,
-  store_or_AMO_address_misaligned_handler,
-  store_or_AMO_access_fault_handler,
-  ecall_from_u_handler,
-  ecall_from_s_handler,
-  unimplemented,
-  ecall_from_m_handler, // should only happen from kernel thread
-  unimplemented,
-  unimplemented,
-  unimplemented,
-  unimplemented,
+    instruction_address_misaligned_handler,
+    illegal_instruction_access_fault_handler,
+    illegal_instruction_handler,
+    unimplemented, // breakpoint
+    load_address_misaligned_handler,
+    load_access_fault_handler,
+    store_or_AMO_address_misaligned_handler,
+    store_or_AMO_access_fault_handler,
+    ecall_from_u_handler,
+    ecall_from_s_handler,
+    unimplemented,
+    ecall_from_m_handler, // should only happen from kernel thread
+    unimplemented,
+    unimplemented,
+    unimplemented,
+    unimplemented,
 };
 
 
@@ -167,40 +167,40 @@ void (*exception_handlers[16])() = {
 
 extern void kerneltrap(uint32_t* caller_sp)
 {
-  unsigned long mcause_value = r_mcause();
+    unsigned long mcause_value = r_mcause();
 
-  current->ctx.mepc = r_mepc();
-  if (mcause_value & MCAUSE_INT_MASK) {
-    if ((mcause_value & MCAUSE_CODE_MASK) == CONFIG_SYSTEM_TIMER_CPU_INTR) {
-      machine_timer_interrupt_handler();
+    current->ctx.mepc = r_mepc();
+    if (mcause_value & MCAUSE_INT_MASK) {
+        if ((mcause_value & MCAUSE_CODE_MASK) == CONFIG_SYSTEM_TIMER_CPU_INTR) {
+            machine_timer_interrupt_handler();
+        } else {
+            __interrupt_handler(mcause_value & MCAUSE_CODE_MASK);
+        }
+        // interrupt_handlers[(mcause_value & MCAUSE_CODE_MASK)]();
     } else {
-      __interrupt_handler(mcause_value & MCAUSE_CODE_MASK);
+        exception_handlers[(mcause_value & MCAUSE_CODE_MASK)]();
     }
-    // interrupt_handlers[(mcause_value & MCAUSE_CODE_MASK)]();
-  } else {
-    exception_handlers[(mcause_value & MCAUSE_CODE_MASK)]();
-  }
 
-  /* Context switch */
-  current->ctx.sp = (uint32_t) caller_sp;
-  tcb_t* sel = schedule_select();
-  if (sel != current) {
-    thread_switch(sel);
-  }
+    /* Context switch */
+    current->ctx.sp = (uint32_t) caller_sp;
+    tcb_t* sel = schedule_select();
+    if (sel != current) {
+        thread_switch(sel);
+    }
 
-  /* Kernel thread should run in m-mode, rest should run in u-mode
-   * The reason we need the kernel thread in m-mode is because it needs
-   * the ability to disable all interrupts */
-  extern tcb_t *kernel;
-  unsigned long x = r_mstatus();
-  x &= ~MSTATUS_MPP_MASK;
-  if (thread_current() == kernel) {
-    x |= MSTATUS_MPP_M;
-  } else {
-    x |= MSTATUS_MPP_U;
-  }
-  w_mstatus(x);
+    /* Kernel thread should run in m-mode, rest should run in u-mode
+     * The reason we need the kernel thread in m-mode is because it needs
+     * the ability to disable all interrupts */
+    extern tcb_t *kernel;
+    unsigned long x = r_mstatus();
+    x &= ~MSTATUS_MPP_MASK;
+    if (thread_current() == kernel) {
+        x |= MSTATUS_MPP_M;
+    } else {
+        x |= MSTATUS_MPP_U;
+    }
+    w_mstatus(x);
 
-  __asm__ ("csrw mepc, %0" : : "r" (current->ctx.mepc));
-  __asm__ volatile ("mv a0, %0" : : "r" (current->ctx.sp));
+    __asm__ ("csrw mepc, %0" : : "r" (current->ctx.mepc));
+    __asm__ volatile ("mv a0, %0" : : "r" (current->ctx.sp));
 }
