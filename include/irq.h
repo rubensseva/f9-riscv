@@ -15,26 +15,11 @@ void irq_init(void);
 
 
 /* Do the initial context switch.
- * A couple of important things to note here:
- * 1. We simulate a context switch by manually setting the stack pointer and mepc
- * 2. We wait for the next-to-last instruction to enable interrupts, so that
- *    this "fake" context switch does not get interrupted and a "real" context
- *    switch is attempted
- * 3. Enabling of interrupts is done by setting the MIE bit in mstatus, by orring
- *    mstatus with 3.
- *
- * I'm not really sure how safe it is to just delay enabling interrupts to the end,
- * is it not possible that an interrupt can occur between enabling interrupts and
- * the mret instruction? It seems to work for now, but this should be kept in mind
- * in case some suspicious error appears in the initialization code */
+ * We simulate a context switch by manually setting the stack pointer and mepc */
 #define init_ctx_switch(sp, pc)							\
 	__asm__ __volatile__ ("mv sp, %0" : : "r" (sp));	\
     __asm__ __volatile__ ("csrw mepc, %0" : : "r" (pc));     \
-	__asm__ __volatile__ (    \
-        "csrr t0, mstatus         \n\t\
-        ori t0, t0, 3             \n\t\
-        csrw mstatus, t0          \n\t\
-        mret                      \n\t");
+	__asm__ __volatile__ ("mret");
 
 #define irq_ecall() \
 	__asm__ __volatile__ ("ecall");

@@ -83,6 +83,8 @@ enum register_stack_t {
 #define CONFIG_MAX_FPAGES 256
 /* Only have 16 bits to set size of fpage */
 #define CONFIG_FPAGE_MAX_SIZE 65535
+/* One fpage is always mapped to vector table, so that leaves 7 fpages that we can use */
+#define CONFIG_MAX_MAPPED_THREAD_FPAGES 7
 
 //
 // Kernel Timer

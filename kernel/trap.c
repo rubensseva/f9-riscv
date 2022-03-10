@@ -9,6 +9,10 @@
 #include <thread.h>
 #include <memory.h>
 #include <mpu.h>
+#include <utility.h>
+#include <config.h>
+#include <ESP32_C3.h>
+#include <error.h>
 
 extern void timervec();
 extern void kernel_vec_in_c_restore();
@@ -36,6 +40,7 @@ void access_fault_handler(void) {
                    "\n------ACCESS FAULT------\nmcause: 0x%x, mstaus: 0x%x, mepc: 0x%x, mtval: 0x%x, thread_id: %d\n",
                    mcause, mstatus, mepc, fault_addr, current->t_globalid);
         dump_state();
+        panic("Unrecoverable access fault");
     }
 }
 
@@ -48,6 +53,7 @@ void unimplemented(void) {
                "\n------UNIMPLEMENTED TRAP------\nmcause: 0x%x, mstaus: 0x%x, mepc: 0x%x, mtval: 0x%x, thread_id: %d\n",
                mcause, mstatus, mepc, mtval, current->t_globalid);
     dump_state();
+    panic("Unrecoverable error, unimplemented trap");
 }
 
 /* interrupt handlers start */
@@ -64,11 +70,11 @@ void machine_timer_interrupt_handler(void) {
 }
 
 void supervisor_timer_interrupt_handler(void) {
-    dbg_printf(DL_EMERG, "ERROR: Got supervisor timer interrupt, shouldnt happen\n");
+    panic("ERROR: Got supervisor timer interrupt, shouldnt happen\n");
 }
 
 void supervisor_external_interrupt(void) {
-    dbg_printf(DL_EMERG, "ERROR: Got supervisor external interrupt, shouldnt happen\n");
+    panic("ERROR: Got supervisor external interrupt, shouldnt happen\n");
 }
 
 /* interrupt handlers end */
@@ -107,6 +113,7 @@ void store_or_AMO_address_misaligned_handler(void) {
     dbg_printf(DL_EMERG, "Store/AMO address misaligned exception. mepc: %x, mtval: %x\n",
                r_mepc(), r_mtval());
     dump_state();
+    panic("Unrecoverable Store/AMO address misaligned exception");
 }
 
 void ecall_from_u_handler(void) {
@@ -173,6 +180,13 @@ extern void kerneltrap(uint32_t* caller_sp)
     if (mcause_value & MCAUSE_INT_MASK) {
         if ((mcause_value & MCAUSE_CODE_MASK) == CONFIG_SYSTEM_TIMER_CPU_INTR) {
             machine_timer_interrupt_handler();
+
+            /* Clear system timer by toggling INTERRUPT_CORE0_INT_CLEAR_REG */
+            /* volatile uint32_t *interrupt_core0_cpu_int_clear = REG(INTERRUPT_MATRIX_BASE + INTERRUPT_CORE0_CPU_INT_CLEAR_REG); */
+            /* *interrupt_core0_cpu_int_clear ^= (1 << CONFIG_SYSTEM_TIMER_CPU_INTR); */
+
+            volatile uint32_t *systimer_target0_int_clr = REG(SYSTEM_TIMER_BASE + SYSTIMER_INT_CLR_REG);
+            *systimer_target0_int_clr = 1; // clear TARGET0
         } else {
             __interrupt_handler(mcause_value & MCAUSE_CODE_MASK);
         }

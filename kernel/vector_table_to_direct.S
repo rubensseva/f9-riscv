@@ -9,7 +9,6 @@
     .balign 0x100
     .global _vector_table
 _vector_table:
-    j kernelvec
-    .rept 31
+    .rept 32
     j kernelvec
     .endr

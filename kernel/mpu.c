@@ -2,6 +2,7 @@
 #include <riscv.h>
 #include <thread.h>
 #include <debug.h>
+#include <config.h>
 
 
 void (*w_pmpaddrarr[16])(uint32_t) = {
@@ -91,7 +92,8 @@ uint32_t r_pmpcfgi(int pmp_entry) {
  *     n = 0 means pmp entries 0 and 1
  *     n = 3 means pmp entries 6 and 7 */
 void mpu_setup_region(int n, fpage_t *fp) {
-    if (n > 7) {
+    if (n > (CONFIG_MAX_MAPPED_THREAD_FPAGES - 1)) {
+        dbg_printf(DL_MEMORY, "Got request to map fpage num %n, but it is over the max number of mapped thread fpages: %d", n);
         return;
     }
     int pmp_entry_lower = n * 2;

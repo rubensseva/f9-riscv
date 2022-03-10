@@ -72,21 +72,24 @@ void system_timer_init() {
     volatile uint32_t *systimer_int_ena = REG(SYSTEM_TIMER_BASE + SYSTIMER_INT_ENA_REG);
     *systimer_int_ena |= 1; // enable interrups for target 0
 
-    /* Then, after configuring the system timer, we need to enable interrupts for the system timer */
-    /* First, we map peripheral interrupt system timer to CPU interrupt number 1 */
+    /* Map peripheral interrupt system timer to a CPU interrupt number */
     volatile uint32_t *interrupt_core0_systimer_target0_int_map_reg = REG(INTERRUPT_MATRIX_BASE + INTERRUPT_CORE0_SYSTIMER_TARGET0_INT_MAP_REG);
     *interrupt_core0_systimer_target0_int_map_reg = CONFIG_SYSTEM_TIMER_CPU_INTR;
+
+    /* Set interrupt type to level-type interrupt, as stated in TRM 10.4.4. */
+    volatile uint32_t *interrupt_core0_cpu_int_type = REG(INTERRUPT_MATRIX_BASE + INTERRUPT_CORE0_CPU_INT_TYPE_REG);
+    *interrupt_core0_cpu_int_type &= ~(1 << CONFIG_SYSTEM_TIMER_CPU_INTR); // set to level type by writing zero
 
     /* Set the priority of the interrupt */
     volatile uint32_t *interrupt_core0_cpu_int_pri = REG(INTERRUPT_MATRIX_BASE + INTERRUPT_CORE0_CPU_INT_PRI_n_REG + 0x4 * (CONFIG_SYSTEM_TIMER_CPU_INTR - 1));
     /* volatile uint32_t *interrupt_core0_cpu_int_pri = REG(INTERRUPT_MATRIX_BASE + 0x128); */
     *interrupt_core0_cpu_int_pri = 15; // Set hightes priority for now TODO: Set a more sensible priority
 
-    /* Set the threshold of interrupt priorities to 1, so that all interrupts are taken */
+    /* Set the threshold of interrupt priorities to 1, so that all interrupts are taken except those with priority = 0 */
     volatile uint32_t *interrupt_core0_cpu_int_thresh = REG(INTERRUPT_MATRIX_BASE + INTERRUPT_CORE0_CPU_INT_THRESH_REG);
     *interrupt_core0_cpu_int_thresh = 1;
 
-    /* After mapping system timer to CPU interrupt number 1, we enable CPU interrupt number 1 */
+    /* After mapping system timer to CPU interrupt, we enable the CPU interrupt number */
     volatile uint32_t *interrupt_core0_cpi_in_enable = REG(INTERRUPT_MATRIX_BASE + INTERRUPT_CORE0_CPU_INT_ENABLE_REG);
     *interrupt_core0_cpi_in_enable |= (1 << CONFIG_SYSTEM_TIMER_CPU_INTR);
 
@@ -94,6 +97,20 @@ void system_timer_init() {
     /* And finally start the counter */
     *systimer_conf_reg |= (1 << SYSTIMER_CONF_REG__SYSTIMER_TIMER_UNIT0_WORK_EN);
 
+}
+
+/**
+   Map the interrupt vector to a pmp fpage. This is needed when an interrupt happens in
+   user mode, otherwise it triggers an illegal instruction access exception.
+ */
+void map_intr_vector() {
+    w_pmpaddr14((int)_vector_table >> 2);
+    w_pmpaddr15(((int)_vector_table + (4 * 32)) >> 2); // We have 32 instructions in interrupt vector, each one is 4 bytes long
+
+    uint32_t old_cfg = r_pmpcfg3();
+    uint32_t new_cfg = old_cfg & (0x0000ffff);
+    new_cfg |= 0x8C008000; // write 0b10001100 10000000 to set TOR mode, exec-only, and lock bit on both pmpaddr
+    w_pmpcfg3(new_cfg);
 }
 
 
@@ -134,6 +151,7 @@ int main(void)
 
     user_irq_init();
     irq_init();
+    map_intr_vector();
     system_timer_init();
 
     switch_to_kernel();

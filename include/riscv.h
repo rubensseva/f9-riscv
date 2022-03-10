@@ -33,6 +33,13 @@ static inline void w_mstatus(uint32_t x)
     asm volatile("csrw mstatus, %0" : : "r" (x));
 }
 
+static inline uint32_t r_mcause()
+{
+    uint32_t x;
+    asm volatile("csrr %0, mcause" : "=r" (x) );
+    return x;
+}
+
 /* machine exception program counter, holds the
    instruction address to which a return from
    exception will go. */
@@ -108,6 +115,13 @@ static inline uint32_t r_satp()
 {
     uint32_t x;
     asm volatile("csrr %0, satp" : "=r" (x) );
+    return x;
+}
+
+static inline uint32_t r_sp()
+{
+    uint32_t x;
+    asm volatile("mv %0, sp" : "=r" (x));
     return x;
 }
 

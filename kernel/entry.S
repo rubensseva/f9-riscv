@@ -1,5 +1,4 @@
 .section __l4_start_section
-.global idle_stack_end
 .global _entry
 _entry:
     # Load __global_pointer$ (from linker script) into gp.

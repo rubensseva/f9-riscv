@@ -1,4 +1,4 @@
-	#
+        #
         # interrupts and exceptions while in machine
         # mode come here.
         #
@@ -45,6 +45,7 @@ kernelvec:
         sw s11, 120(sp)
 
         mv a0, sp
+        la sp, kernel_stack_end
 
         call kerneltrap
 
