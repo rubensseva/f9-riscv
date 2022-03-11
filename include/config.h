@@ -49,7 +49,13 @@ enum register_stack_t {
 
 #define CONFIG_BITMAP_BITBAND 0
 
+/* external to CPU interrupt mappings */
+#define CONFIG_UART_CPU_INTR 3
+// ESP32-C3 mappings from external interrupts to CPU interrupts
 #define CONFIG_SYSTEM_TIMER_CPU_INTR 7
+
+// F9 interrupt numbers. User threads should use this to request interrupt delegation
+#define CONFIG_F9_UART_INTR_NUM 1
 
 // From old kconfig
 // -----------------------------

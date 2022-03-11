@@ -82,10 +82,10 @@ void system_timer_init() {
 
     /* Set the priority of the interrupt */
     volatile uint32_t *interrupt_core0_cpu_int_pri = REG(INTERRUPT_MATRIX_BASE + INTERRUPT_CORE0_CPU_INT_PRI_n_REG + 0x4 * (CONFIG_SYSTEM_TIMER_CPU_INTR - 1));
-    /* volatile uint32_t *interrupt_core0_cpu_int_pri = REG(INTERRUPT_MATRIX_BASE + 0x128); */
-    *interrupt_core0_cpu_int_pri = 15; // Set hightes priority for now TODO: Set a more sensible priority
+    *interrupt_core0_cpu_int_pri = 10; // Set hightes priority for now TODO: Set a more sensible priority
 
     /* Set the threshold of interrupt priorities to 1, so that all interrupts are taken except those with priority = 0 */
+    /* TODO: This should be in a more general interrupt_init() type of function */
     volatile uint32_t *interrupt_core0_cpu_int_thresh = REG(INTERRUPT_MATRIX_BASE + INTERRUPT_CORE0_CPU_INT_THRESH_REG);
     *interrupt_core0_cpu_int_thresh = 1;
 

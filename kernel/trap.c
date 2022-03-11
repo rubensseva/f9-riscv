@@ -181,16 +181,12 @@ extern void kerneltrap(uint32_t* caller_sp)
         if ((mcause_value & MCAUSE_CODE_MASK) == CONFIG_SYSTEM_TIMER_CPU_INTR) {
             machine_timer_interrupt_handler();
 
-            /* Clear system timer by toggling INTERRUPT_CORE0_INT_CLEAR_REG */
-            /* volatile uint32_t *interrupt_core0_cpu_int_clear = REG(INTERRUPT_MATRIX_BASE + INTERRUPT_CORE0_CPU_INT_CLEAR_REG); */
-            /* *interrupt_core0_cpu_int_clear ^= (1 << CONFIG_SYSTEM_TIMER_CPU_INTR); */
-
+            /* Clear system timer interrupt */
             volatile uint32_t *systimer_target0_int_clr = REG(SYSTEM_TIMER_BASE + SYSTIMER_INT_CLR_REG);
             *systimer_target0_int_clr = 1; // clear TARGET0
         } else {
             __interrupt_handler(mcause_value & MCAUSE_CODE_MASK);
         }
-        // interrupt_handlers[(mcause_value & MCAUSE_CODE_MASK)]();
     } else {
         exception_handlers[(mcause_value & MCAUSE_CODE_MASK)]();
     }
