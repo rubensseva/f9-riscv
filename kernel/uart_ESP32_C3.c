@@ -42,10 +42,23 @@ __USER_TEXT void UART_receive_init(int controller_num)
     volatile uint32_t *interrupt_core0_cpu_int_pri = REG(INTERRUPT_MATRIX_BASE + INTERRUPT_CORE0_CPU_INT_PRI_n_REG + 0x4 * (CONFIG_UART_CPU_INTR - 1));
     *interrupt_core0_cpu_int_pri = 11; // Set hightes priority for now TODO: Set a more sensible priority
 
+    /* Set the type to edge triggered, so we can clear it with the interrupt matrix */
+    volatile uint32_t *interrupt_core0_cpu_int_type = REG(INTERRUPT_MATRIX_BASE + INTERRUPT_CORE0_CPU_INT_TYPE_REG);
+    *interrupt_core0_cpu_int_type |= (1 << CONFIG_UART_CPU_INTR);
+
     /* After mapping system timer to CPU interrupt, we enable the CPU interrupt number */
     volatile uint32_t *interrupt_core0_cpi_in_enable = REG(INTERRUPT_MATRIX_BASE + INTERRUPT_CORE0_CPU_INT_ENABLE_REG);
     *interrupt_core0_cpi_in_enable |= (1 << CONFIG_UART_CPU_INTR);
-}
+
+    /* Clear uart interrupt in interrupt matrix (not sure if this is necessary, but lets do it to be sure) */
+    volatile uint32_t *interrupt_core0_cpu_int_clear = REG(INTERRUPT_MATRIX_BASE + INTERRUPT_CORE0_CPU_INT_CLEAR_REG);
+    *interrupt_core0_cpu_int_clear |= (1 << CONFIG_UART_CPU_INTR);
+    *interrupt_core0_cpu_int_clear &= ~(1 << CONFIG_UART_CPU_INTR);
+
+    /* Clear uart interrupt from source */
+    volatile uint32_t *uart_int_clr = REG(UART_CONTROLLER_0_BASE + UART_INT_CLR_REG);
+    *uart_int_clr |= (1 << UART_INTR__UART_RXFIFO_FULL);
+};
 
 __USER_TEXT uint32_t UART_txfifo_count(int controller_num) {
     uint32_t controller = controller_num ? UART_CONTROLLER_1_BASE : UART_CONTROLLER_0_BASE;
