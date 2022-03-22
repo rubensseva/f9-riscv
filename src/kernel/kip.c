@@ -1,3 +1,4 @@
+#include <types.h>
 #include <kip.h>
 #include <link.h>
 #include <config.h>

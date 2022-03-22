@@ -15,7 +15,7 @@ BUILD_TIME = $(shell date +%FT%T%z)
 CC:=~/CustomInstalledPrograms/riscv-from-sourc/bin/riscv32-unknown-elf-gcc
 LD:=~/CustomInstalledPrograms/riscv-from-sourc/bin/riscv32-unknown-elf-ld
 
-SRC_DIR:=kernel
+SRC_DIR:=src
 BUILD_DIR:=build
 INCLUDES_DIR:=include
 
@@ -39,6 +39,7 @@ CFLAGS += -O0
 CFLAGS += -mcmodel=medany
 CFLAGS += -ffreestanding -fno-common -nostdlib -mno-relax
 CFLAGS += -I$(INCLUDES_DIR)
+CFLAGS += -I$(INCLUDES_DIR)/kernel
 CFLAGS += -I$(INCLUDES_DIR)/l4
 CFLAGS += -I$(INCLUDES_DIR)/lib
 CFLAGS += -I$(INCLUDES_DIR)/platform

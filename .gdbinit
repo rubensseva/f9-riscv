@@ -88,8 +88,8 @@ define sbr
   # when we return from kerneltrap:
   break kernelvec.S:94
 
-  break kernel/root_thread.c:190
-  break kernel/trap.c:204
+  break root_thread.c:190
+  break trap.c:204
 
 end
 sbr
