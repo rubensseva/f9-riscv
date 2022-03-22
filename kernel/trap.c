@@ -13,6 +13,7 @@
 #include <config.h>
 #include <ESP32_C3.h>
 #include <error.h>
+#include <uart_ESP32_C3.h>
 
 extern void timervec();
 extern void kernel_vec_in_c_restore();
@@ -185,6 +186,21 @@ extern void kerneltrap(uint32_t* caller_sp)
             volatile uint32_t *systimer_target0_int_clr = REG(SYSTEM_TIMER_BASE + SYSTIMER_INT_CLR_REG);
             *systimer_target0_int_clr = 1; // clear TARGET0
         } else {
+
+            /* TODO: Remove this when no longer needed */
+            if ((mcause_value & MCAUSE_CODE_MASK) == CONFIG_UART_CPU_INTR) {
+                while(UART_rxfifo_count(0) != 0) {
+                    dbg_printf(DL_BASIC, "%c", (UART_read(0)));
+                }
+            }
+            /* Try to clear using interrupt matrix (only works for edge type interrupts) */
+            volatile uint32_t *interrupt_core0_cpu_int_clear = REG(INTERRUPT_MATRIX_BASE + INTERRUPT_CORE0_CPU_INT_CLEAR_REG);
+            *interrupt_core0_cpu_int_clear |= (1 << CONFIG_UART_CPU_INTR);
+            /* Try to clear from source */
+            /* TODO: I dont think we can just clear the CPU interrupt, we need to clear the specific UART interrupt that happened */
+            volatile uint32_t *uart_int_clr = REG(UART_CONTROLLER_0_BASE + UART_INT_CLR_REG);
+            *uart_int_clr |= (1 << UART_INTR__UART_RXFIFO_FULL);
+
             __interrupt_handler(mcause_value & MCAUSE_CODE_MASK);
         }
     } else {

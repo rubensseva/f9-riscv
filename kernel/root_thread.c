@@ -165,7 +165,7 @@ void __USER_TEXT my_user_thread()
 
     char *curr = txt;
     while (*curr != '\0') {
-        UART_write(*curr);
+        UART_write(*curr, 0);
         curr++;
     }
 

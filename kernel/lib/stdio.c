@@ -10,8 +10,9 @@
 
 /* TODO: In the original F9 code, this function is part of a debug device abstraction.
  * That abstraction should be added here as well */
-void __l4_putchar(uint8_t c) {
-  UART_write(c);
+void __l4_putchar(uint8_t c)
+{
+    UART_write(c, 0);
 }
 
 void __l4_puts(char *str)
