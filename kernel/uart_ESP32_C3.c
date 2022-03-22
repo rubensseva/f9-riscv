@@ -88,3 +88,10 @@ __USER_TEXT char UART_read(int controller_num)
     volatile uint32_t *uart_rxfifo_rd_byte = REG(controller + UART_FIFO_REG);
     return (char) *uart_rxfifo_rd_byte;
 }
+
+
+__USER_TEXT void UART_clear(int controller_num) {
+    uint32_t controller = controller_num ? UART_CONTROLLER_1_BASE : UART_CONTROLLER_0_BASE;
+    volatile uint32_t *uart_int_clr = REG(controller + UART_INT_CLR_REG);
+    *uart_int_clr |= (1 << UART_INTR__UART_RXFIFO_FULL);
+}

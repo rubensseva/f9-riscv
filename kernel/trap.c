@@ -188,18 +188,18 @@ extern void kerneltrap(uint32_t* caller_sp)
         } else {
 
             /* TODO: Remove this when no longer needed */
-            if ((mcause_value & MCAUSE_CODE_MASK) == CONFIG_UART_CPU_INTR) {
-                while(UART_rxfifo_count(0) != 0) {
-                    dbg_printf(DL_BASIC, "%c", (UART_read(0)));
-                }
-            }
+            /* if ((mcause_value & MCAUSE_CODE_MASK) == CONFIG_UART_CPU_INTR) { */
+            /*     while(UART_rxfifo_count(0) != 0) { */
+            /*         dbg_printf(DL_BASIC, "%c", (UART_read(0))); */
+            /*     } */
+            /* } */
             /* Try to clear using interrupt matrix (only works for edge type interrupts) */
             volatile uint32_t *interrupt_core0_cpu_int_clear = REG(INTERRUPT_MATRIX_BASE + INTERRUPT_CORE0_CPU_INT_CLEAR_REG);
             *interrupt_core0_cpu_int_clear |= (1 << CONFIG_UART_CPU_INTR);
             /* Try to clear from source */
             /* TODO: I dont think we can just clear the CPU interrupt, we need to clear the specific UART interrupt that happened */
-            volatile uint32_t *uart_int_clr = REG(UART_CONTROLLER_0_BASE + UART_INT_CLR_REG);
-            *uart_int_clr |= (1 << UART_INTR__UART_RXFIFO_FULL);
+            /* volatile uint32_t *uart_int_clr = REG(UART_CONTROLLER_0_BASE + UART_INT_CLR_REG); */
+            /* *uart_int_clr |= (1 << UART_INTR__UART_RXFIFO_FULL); */
 
             __interrupt_handler(mcause_value & MCAUSE_CODE_MASK);
         }
@@ -217,10 +217,12 @@ extern void kerneltrap(uint32_t* caller_sp)
     /* Kernel thread should run in m-mode, rest should run in u-mode
      * The reason we need the kernel thread in m-mode is because it needs
      * the ability to disable all interrupts */
-    extern tcb_t *kernel;
+    /* TODO: Consider running idle thread in user mode */
+    /* TODO: Decide on using either *current or thread_current() */
+    extern tcb_t *kernel, *idle;
     unsigned long x = r_mstatus();
     x &= ~MSTATUS_MPP_MASK;
-    if (thread_current() == kernel) {
+    if (thread_current() == kernel || thread_current() == idle) {
         x |= MSTATUS_MPP_M;
     } else {
         x |= MSTATUS_MPP_U;

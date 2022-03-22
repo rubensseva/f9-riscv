@@ -87,5 +87,9 @@ define sbr
   # break sys_ipc
   # when we return from kerneltrap:
   break kernelvec.S:94
+
+  break kernel/root_thread.c:190
+  break kernel/trap.c:204
+
 end
 sbr
