@@ -20,7 +20,7 @@ kernelvec:
         sw a6, 24(sp)
         sw a7, 28(sp)
         # skip stack pointer, we'll pass it to kerneltrap with a0
-        # sd sp, 32(sp)
+        # sw sp, 32(sp)
         sw ra, 36(sp)
         sw gp, 40(sp)
         sw tp, 44(sp)
@@ -63,7 +63,7 @@ kernelvec:
         lw a6, 24(sp)
         lw a7, 28(sp)
         # skip sp
-        # ld sp, 32(sp)
+        # lw sp, 32(sp)
         lw ra, 36(sp)
         lw gp, 40(sp)
         lw tp, 44(sp)

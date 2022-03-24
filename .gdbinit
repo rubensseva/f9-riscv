@@ -25,6 +25,14 @@ define intr_dump
   print /t *$intr_perip_pend_1
 end
 
+define timer_en
+  set *($intr_ena) |= (1 << 7)
+end
+define timer_dis
+  set *($intr_ena) &= ~(1 << 7)
+end
+
+
 reesp
 set remote hardware-watchpoint-limit 2
 mon reset halt

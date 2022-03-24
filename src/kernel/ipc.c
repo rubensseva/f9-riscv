@@ -22,23 +22,23 @@ extern tcb_t *caller;
 extern tcb_t *thread_map[];
 extern int thread_count;
 
+/* Read a MR register. The first 8 MRs are hardware registers, the next 8 are on the
+   UTCB. Assumes that the s registers are stored sequentially on the stack */
 uint32_t ipc_read_mr(tcb_t *from, int i)
 {
-	/* if (i >= 8) */
-	/* 	return from->utcb->mr[i - 8]; */
-	/* return from->ctx.s_regs[i]; */
-
-	return from->utcb->mr[i];
+	if (i >= 8)
+		return from->utcb->mr[i - 8];
+	return *(((uint32_t *)from->ctx.sp) + (REG_S4 + i));
 }
 
+/* Write a MR register. The first 8 MRs are hardware registers, the next 8 are on the
+   UTCB. Assumes that the s registers are stored sequentially on the stack */
 void ipc_write_mr(tcb_t *to, int i, uint32_t data)
 {
-	/* if (i >= 8) */
-	/* 	to->utcb->mr[i - 8] = data; */
-	/* else */
-	/* 	to->ctx.s_regs[i] = data; */
-
-	to->utcb->mr[i] = data;
+	if (i >= 8)
+		to->utcb->mr[i - 8] = data;
+	else
+        *(((uint32_t *)to->ctx.sp) + (REG_S4 + i)) = data;
 }
 
 static void user_ipc_error(tcb_t *thr, enum user_error_t error)
@@ -150,10 +150,10 @@ static void do_ipc(tcb_t *from, tcb_t *to)
 
 	to->state = T_RUNNABLE;
 	to->ipc_from = L4_NILTHREAD;
-	((uint32_t *) to->ctx.sp)[REG_T0] = from->t_globalid;
+	((uint32_t *) to->ctx.sp)[REG_A0] = from->t_globalid;
 
 	/* If from has receive phases, lock myself */
-	from_recv_tid = ((uint32_t *) from->ctx.sp)[REG_T1];
+	from_recv_tid = ((uint32_t *) from->ctx.sp)[REG_A2];
 	if (from_recv_tid == L4_NILTHREAD) {
 		from->state = T_RUNNABLE;
 	} else {

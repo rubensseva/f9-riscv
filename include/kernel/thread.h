@@ -58,6 +58,44 @@ typedef enum {
 	T_SEND_BLOCKED
 } thread_state_t;
 
+/* Multiply these by 4 to get the byte offset of the stack pointer */
+/* Caution: There is a duplicate of this in user space code. If you change this one, change the one in
+   user space as well (and when actually saving registers on the stack) */
+enum register_stack_t {
+	REG_A0,
+	REG_A1,
+	REG_A2,
+	REG_A3,
+	REG_A4,
+	REG_A5,
+	REG_A6,
+    REG_A7,
+	REG_RA,
+	REG_SP,
+	REG_GP,
+	REG_TP,
+	REG_T0,
+	REG_T1,
+	REG_T2,
+	REG_T3,
+	REG_T4,
+	REG_T5,
+	REG_T6,
+	REG_S0,
+	REG_S1,
+	REG_S2,
+	REG_S3,
+	REG_S4,
+	REG_S5,
+	REG_S6,
+	REG_S7,
+	REG_S8,
+	REG_S9,
+	REG_S10,
+	REG_S11
+};
+
+/* TODO: Can delete most of these, except sp */
 typedef struct {
 	uint32_t mepc;
 

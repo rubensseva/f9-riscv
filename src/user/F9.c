@@ -1,27 +1,34 @@
-#include <stdint.h>
-#include <types.h>
-#include <link.h>
-#include <thread.h>
-#include <syscall.h>
-#include <ipc.h>
-#include <uart_ESP32_C3.h>
-#include <interrupt_ipc.h>
-#include <l4/utcb.h>
+#include "user/message.h"
 #include <user/F9.h>
+#include <user/user_types.h>
 
 extern void* current_utcb;
 
-__USER_TEXT void L4_Ipc(uint32_t to_gid, uint32_t from_gid)
+__USER_TEXT L4_MsgTag_t L4_Ipc(L4_ThreadId_t to,
+                               L4_ThreadId_t FromSpecifier,
+                               L4_Word_t Timeouts,
+                               L4_ThreadId_t *from)
 {
+    L4_MsgTag_t result;
+    L4_ThreadId_t from_ret;
+
     __asm__ __volatile__(
-        "mv a0, %0\n\t\
-        mv a1, %1\n\t\
-        mv a2, %2\n\t\
-        mv a3, %3\n\t\
-        ecall\n\t"
-        :
-        : "r"(SYS_IPC), "r"(to_gid), "r"(from_gid), "r"(0)
+        "mv a0, %[SYS_NUM]\n\t\
+        mv a1, %[to]\n\t\
+        mv a2, %[from_specifier]\n\t\
+        mv a3, %[timeout]\n\t\
+        ecall\n\t\
+        mv %[from_ret], a0\n\t"
+        : [from_ret] "=r" (from_ret)
+        : [SYS_NUM] "r"(SYS_IPC), [to] "r"(to), [from_specifier] "r"(FromSpecifier), [timeout] "r"(Timeouts)
         : "a0", "a1", "a2", "a3");
+
+    result.raw = __L4_MR0;
+
+    if (from)
+        *from = from_ret;
+
+    return result;
 }
 
 __USER_TEXT void L4_Sleep()
@@ -57,8 +64,7 @@ __USER_TEXT void L4_ThreadControl(L4_ThreadId_t dest, L4_ThreadId_t SpaceSpecifi
 
 __USER_TEXT void L4_map(memptr_t base, uint32_t size, L4_ThreadId_t tid)
 {
-    ipc_msg_tag_t tag = {.raw = 0};
-    tag.s.n_typed = 2;
+    L4_Msg_t msg;
 
     /* 0xA is 0b1010, 0x8 is 0b1000, it decides what operation to do for typed argument:
        - 1xxx means that this is a grant or a map instead of a normal typed IPC.
@@ -68,11 +74,14 @@ __USER_TEXT void L4_map(memptr_t base, uint32_t size, L4_ThreadId_t tid)
         size & 0xFFFFFFC0
     };
 
-    ((utcb_t *)current_utcb)->mr[0] = tag.raw;
-    ((utcb_t *)current_utcb)->mr[1] = page[0];
-    ((utcb_t *)current_utcb)->mr[2] = page[1];
+    L4_MsgPut(&msg, 0, 0, NULL, 2, page);
+    L4_MsgLoad(&msg);
+    L4_Send(tid);
 
-    L4_Ipc(tid, L4_NILTHREAD);
+    /* ((utcb_t *)current_utcb)->mr[0] = tag.raw; */
+    /* ((utcb_t *)current_utcb)->mr[1] = page[0]; */
+    /* ((utcb_t *)current_utcb)->mr[2] = page[1]; */
+
 }
 
 __USER_TEXT void map_user_sections(kip_t *kip_ptr, L4_ThreadId_t tid)
@@ -108,15 +117,30 @@ __USER_TEXT memptr_t get_free_base(kip_t *kip_ptr)
 }
 
 __USER_TEXT void request_irq(uint16_t irq_num, uint32_t priority, L4_ThreadId_t thread_id, uint32_t handler_ptr) {
-    ipc_msg_tag_t irq_tag = {{0, 0, 0, 0}};
-    irq_tag.s.n_untyped = 5;
-    irq_tag.s.label = USER_INTERRUPT_LABEL;
-    ((utcb_t *)current_utcb)->mr[0] = irq_tag.raw;
-    ((utcb_t *)current_utcb)->mr[1] = (uint16_t) irq_num; // IRQ_N
-    ((utcb_t *)current_utcb)->mr[2] = (l4_thread_t) thread_id;
-    ((utcb_t *)current_utcb)->mr[3] = (uint16_t) USER_IRQ_ENABLE; // action
-    ((utcb_t *)current_utcb)->mr[4] = (uint32_t) handler_ptr;
-    ((utcb_t *)current_utcb)->mr[5] = (uint16_t) priority;
-    L4_ThreadId_t irq_gid = TID_TO_GLOBALID(THREAD_IRQ_REQUEST);
-    L4_Ipc(irq_gid, L4_NILTHREAD);
+    /* ipc_msg_tag_t irq_tag = {{0, 0, 0, 0}}; */
+    /* irq_tag.s.n_untyped = 5; */
+    /* irq_tag.s.label = USER_INTERRUPT_LABEL; */
+    /* ((utcb_t *)current_utcb)->mr[0] = irq_tag.raw; */
+    /* ((utcb_t *)current_utcb)->mr[1] = (uint16_t) irq_num; // IRQ_N */
+    /* ((utcb_t *)current_utcb)->mr[2] = thread_id.raw; */
+    /* ((utcb_t *)current_utcb)->mr[3] = (uint16_t) USER_IRQ_ENABLE; // action */
+    /* ((utcb_t *)current_utcb)->mr[4] = (uint32_t) handler_ptr; */
+    /* ((utcb_t *)current_utcb)->mr[5] = (uint16_t) priority; */
+    L4_ThreadId_t irq_gid = {.raw = TID_TO_GLOBALID(THREAD_IRQ_REQUEST)};
+
+    L4_Msg_t msg;
+    L4_MsgClear(&msg);
+
+    L4_Word_t msgs[5] = {
+        (uint16_t) irq_num, // IRQ_N
+        thread_id.raw,
+        (uint16_t) USER_IRQ_ENABLE, // action
+        (uint32_t) handler_ptr,
+        (uint16_t) priority,
+    };
+
+    L4_MsgPut(&msg, USER_INTERRUPT_LABEL, 5, msgs, 0, NULL);
+    L4_MsgLoad(&msg);
+
+    L4_Ipc(irq_gid, L4_nilthread, 0, (L4_ThreadId_t *)0);
 }
