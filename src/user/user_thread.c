@@ -19,6 +19,7 @@ __USER_TEXT void user_uart_handler() {
 
 __USER_TEXT void user_thread()
 {
+    UART_receive_init(0);
     L4_ThreadId_t myself = {.raw = ((utcb_t *)current_utcb)->t_globalid};
     request_irq(3, 1, myself, (uint32_t) user_uart_handler);
 

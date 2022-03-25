@@ -137,7 +137,7 @@ int main(void)
     thread_init_subsys();
 
     UART_init(115200, 0);
-    UART_receive_init(0);
+    UART_receive_intr_matr_init();
     dbg_init(DL_BASIC | DL_KDB  | DL_KTABLE | DL_SOFTIRQ | DL_THREAD |
              DL_KTIMER | DL_SYSCALL | DL_SCHEDULE | DL_MEMORY | DL_IPC);
     __l4_printf("%s", banner);

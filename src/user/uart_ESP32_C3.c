@@ -21,18 +21,12 @@ __USER_TEXT void UART_init(int baud, int controller_num)
     *uart_clk_conf = BIT(25) | BIT(24) | BIT(22) | BIT(21) | BIT(20);  // Use APB NOTE: Is this APB? Seems to be XTAL_CLK...
 }
 
-__USER_TEXT void UART_receive_init(int controller_num)
+/**
+   This function sets up the interrupt matrix for UART. Only the kernel should access the interrupt matrix,
+   which is why this is not in user text
+*/
+void UART_receive_intr_matr_init()
 {
-    uint32_t controller = controller_num ? UART_CONTROLLER_1_BASE : UART_CONTROLLER_0_BASE;
-    /* Set receive threshold to 1, so that we generate an interrupt when receiving one character */
-    volatile uint32_t *uart_conf1 = REG(controller + UART_CONF1_REG);
-    *uart_conf1 &= ~(0xFF);
-    *uart_conf1 |= (1 << UART_CONF1_REG__UART_RXFIFO_FULL_THRHD);
-
-    /* Enable UART interrupt when RXFIFO is full */
-    volatile uint32_t *uart_int_ena = REG(controller + UART_INT_ENA_REG);
-    *uart_int_ena |= (1 << UART_INTR__UART_RXFIFO_FULL);
-
     /* Map UART interrupt */
     /* TODO: Should this be reg UART, or UART1? */
     volatile uint32_t *interrupt_core0_systimer_target0_int_map_reg = REG(INTERRUPT_MATRIX_BASE + INTERRUPT_CORE0_UART_TARGET0_INT_MAP_REG);
@@ -54,8 +48,22 @@ __USER_TEXT void UART_receive_init(int controller_num)
     volatile uint32_t *interrupt_core0_cpu_int_clear = REG(INTERRUPT_MATRIX_BASE + INTERRUPT_CORE0_CPU_INT_CLEAR_REG);
     *interrupt_core0_cpu_int_clear |= (1 << CONFIG_UART_CPU_INTR);
     *interrupt_core0_cpu_int_clear &= ~(1 << CONFIG_UART_CPU_INTR);
+}
+
+__USER_TEXT void UART_receive_init(int controller_num)
+{
+    uint32_t controller = controller_num ? UART_CONTROLLER_1_BASE : UART_CONTROLLER_0_BASE;
+    /* Set receive threshold to 1, so that we generate an interrupt when receiving one character */
+    volatile uint32_t *uart_conf1 = REG(controller + UART_CONF1_REG);
+    *uart_conf1 &= ~(0xFF);
+    *uart_conf1 |= (1 << UART_CONF1_REG__UART_RXFIFO_FULL_THRHD);
+
+    /* Enable UART interrupt when RXFIFO is full */
+    volatile uint32_t *uart_int_ena = REG(controller + UART_INT_ENA_REG);
+    *uart_int_ena |= (1 << UART_INTR__UART_RXFIFO_FULL);
 
     /* Clear uart interrupt from source */
+    /* TODO: Use UART_clear() instead */
     volatile uint32_t *uart_int_clr = REG(UART_CONTROLLER_0_BASE + UART_INT_CLR_REG);
     *uart_int_clr |= (1 << UART_INTR__UART_RXFIFO_FULL);
 };
