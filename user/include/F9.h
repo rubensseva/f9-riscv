@@ -12,9 +12,9 @@
 #include <interrupt_ipc.h>
 #include <l4/utcb.h>
 
-#include <user/message.h>
-#include <user/user_types.h>
-#include <user/vregs.h>
+#include <message.h>
+#include <user_types.h>
+#include <vregs.h>
 
 // void L4_Ipc(L4_ThreadId_t to_gid, L4_ThreadId_t from_gid);
 L4_MsgTag_t L4_Ipc(L4_ThreadId_t to,

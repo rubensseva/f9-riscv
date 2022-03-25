@@ -2,8 +2,8 @@
 #define MESSAGE_H_
 
 #include <link.h>
-#include <user/user_types.h>
-#include <user/vregs.h>
+#include <user_types.h>
+#include <vregs.h>
 
 /*
  * Message tag

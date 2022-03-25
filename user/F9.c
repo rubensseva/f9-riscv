@@ -1,6 +1,6 @@
-#include "user/message.h"
-#include <user/F9.h>
-#include <user/user_types.h>
+#include <message.h>
+#include <F9.h>
+#include <user_types.h>
 
 extern void* current_utcb;
 

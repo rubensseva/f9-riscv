@@ -15,14 +15,18 @@ BUILD_TIME = $(shell date +%FT%T%z)
 CC:=~/CustomInstalledPrograms/riscv-from-sourc/bin/riscv32-unknown-elf-gcc
 LD:=~/CustomInstalledPrograms/riscv-from-sourc/bin/riscv32-unknown-elf-ld
 
-SRC_DIR:=src
-BUILD_DIR:=build
+KERNEL_DIR:=kernel
+PLATFORM_DIR:=platform
 INCLUDES_DIR:=include
+USER_DIR:=user
+USER_INCLUDES_DIR:=user/include
+
+BUILD_DIR:=build
 
 TARGET:=$(BUILD_DIR)/kernel.bin
 default: $(TARGET)
 
-LINKERSCRIPT:=linker_scripts/esp32-c3/f9.ld
+LINKERSCRIPT:=platform/esp32_c3/f9.ld
 
 CFLAGS_MISC_DEFINE = \
 	-DGIT_HEAD=\"$(GIT_HEAD)\" \
@@ -43,6 +47,7 @@ CFLAGS += -I$(INCLUDES_DIR)/kernel
 CFLAGS += -I$(INCLUDES_DIR)/l4
 CFLAGS += -I$(INCLUDES_DIR)/lib
 CFLAGS += -I$(INCLUDES_DIR)/platform
+CFLAGS += -I$(USER_INCLUDES_DIR)
 CFLAGS += $(CFLAGS_MISC_DEFINE)
 
 LDFLAGS = --gc-sections
@@ -50,30 +55,40 @@ LDFLAGS = --gc-sections
 # LDLAGS += -mabi=ilp32
 
 
-SOURCES:=$(shell find $(SRC_DIR) -name "*.c")
-ASSEMBLY:=$(shell find $(SRC_DIR) -name "*.S")
-$(info $$SOURCES is [${SOURCES}])
+KERNEL_SOURCES:=$(shell find $(KERNEL_DIR) -name "*.c")
+ASSEMBLY:=$(shell find $(KERNEL_DIR) -name "*.S")
+PLATFORM_SOURCES:=$(shell find $(PLATFORM_DIR) -name "*.c")
+USER_SOURCES:=$(shell find $(USER_DIR) -name "*.c")
+$(info $$ASSEMBLY is [${ASSEMBLY}])
 
 
 # OBJECTS := $(addprefix $(BUILD_DIR)/,$(SOURCES:%.c=%.o))
-SOURCE_OBJECTS = $(SOURCES:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
-ASSEMBLY_OBJECTS = $(ASSEMBLY:$(SRC_DIR)/%.S=$(BUILD_DIR)/%.o)
-$(info $$OBJECTS is [${OBJECTS}])
-$(info $$SOURCE_OBJECTS is [${SOURCE_OBJECTS}])
+KERNEL_SOURCE_OBJECTS = $(KERNEL_SOURCES:$(KERNEL_DIR)/%.c=$(BUILD_DIR)/%.o)
+ASSEMBLY_OBJECTS = $(ASSEMBLY:$(KERNEL_DIR)/%.S=$(BUILD_DIR)/%.o)
+PLATFORM_SOURCE_OBJECTS = $(PLATFORM_SOURCES:$(PLATFORM_DIR)/%.c=$(BUILD_DIR)/%.o)
+USER_SOURCE_OBJECTS = $(USER_SOURCES:$(USER_DIR)/%.c=$(BUILD_DIR)/%.o)
+$(info $$KERNEL_SOURCE_OBJECTS is [${KERNEL_SOURCE_OBJECTS}])
 $(info $$ASSEMBLY_OBJECTS is [${ASSEMBLY_OBJECTS}])
+$(info $$USER_SOURCE_OBJECTS is [${USER_SOURCE_OBJECTS}])
+$(info $$PLATFORM_SOURCE_OBJECTS is [${PLATFORM_SOURCE_OBJECTS}])
 
 .SECONDEXPANSION:
 
-$(SOURCE_OBJECTS) : $$(patsubst $(BUILD_DIR)/%.o,$(SRC_DIR)/%.c,$$@)
+$(KERNEL_SOURCE_OBJECTS) : $$(patsubst $(BUILD_DIR)/%.o,$(KERNEL_DIR)/%.c,$$@)
+	mkdir -p $(@D)
+	$(CC) -c -o $@ $(CFLAGS) $<
+$(ASSEMBLY_OBJECTS) : $$(patsubst $(BUILD_DIR)/%.o,$(KERNEL_DIR)/%.S,$$@)
+	mkdir -p $(@D)
+	$(CC) -c -o $@ $(CFLAGS) $<
+$(PLATFORM_SOURCE_OBJECTS) : $$(patsubst $(BUILD_DIR)/%.o,$(PLATFORM_DIR)/%.c,$$@)
+	mkdir -p $(@D)
+	$(CC) -c -o $@ $(CFLAGS) $<
+$(USER_SOURCE_OBJECTS) : $$(patsubst $(BUILD_DIR)/%.o,$(USER_DIR)/%.c,$$@)
 	mkdir -p $(@D)
 	$(CC) -c -o $@ $(CFLAGS) $<
 
-$(ASSEMBLY_OBJECTS) : $$(patsubst $(BUILD_DIR)/%.o,$(SRC_DIR)/%.S,$$@)
-	mkdir -p $(@D)
-	$(CC) -c -o $@ $(CFLAGS) $<
-
-$(TARGET): $(SOURCE_OBJECTS) $(ASSEMBLY_OBJECTS) $(LINKERSCRIPT) $(INCLUDES_DIR)
-	$(LD) $(LDFLAGS) -T $(LINKERSCRIPT) -o $(TARGET) $(SOURCE_OBJECTS) $(ASSEMBLY_OBJECTS)
+$(TARGET): $(KERNEL_SOURCE_OBJECTS) $(ASSEMBLY_OBJECTS) $(PLATFORM_SOURCE_OBJECTS) $(USER_SOURCE_OBJECTS) $(LINKERSCRIPT) $(INCLUDES_DIR) $(USER_INCLUDES_DIR)
+	$(LD) $(LDFLAGS) -T $(LINKERSCRIPT) -o $(TARGET) $(KERNEL_SOURCE_OBJECTS) $(ASSEMBLY_OBJECTS) $(PLATFORM_SOURCE_OBJECTS) $(USER_SOURCE_OBJECTS)
 
 .PHONY: clean
 clean:

@@ -22,16 +22,17 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"f54d88a09cb0e9e1666ef01fb08eaa8e96ba3f58\"",
+      "-Iuser/include",
+      "-DGIT_HEAD=\"fef0dde6ff71d775774f3d5e2c5da718eedb381f\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2022-03-22T14:54:31+0100\"",
+      "-DBUILD_TIME=\"2022-03-25T13:52:11+0100\"",
       "-o",
-      "build/kernel/kip.o",
-      "src/kernel/kip.c"
+      "build/kip.o",
+      "kernel/kip.c"
     ],
     "directory": "/home/ruben/Code/MasterThesis/f9-riscv-simple",
-    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/src/kernel/kip.c",
-    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/kernel/kip.o"
+    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/kernel/kip.c",
+    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/kip.o"
   },
   {
     "arguments": [
@@ -56,16 +57,17 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"f54d88a09cb0e9e1666ef01fb08eaa8e96ba3f58\"",
+      "-Iuser/include",
+      "-DGIT_HEAD=\"fef0dde6ff71d775774f3d5e2c5da718eedb381f\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2022-03-22T14:54:31+0100\"",
+      "-DBUILD_TIME=\"2022-03-25T13:52:11+0100\"",
       "-o",
-      "build/kernel/bitops.o",
-      "src/kernel/bitops.c"
+      "build/bitops.o",
+      "kernel/bitops.c"
     ],
     "directory": "/home/ruben/Code/MasterThesis/f9-riscv-simple",
-    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/src/kernel/bitops.c",
-    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/kernel/bitops.o"
+    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/kernel/bitops.c",
+    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/bitops.o"
   },
   {
     "arguments": [
@@ -90,16 +92,17 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"f54d88a09cb0e9e1666ef01fb08eaa8e96ba3f58\"",
+      "-Iuser/include",
+      "-DGIT_HEAD=\"fef0dde6ff71d775774f3d5e2c5da718eedb381f\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2022-03-22T14:54:31+0100\"",
+      "-DBUILD_TIME=\"2022-03-25T13:52:11+0100\"",
       "-o",
-      "build/kernel/start.o",
-      "src/kernel/start.c"
+      "build/start.o",
+      "kernel/start.c"
     ],
     "directory": "/home/ruben/Code/MasterThesis/f9-riscv-simple",
-    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/src/kernel/start.c",
-    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/kernel/start.o"
+    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/kernel/start.c",
+    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/start.o"
   },
   {
     "arguments": [
@@ -124,16 +127,17 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"f54d88a09cb0e9e1666ef01fb08eaa8e96ba3f58\"",
+      "-Iuser/include",
+      "-DGIT_HEAD=\"fef0dde6ff71d775774f3d5e2c5da718eedb381f\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2022-03-22T14:54:31+0100\"",
+      "-DBUILD_TIME=\"2022-03-25T13:52:11+0100\"",
       "-o",
-      "build/kernel/ksym.o",
-      "src/kernel/ksym.c"
+      "build/ksym.o",
+      "kernel/ksym.c"
     ],
     "directory": "/home/ruben/Code/MasterThesis/f9-riscv-simple",
-    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/src/kernel/ksym.c",
-    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/kernel/ksym.o"
+    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/kernel/ksym.c",
+    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/ksym.o"
   },
   {
     "arguments": [
@@ -158,16 +162,17 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"f54d88a09cb0e9e1666ef01fb08eaa8e96ba3f58\"",
+      "-Iuser/include",
+      "-DGIT_HEAD=\"fef0dde6ff71d775774f3d5e2c5da718eedb381f\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2022-03-22T14:54:31+0100\"",
+      "-DBUILD_TIME=\"2022-03-25T13:52:11+0100\"",
       "-o",
-      "build/kernel/systhread.o",
-      "src/kernel/systhread.c"
+      "build/systhread.o",
+      "kernel/systhread.c"
     ],
     "directory": "/home/ruben/Code/MasterThesis/f9-riscv-simple",
-    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/src/kernel/systhread.c",
-    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/kernel/systhread.o"
+    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/kernel/systhread.c",
+    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/systhread.o"
   },
   {
     "arguments": [
@@ -192,16 +197,17 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"f54d88a09cb0e9e1666ef01fb08eaa8e96ba3f58\"",
+      "-Iuser/include",
+      "-DGIT_HEAD=\"fef0dde6ff71d775774f3d5e2c5da718eedb381f\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2022-03-22T14:54:31+0100\"",
+      "-DBUILD_TIME=\"2022-03-25T13:52:12+0100\"",
       "-o",
-      "build/kernel/fpage.o",
-      "src/kernel/fpage.c"
+      "build/fpage.o",
+      "kernel/fpage.c"
     ],
     "directory": "/home/ruben/Code/MasterThesis/f9-riscv-simple",
-    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/src/kernel/fpage.c",
-    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/kernel/fpage.o"
+    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/kernel/fpage.c",
+    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/fpage.o"
   },
   {
     "arguments": [
@@ -226,16 +232,17 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"f54d88a09cb0e9e1666ef01fb08eaa8e96ba3f58\"",
+      "-Iuser/include",
+      "-DGIT_HEAD=\"fef0dde6ff71d775774f3d5e2c5da718eedb381f\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2022-03-22T14:54:32+0100\"",
+      "-DBUILD_TIME=\"2022-03-25T13:52:12+0100\"",
       "-o",
-      "build/kernel/sched.o",
-      "src/kernel/sched.c"
+      "build/sched.o",
+      "kernel/sched.c"
     ],
     "directory": "/home/ruben/Code/MasterThesis/f9-riscv-simple",
-    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/src/kernel/sched.c",
-    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/kernel/sched.o"
+    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/kernel/sched.c",
+    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/sched.o"
   },
   {
     "arguments": [
@@ -260,16 +267,17 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"f54d88a09cb0e9e1666ef01fb08eaa8e96ba3f58\"",
+      "-Iuser/include",
+      "-DGIT_HEAD=\"fef0dde6ff71d775774f3d5e2c5da718eedb381f\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2022-03-22T14:54:32+0100\"",
+      "-DBUILD_TIME=\"2022-03-25T13:52:12+0100\"",
       "-o",
-      "build/kernel/debug.o",
-      "src/kernel/debug.c"
+      "build/debug.o",
+      "kernel/debug.c"
     ],
     "directory": "/home/ruben/Code/MasterThesis/f9-riscv-simple",
-    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/src/kernel/debug.c",
-    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/kernel/debug.o"
+    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/kernel/debug.c",
+    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/debug.o"
   },
   {
     "arguments": [
@@ -294,16 +302,17 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"f54d88a09cb0e9e1666ef01fb08eaa8e96ba3f58\"",
+      "-Iuser/include",
+      "-DGIT_HEAD=\"fef0dde6ff71d775774f3d5e2c5da718eedb381f\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2022-03-22T14:54:32+0100\"",
+      "-DBUILD_TIME=\"2022-03-25T13:52:12+0100\"",
       "-o",
-      "build/kernel/lib/queue.o",
-      "src/kernel/lib/queue.c"
+      "build/lib/queue.o",
+      "kernel/lib/queue.c"
     ],
     "directory": "/home/ruben/Code/MasterThesis/f9-riscv-simple",
-    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/src/kernel/lib/queue.c",
-    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/kernel/lib/queue.o"
+    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/kernel/lib/queue.c",
+    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/lib/queue.o"
   },
   {
     "arguments": [
@@ -328,16 +337,17 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"f54d88a09cb0e9e1666ef01fb08eaa8e96ba3f58\"",
+      "-Iuser/include",
+      "-DGIT_HEAD=\"fef0dde6ff71d775774f3d5e2c5da718eedb381f\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2022-03-22T14:54:32+0100\"",
+      "-DBUILD_TIME=\"2022-03-25T13:52:12+0100\"",
       "-o",
-      "build/kernel/lib/bsearch.o",
-      "src/kernel/lib/bsearch.c"
+      "build/lib/bsearch.o",
+      "kernel/lib/bsearch.c"
     ],
     "directory": "/home/ruben/Code/MasterThesis/f9-riscv-simple",
-    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/src/kernel/lib/bsearch.c",
-    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/kernel/lib/bsearch.o"
+    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/kernel/lib/bsearch.c",
+    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/lib/bsearch.o"
   },
   {
     "arguments": [
@@ -362,16 +372,17 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"f54d88a09cb0e9e1666ef01fb08eaa8e96ba3f58\"",
+      "-Iuser/include",
+      "-DGIT_HEAD=\"fef0dde6ff71d775774f3d5e2c5da718eedb381f\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2022-03-22T14:54:32+0100\"",
+      "-DBUILD_TIME=\"2022-03-25T13:52:12+0100\"",
       "-o",
-      "build/kernel/lib/memcpy.o",
-      "src/kernel/lib/memcpy.c"
+      "build/lib/memcpy.o",
+      "kernel/lib/memcpy.c"
     ],
     "directory": "/home/ruben/Code/MasterThesis/f9-riscv-simple",
-    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/src/kernel/lib/memcpy.c",
-    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/kernel/lib/memcpy.o"
+    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/kernel/lib/memcpy.c",
+    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/lib/memcpy.o"
   },
   {
     "arguments": [
@@ -396,16 +407,17 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"f54d88a09cb0e9e1666ef01fb08eaa8e96ba3f58\"",
+      "-Iuser/include",
+      "-DGIT_HEAD=\"fef0dde6ff71d775774f3d5e2c5da718eedb381f\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2022-03-22T14:54:32+0100\"",
+      "-DBUILD_TIME=\"2022-03-25T13:52:12+0100\"",
       "-o",
-      "build/kernel/lib/strcmp.o",
-      "src/kernel/lib/strcmp.c"
+      "build/lib/strcmp.o",
+      "kernel/lib/strcmp.c"
     ],
     "directory": "/home/ruben/Code/MasterThesis/f9-riscv-simple",
-    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/src/kernel/lib/strcmp.c",
-    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/kernel/lib/strcmp.o"
+    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/kernel/lib/strcmp.c",
+    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/lib/strcmp.o"
   },
   {
     "arguments": [
@@ -430,16 +442,17 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"f54d88a09cb0e9e1666ef01fb08eaa8e96ba3f58\"",
+      "-Iuser/include",
+      "-DGIT_HEAD=\"fef0dde6ff71d775774f3d5e2c5da718eedb381f\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2022-03-22T14:54:32+0100\"",
+      "-DBUILD_TIME=\"2022-03-25T13:52:12+0100\"",
       "-o",
-      "build/kernel/lib/ktable.o",
-      "src/kernel/lib/ktable.c"
+      "build/lib/ktable.o",
+      "kernel/lib/ktable.c"
     ],
     "directory": "/home/ruben/Code/MasterThesis/f9-riscv-simple",
-    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/src/kernel/lib/ktable.c",
-    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/kernel/lib/ktable.o"
+    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/kernel/lib/ktable.c",
+    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/lib/ktable.o"
   },
   {
     "arguments": [
@@ -464,16 +477,17 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"f54d88a09cb0e9e1666ef01fb08eaa8e96ba3f58\"",
+      "-Iuser/include",
+      "-DGIT_HEAD=\"fef0dde6ff71d775774f3d5e2c5da718eedb381f\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2022-03-22T14:54:32+0100\"",
+      "-DBUILD_TIME=\"2022-03-25T13:52:12+0100\"",
       "-o",
-      "build/kernel/lib/memset.o",
-      "src/kernel/lib/memset.c"
+      "build/lib/memset.o",
+      "kernel/lib/memset.c"
     ],
     "directory": "/home/ruben/Code/MasterThesis/f9-riscv-simple",
-    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/src/kernel/lib/memset.c",
-    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/kernel/lib/memset.o"
+    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/kernel/lib/memset.c",
+    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/lib/memset.o"
   },
   {
     "arguments": [
@@ -498,16 +512,17 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"f54d88a09cb0e9e1666ef01fb08eaa8e96ba3f58\"",
+      "-Iuser/include",
+      "-DGIT_HEAD=\"fef0dde6ff71d775774f3d5e2c5da718eedb381f\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2022-03-22T14:54:32+0100\"",
+      "-DBUILD_TIME=\"2022-03-25T13:52:13+0100\"",
       "-o",
-      "build/kernel/lib/stdio.o",
-      "src/kernel/lib/stdio.c"
+      "build/lib/stdio.o",
+      "kernel/lib/stdio.c"
     ],
     "directory": "/home/ruben/Code/MasterThesis/f9-riscv-simple",
-    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/src/kernel/lib/stdio.c",
-    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/kernel/lib/stdio.o"
+    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/kernel/lib/stdio.c",
+    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/lib/stdio.o"
   },
   {
     "arguments": [
@@ -532,16 +547,17 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"f54d88a09cb0e9e1666ef01fb08eaa8e96ba3f58\"",
+      "-Iuser/include",
+      "-DGIT_HEAD=\"fef0dde6ff71d775774f3d5e2c5da718eedb381f\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2022-03-22T14:54:32+0100\"",
+      "-DBUILD_TIME=\"2022-03-25T13:52:13+0100\"",
       "-o",
-      "build/kernel/lib/sort.o",
-      "src/kernel/lib/sort.c"
+      "build/lib/sort.o",
+      "kernel/lib/sort.c"
     ],
     "directory": "/home/ruben/Code/MasterThesis/f9-riscv-simple",
-    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/src/kernel/lib/sort.c",
-    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/kernel/lib/sort.o"
+    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/kernel/lib/sort.c",
+    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/lib/sort.o"
   },
   {
     "arguments": [
@@ -566,16 +582,17 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"f54d88a09cb0e9e1666ef01fb08eaa8e96ba3f58\"",
+      "-Iuser/include",
+      "-DGIT_HEAD=\"fef0dde6ff71d775774f3d5e2c5da718eedb381f\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2022-03-22T14:54:32+0100\"",
+      "-DBUILD_TIME=\"2022-03-25T13:52:13+0100\"",
       "-o",
-      "build/kernel/thread.o",
-      "src/kernel/thread.c"
+      "build/thread.o",
+      "kernel/thread.c"
     ],
     "directory": "/home/ruben/Code/MasterThesis/f9-riscv-simple",
-    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/src/kernel/thread.c",
-    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/kernel/thread.o"
+    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/kernel/thread.c",
+    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/thread.o"
   },
   {
     "arguments": [
@@ -600,16 +617,17 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"f54d88a09cb0e9e1666ef01fb08eaa8e96ba3f58\"",
+      "-Iuser/include",
+      "-DGIT_HEAD=\"fef0dde6ff71d775774f3d5e2c5da718eedb381f\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2022-03-22T14:54:33+0100\"",
+      "-DBUILD_TIME=\"2022-03-25T13:52:13+0100\"",
       "-o",
-      "build/kernel/ktimer.o",
-      "src/kernel/ktimer.c"
+      "build/ktimer.o",
+      "kernel/ktimer.c"
     ],
     "directory": "/home/ruben/Code/MasterThesis/f9-riscv-simple",
-    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/src/kernel/ktimer.c",
-    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/kernel/ktimer.o"
+    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/kernel/ktimer.c",
+    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/ktimer.o"
   },
   {
     "arguments": [
@@ -634,16 +652,17 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"f54d88a09cb0e9e1666ef01fb08eaa8e96ba3f58\"",
+      "-Iuser/include",
+      "-DGIT_HEAD=\"fef0dde6ff71d775774f3d5e2c5da718eedb381f\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2022-03-22T14:54:33+0100\"",
+      "-DBUILD_TIME=\"2022-03-25T13:52:13+0100\"",
       "-o",
-      "build/kernel/ipc.o",
-      "src/kernel/ipc.c"
+      "build/ipc.o",
+      "kernel/ipc.c"
     ],
     "directory": "/home/ruben/Code/MasterThesis/f9-riscv-simple",
-    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/src/kernel/ipc.c",
-    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/kernel/ipc.o"
+    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/kernel/ipc.c",
+    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/ipc.o"
   },
   {
     "arguments": [
@@ -668,16 +687,17 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"f54d88a09cb0e9e1666ef01fb08eaa8e96ba3f58\"",
+      "-Iuser/include",
+      "-DGIT_HEAD=\"fef0dde6ff71d775774f3d5e2c5da718eedb381f\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2022-03-22T14:54:33+0100\"",
+      "-DBUILD_TIME=\"2022-03-25T13:52:13+0100\"",
       "-o",
-      "build/kernel/error.o",
-      "src/kernel/error.c"
+      "build/error.o",
+      "kernel/error.c"
     ],
     "directory": "/home/ruben/Code/MasterThesis/f9-riscv-simple",
-    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/src/kernel/error.c",
-    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/kernel/error.o"
+    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/kernel/error.c",
+    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/error.o"
   },
   {
     "arguments": [
@@ -702,16 +722,17 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"f54d88a09cb0e9e1666ef01fb08eaa8e96ba3f58\"",
+      "-Iuser/include",
+      "-DGIT_HEAD=\"fef0dde6ff71d775774f3d5e2c5da718eedb381f\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2022-03-22T14:54:33+0100\"",
+      "-DBUILD_TIME=\"2022-03-25T13:52:13+0100\"",
       "-o",
-      "build/kernel/softirq.o",
-      "src/kernel/softirq.c"
+      "build/softirq.o",
+      "kernel/softirq.c"
     ],
     "directory": "/home/ruben/Code/MasterThesis/f9-riscv-simple",
-    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/src/kernel/softirq.c",
-    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/kernel/softirq.o"
+    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/kernel/softirq.c",
+    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/softirq.o"
   },
   {
     "arguments": [
@@ -736,16 +757,17 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"f54d88a09cb0e9e1666ef01fb08eaa8e96ba3f58\"",
+      "-Iuser/include",
+      "-DGIT_HEAD=\"fef0dde6ff71d775774f3d5e2c5da718eedb381f\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2022-03-22T14:54:33+0100\"",
+      "-DBUILD_TIME=\"2022-03-25T13:52:13+0100\"",
       "-o",
-      "build/kernel/syscall.o",
-      "src/kernel/syscall.c"
+      "build/syscall.o",
+      "kernel/syscall.c"
     ],
     "directory": "/home/ruben/Code/MasterThesis/f9-riscv-simple",
-    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/src/kernel/syscall.c",
-    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/kernel/syscall.o"
+    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/kernel/syscall.c",
+    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/syscall.o"
   },
   {
     "arguments": [
@@ -770,16 +792,17 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"f54d88a09cb0e9e1666ef01fb08eaa8e96ba3f58\"",
+      "-Iuser/include",
+      "-DGIT_HEAD=\"fef0dde6ff71d775774f3d5e2c5da718eedb381f\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2022-03-22T14:54:33+0100\"",
+      "-DBUILD_TIME=\"2022-03-25T13:52:14+0100\"",
       "-o",
-      "build/kernel/user_log.o",
-      "src/kernel/user_log.c"
+      "build/user_log.o",
+      "kernel/user_log.c"
     ],
     "directory": "/home/ruben/Code/MasterThesis/f9-riscv-simple",
-    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/src/kernel/user_log.c",
-    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/kernel/user_log.o"
+    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/kernel/user_log.c",
+    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/user_log.o"
   },
   {
     "arguments": [
@@ -804,16 +827,17 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"f54d88a09cb0e9e1666ef01fb08eaa8e96ba3f58\"",
+      "-Iuser/include",
+      "-DGIT_HEAD=\"fef0dde6ff71d775774f3d5e2c5da718eedb381f\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2022-03-22T14:54:33+0100\"",
+      "-DBUILD_TIME=\"2022-03-25T13:52:14+0100\"",
       "-o",
-      "build/kernel/trap.o",
-      "src/kernel/trap.c"
+      "build/trap.o",
+      "kernel/trap.c"
     ],
     "directory": "/home/ruben/Code/MasterThesis/f9-riscv-simple",
-    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/src/kernel/trap.c",
-    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/kernel/trap.o"
+    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/kernel/trap.c",
+    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/trap.o"
   },
   {
     "arguments": [
@@ -838,16 +862,17 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"f54d88a09cb0e9e1666ef01fb08eaa8e96ba3f58\"",
+      "-Iuser/include",
+      "-DGIT_HEAD=\"fef0dde6ff71d775774f3d5e2c5da718eedb381f\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2022-03-22T14:54:33+0100\"",
+      "-DBUILD_TIME=\"2022-03-25T13:52:14+0100\"",
       "-o",
-      "build/kernel/memory.o",
-      "src/kernel/memory.c"
+      "build/memory.o",
+      "kernel/memory.c"
     ],
     "directory": "/home/ruben/Code/MasterThesis/f9-riscv-simple",
-    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/src/kernel/memory.c",
-    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/kernel/memory.o"
+    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/kernel/memory.c",
+    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/memory.o"
   },
   {
     "arguments": [
@@ -872,16 +897,17 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"f54d88a09cb0e9e1666ef01fb08eaa8e96ba3f58\"",
+      "-Iuser/include",
+      "-DGIT_HEAD=\"fef0dde6ff71d775774f3d5e2c5da718eedb381f\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2022-03-22T14:54:33+0100\"",
+      "-DBUILD_TIME=\"2022-03-25T13:52:14+0100\"",
       "-o",
-      "build/kernel/interrupt.o",
-      "src/kernel/interrupt.c"
+      "build/interrupt.o",
+      "kernel/interrupt.c"
     ],
     "directory": "/home/ruben/Code/MasterThesis/f9-riscv-simple",
-    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/src/kernel/interrupt.c",
-    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/kernel/interrupt.o"
+    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/kernel/interrupt.c",
+    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/interrupt.o"
   },
   {
     "arguments": [
@@ -906,16 +932,17 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"f54d88a09cb0e9e1666ef01fb08eaa8e96ba3f58\"",
+      "-Iuser/include",
+      "-DGIT_HEAD=\"fef0dde6ff71d775774f3d5e2c5da718eedb381f\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2022-03-22T14:54:33+0100\"",
+      "-DBUILD_TIME=\"2022-03-25T13:52:14+0100\"",
       "-o",
-      "build/kernel/mpu.o",
-      "src/kernel/mpu.c"
+      "build/mpu.o",
+      "kernel/mpu.c"
     ],
     "directory": "/home/ruben/Code/MasterThesis/f9-riscv-simple",
-    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/src/kernel/mpu.c",
-    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/kernel/mpu.o"
+    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/kernel/mpu.c",
+    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/mpu.o"
   },
   {
     "arguments": [
@@ -940,16 +967,17 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"f54d88a09cb0e9e1666ef01fb08eaa8e96ba3f58\"",
+      "-Iuser/include",
+      "-DGIT_HEAD=\"fef0dde6ff71d775774f3d5e2c5da718eedb381f\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2022-03-22T14:54:34+0100\"",
+      "-DBUILD_TIME=\"2022-03-25T13:52:14+0100\"",
       "-o",
-      "build/user/F9.o",
-      "src/user/F9.c"
+      "build/entry.o",
+      "kernel/entry.S"
     ],
     "directory": "/home/ruben/Code/MasterThesis/f9-riscv-simple",
-    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/src/user/F9.c",
-    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/user/F9.o"
+    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/kernel/entry.S",
+    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/entry.o"
   },
   {
     "arguments": [
@@ -974,16 +1002,17 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"f54d88a09cb0e9e1666ef01fb08eaa8e96ba3f58\"",
+      "-Iuser/include",
+      "-DGIT_HEAD=\"fef0dde6ff71d775774f3d5e2c5da718eedb381f\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2022-03-22T14:54:34+0100\"",
+      "-DBUILD_TIME=\"2022-03-25T13:52:14+0100\"",
       "-o",
-      "build/user/root_thread.o",
-      "src/user/root_thread.c"
+      "build/vector_table_to_direct.o",
+      "kernel/vector_table_to_direct.S"
     ],
     "directory": "/home/ruben/Code/MasterThesis/f9-riscv-simple",
-    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/src/user/root_thread.c",
-    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/user/root_thread.o"
+    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/kernel/vector_table_to_direct.S",
+    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/vector_table_to_direct.o"
   },
   {
     "arguments": [
@@ -1008,16 +1037,17 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"f54d88a09cb0e9e1666ef01fb08eaa8e96ba3f58\"",
+      "-Iuser/include",
+      "-DGIT_HEAD=\"fef0dde6ff71d775774f3d5e2c5da718eedb381f\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2022-03-22T14:54:34+0100\"",
+      "-DBUILD_TIME=\"2022-03-25T13:52:14+0100\"",
       "-o",
-      "build/user/uart_ESP32_C3.o",
-      "src/user/uart_ESP32_C3.c"
+      "build/kernelvec.o",
+      "kernel/kernelvec.S"
     ],
     "directory": "/home/ruben/Code/MasterThesis/f9-riscv-simple",
-    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/src/user/uart_ESP32_C3.c",
-    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/user/uart_ESP32_C3.o"
+    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/kernel/kernelvec.S",
+    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/kernelvec.o"
   },
   {
     "arguments": [
@@ -1042,16 +1072,17 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"f54d88a09cb0e9e1666ef01fb08eaa8e96ba3f58\"",
+      "-Iuser/include",
+      "-DGIT_HEAD=\"fef0dde6ff71d775774f3d5e2c5da718eedb381f\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2022-03-22T14:54:34+0100\"",
+      "-DBUILD_TIME=\"2022-03-25T13:52:14+0100\"",
       "-o",
-      "build/kernel/entry.o",
-      "src/kernel/entry.S"
+      "build/system_timer.o",
+      "platform/system_timer.c"
     ],
     "directory": "/home/ruben/Code/MasterThesis/f9-riscv-simple",
-    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/src/kernel/entry.S",
-    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/kernel/entry.o"
+    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/platform/system_timer.c",
+    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/system_timer.o"
   },
   {
     "arguments": [
@@ -1076,16 +1107,17 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"f54d88a09cb0e9e1666ef01fb08eaa8e96ba3f58\"",
+      "-Iuser/include",
+      "-DGIT_HEAD=\"fef0dde6ff71d775774f3d5e2c5da718eedb381f\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2022-03-22T14:54:34+0100\"",
+      "-DBUILD_TIME=\"2022-03-25T13:52:15+0100\"",
       "-o",
-      "build/kernel/vector_table_to_direct.o",
-      "src/kernel/vector_table_to_direct.S"
+      "build/F9.o",
+      "user/F9.c"
     ],
     "directory": "/home/ruben/Code/MasterThesis/f9-riscv-simple",
-    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/src/kernel/vector_table_to_direct.S",
-    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/kernel/vector_table_to_direct.o"
+    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/user/F9.c",
+    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/F9.o"
   },
   {
     "arguments": [
@@ -1110,15 +1142,86 @@
       "-Iinclude/l4",
       "-Iinclude/lib",
       "-Iinclude/platform",
-      "-DGIT_HEAD=\"f54d88a09cb0e9e1666ef01fb08eaa8e96ba3f58\"",
+      "-Iuser/include",
+      "-DGIT_HEAD=\"fef0dde6ff71d775774f3d5e2c5da718eedb381f\"",
       "-DMACH_TYPE=\"x86_64\"",
-      "-DBUILD_TIME=\"2022-03-22T14:54:34+0100\"",
+      "-DBUILD_TIME=\"2022-03-25T13:52:15+0100\"",
       "-o",
-      "build/kernel/kernelvec.o",
-      "src/kernel/kernelvec.S"
+      "build/root_thread.o",
+      "user/root_thread.c"
     ],
     "directory": "/home/ruben/Code/MasterThesis/f9-riscv-simple",
-    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/src/kernel/kernelvec.S",
-    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/kernel/kernelvec.o"
+    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/user/root_thread.c",
+    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/root_thread.o"
+  },
+  {
+    "arguments": [
+      "/home/ruben/CustomInstalledPrograms/riscv-from-sourc/bin/riscv32-unknown-elf-gcc",
+      "-c",
+      "-march=rv32imc",
+      "-mabi=ilp32",
+      "-Wall",
+      "-Wundef",
+      "-fno-toplevel-reorder",
+      "-fno-strict-aliasing",
+      "-Werror-implicit-function-declaration",
+      "-fno-omit-frame-pointer",
+      "-ggdb3",
+      "-O0",
+      "-mcmodel=medany",
+      "-ffreestanding",
+      "-fno-common",
+      "-mno-relax",
+      "-Iinclude",
+      "-Iinclude/kernel",
+      "-Iinclude/l4",
+      "-Iinclude/lib",
+      "-Iinclude/platform",
+      "-Iuser/include",
+      "-DGIT_HEAD=\"fef0dde6ff71d775774f3d5e2c5da718eedb381f\"",
+      "-DMACH_TYPE=\"x86_64\"",
+      "-DBUILD_TIME=\"2022-03-25T13:52:15+0100\"",
+      "-o",
+      "build/uart_ESP32_C3.o",
+      "user/uart_ESP32_C3.c"
+    ],
+    "directory": "/home/ruben/Code/MasterThesis/f9-riscv-simple",
+    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/user/uart_ESP32_C3.c",
+    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/uart_ESP32_C3.o"
+  },
+  {
+    "arguments": [
+      "/home/ruben/CustomInstalledPrograms/riscv-from-sourc/bin/riscv32-unknown-elf-gcc",
+      "-c",
+      "-march=rv32imc",
+      "-mabi=ilp32",
+      "-Wall",
+      "-Wundef",
+      "-fno-toplevel-reorder",
+      "-fno-strict-aliasing",
+      "-Werror-implicit-function-declaration",
+      "-fno-omit-frame-pointer",
+      "-ggdb3",
+      "-O0",
+      "-mcmodel=medany",
+      "-ffreestanding",
+      "-fno-common",
+      "-mno-relax",
+      "-Iinclude",
+      "-Iinclude/kernel",
+      "-Iinclude/l4",
+      "-Iinclude/lib",
+      "-Iinclude/platform",
+      "-Iuser/include",
+      "-DGIT_HEAD=\"fef0dde6ff71d775774f3d5e2c5da718eedb381f\"",
+      "-DMACH_TYPE=\"x86_64\"",
+      "-DBUILD_TIME=\"2022-03-25T13:52:15+0100\"",
+      "-o",
+      "build/user_thread.o",
+      "user/user_thread.c"
+    ],
+    "directory": "/home/ruben/Code/MasterThesis/f9-riscv-simple",
+    "file": "/home/ruben/Code/MasterThesis/f9-riscv-simple/user/user_thread.c",
+    "output": "/home/ruben/Code/MasterThesis/f9-riscv-simple/build/user_thread.o"
   }
 ]

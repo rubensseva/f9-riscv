@@ -11,7 +11,7 @@
 
 #include <l4/utcb.h>
 #include <link.h>
-#include <user/user_types.h>
+#include <user_types.h>
 
 #define __L4_NUM_MRS    16
 #define __L4_NUM_BRS    8

@@ -1,8 +1,8 @@
-#include "user/message.h"
-#include "user/user_types.h"
+#include <message.h>
+#include <user_types.h>
 #include <types.h>
-#include <user/F9.h>
-#include <user/user_thread.h>
+#include <F9.h>
+#include <user_thread.h>
 #include <uart_ESP32_C3.h>
 #include <ipc.h>
 #include <interrupt_ipc.h>

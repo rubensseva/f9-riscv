@@ -6,9 +6,9 @@
 #include <uart_ESP32_C3.h>
 #include <interrupt_ipc.h>
 #include <l4/utcb.h>
-#include <user/F9.h>
-#include <user/user_thread.h>
-#include <user/message.h>
+#include <F9.h>
+#include <user_thread.h>
+#include <message.h>
 
 
 __USER_DATA uint32_t uart_mem_base = 0x60000000;

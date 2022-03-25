@@ -2,7 +2,7 @@
  * memory area definitions
  */
 
-INCLUDE "linker_scripts/esp32-c3/f9_mem.ld"
+INCLUDE "platform/esp32_c3/f9_mem.ld"
 
 ENTRY (_entry)
 
