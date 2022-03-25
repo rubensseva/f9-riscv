@@ -16,6 +16,8 @@ int mpu_select_lru(as_t *as, uint32_t addr);
 void w_pmpaddri(int pmp_entry, uint32_t data);
 void w_pmpcfgi_region(int i, uint8_t data, uint32_t old_data);
 
+void map_intr_vector(uint32_t vector_table_ptr);
+
 void dump_mpu();
 
 #endif  /* PLATFORM_MPU_H_ */

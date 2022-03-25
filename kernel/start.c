@@ -17,7 +17,7 @@
 #include <init_hook.h>
 #include <lib/string.h>
 #include <config.h>
-#include <mpu.h>
+#include <platform/mpu.h>
 #include <thread.h>
 #include <interrupt.h>
 #include <uart_ESP32_C3.h>
@@ -50,22 +50,6 @@ void irq_init() {
        disabled. */
     w_mstatus(r_mstatus() | MSTATUS_MPIE);
 }
-
-
-/**
-   Map the interrupt vector to a pmp fpage. This is needed when an interrupt happens in
-   user mode, otherwise it triggers an illegal instruction access exception.
- */
-void map_intr_vector() {
-    w_pmpaddr14((int)_vector_table >> 2);
-    w_pmpaddr15(((int)_vector_table + (4 * 32)) >> 2); // We have 32 instructions in interrupt vector, each one is 4 bytes long
-
-    uint32_t old_cfg = r_pmpcfg3();
-    uint32_t new_cfg = old_cfg & (0x0000ffff);
-    new_cfg |= 0x8C008000; // write 0b10001100 10000000 to set TOR mode, exec-only, and lock bit on both pmpaddr
-    w_pmpcfg3(new_cfg);
-}
-
 
 int main(void)
 {
@@ -105,7 +89,7 @@ int main(void)
 
     user_irq_init();
     irq_init();
-    map_intr_vector();
+    map_intr_vector((uint32_t)_vector_table);
     system_timer_init();
 
     switch_to_kernel();

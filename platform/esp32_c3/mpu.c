@@ -188,6 +188,21 @@ int mpu_select_lru(as_t *as, uint32_t addr)
 }
 
 
+/**
+   Map the interrupt vector to a pmp fpage. This is needed when an interrupt happens in
+   user mode, otherwise it triggers an illegal instruction access exception.
+ */
+void map_intr_vector(uint32_t vector_table_ptr) {
+    w_pmpaddr14(vector_table_ptr >> 2);
+    w_pmpaddr15((vector_table_ptr + (4 * 32)) >> 2); // We have 32 instructions in interrupt vector, each one is 4 bytes long
+
+    uint32_t old_cfg = r_pmpcfg3();
+    uint32_t new_cfg = old_cfg & (0x0000ffff);
+    new_cfg |= 0x8C008000; // write 0b10001100 10000000 to set TOR mode, exec-only, and lock bit on both pmpaddr
+    w_pmpcfg3(new_cfg);
+}
+
+
 void dump_mpu()
 {
     dbg_printf(DL_EMERG,
