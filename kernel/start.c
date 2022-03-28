@@ -17,7 +17,6 @@
 #include <init_hook.h>
 #include <lib/string.h>
 #include <config.h>
-#include <platform/mpu.h>
 #include <thread.h>
 #include <interrupt.h>
 #include <uart_ESP32_C3.h>
@@ -26,6 +25,8 @@
 #include <stdio.h>
 #include <debug.h>
 #include <platform/system_timer.h>
+#include <platform/mpu.h>
+#include <platform/interrupt_matrix.h>
 
 static char banner[] =
     "\n"
@@ -74,7 +75,8 @@ int main(void)
     thread_init_subsys();
 
     UART_init(115200, 0);
-    UART_receive_intr_matr_init();
+    intr_setup(CONFIG_UART_CPU_INTR, 11);
+
     dbg_init(DL_BASIC | DL_KDB  | DL_KTABLE | DL_SOFTIRQ | DL_THREAD |
              DL_KTIMER | DL_SYSCALL | DL_SCHEDULE | DL_MEMORY | DL_IPC);
     __l4_printf("%s", banner);

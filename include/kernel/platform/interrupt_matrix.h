@@ -53,8 +53,8 @@ void intr_en(int cpu_intr_n);
 void intr_clear(int cpu_intr_n);
 
 /**
-   Set up the interrupt matrix for UART.
+   Set up the interrupt matrix for a CPU interrupt.
 */
-void UART_receive_intr_matr_init();
+void intr_setup(unsigned int cpu_intr_n, unsigned int priority);
 
 #endif // INTERRUPT_MATRIX_H_
