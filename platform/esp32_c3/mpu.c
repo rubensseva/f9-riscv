@@ -1,4 +1,4 @@
-#include <mpu.h>
+#include <platform/mpu.h>
 #include <riscv.h>
 #include <thread.h>
 #include <debug.h>

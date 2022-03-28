@@ -8,7 +8,7 @@
 #include <debug.h>
 #include <thread.h>
 #include <memory.h>
-#include <mpu.h>
+#include <platform/mpu.h>
 #include <utility.h>
 #include <config.h>
 #include <ESP32_C3.h>

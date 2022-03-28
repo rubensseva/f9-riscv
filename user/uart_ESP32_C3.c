@@ -21,35 +21,6 @@ __USER_TEXT void UART_init(int baud, int controller_num)
     *uart_clk_conf = BIT(25) | BIT(24) | BIT(22) | BIT(21) | BIT(20);  // Use APB NOTE: Is this APB? Seems to be XTAL_CLK...
 }
 
-/**
-   This function sets up the interrupt matrix for UART. Only the kernel should access the interrupt matrix,
-   which is why this is not in user text
-*/
-void UART_receive_intr_matr_init()
-{
-    /* Map UART interrupt */
-    /* TODO: Should this be reg UART, or UART1? */
-    volatile uint32_t *interrupt_core0_systimer_target0_int_map_reg = REG(INTERRUPT_MATRIX_BASE + INTERRUPT_CORE0_UART_TARGET0_INT_MAP_REG);
-    *interrupt_core0_systimer_target0_int_map_reg = CONFIG_UART_CPU_INTR;
-
-    /* Set the priority of the interrupt */
-    volatile uint32_t *interrupt_core0_cpu_int_pri = REG(INTERRUPT_MATRIX_BASE + INTERRUPT_CORE0_CPU_INT_PRI_n_REG + 0x4 * (CONFIG_UART_CPU_INTR - 1));
-    *interrupt_core0_cpu_int_pri = 11; // Set hightes priority for now TODO: Set a more sensible priority
-
-    /* Set the type to edge triggered, so we can clear it with the interrupt matrix */
-    volatile uint32_t *interrupt_core0_cpu_int_type = REG(INTERRUPT_MATRIX_BASE + INTERRUPT_CORE0_CPU_INT_TYPE_REG);
-    *interrupt_core0_cpu_int_type |= (1 << CONFIG_UART_CPU_INTR);
-
-    /* After mapping system timer to CPU interrupt, we enable the CPU interrupt number */
-    volatile uint32_t *interrupt_core0_cpi_in_enable = REG(INTERRUPT_MATRIX_BASE + INTERRUPT_CORE0_CPU_INT_ENABLE_REG);
-    *interrupt_core0_cpi_in_enable |= (1 << CONFIG_UART_CPU_INTR);
-
-    /* Clear uart interrupt in interrupt matrix (not sure if this is necessary, but lets do it to be sure) */
-    volatile uint32_t *interrupt_core0_cpu_int_clear = REG(INTERRUPT_MATRIX_BASE + INTERRUPT_CORE0_CPU_INT_CLEAR_REG);
-    *interrupt_core0_cpu_int_clear |= (1 << CONFIG_UART_CPU_INTR);
-    *interrupt_core0_cpu_int_clear &= ~(1 << CONFIG_UART_CPU_INTR);
-}
-
 __USER_TEXT void UART_receive_init(int controller_num)
 {
     uint32_t controller = controller_num ? UART_CONTROLLER_1_BASE : UART_CONTROLLER_0_BASE;
@@ -61,11 +32,6 @@ __USER_TEXT void UART_receive_init(int controller_num)
     /* Enable UART interrupt when RXFIFO is full */
     volatile uint32_t *uart_int_ena = REG(controller + UART_INT_ENA_REG);
     *uart_int_ena |= (1 << UART_INTR__UART_RXFIFO_FULL);
-
-    /* Clear uart interrupt from source */
-    /* TODO: Use UART_clear() instead */
-    volatile uint32_t *uart_int_clr = REG(UART_CONTROLLER_0_BASE + UART_INT_CLR_REG);
-    *uart_int_clr |= (1 << UART_INTR__UART_RXFIFO_FULL);
 };
 
 __USER_TEXT uint32_t UART_txfifo_count(int controller_num) {
@@ -96,7 +62,6 @@ __USER_TEXT char UART_read(int controller_num)
     volatile uint32_t *uart_rxfifo_rd_byte = REG(controller + UART_FIFO_REG);
     return (char) *uart_rxfifo_rd_byte;
 }
-
 
 __USER_TEXT void UART_clear(int controller_num) {
     uint32_t controller = controller_num ? UART_CONTROLLER_1_BASE : UART_CONTROLLER_0_BASE;
