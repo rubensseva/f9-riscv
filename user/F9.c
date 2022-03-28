@@ -24,10 +24,8 @@ __USER_TEXT L4_MsgTag_t L4_Ipc(L4_ThreadId_t to,
         : "a0", "a1", "a2", "a3");
 
     result.raw = __L4_MR0;
-
     if (from)
         *from = from_ret;
-
     return result;
 }
 
@@ -77,11 +75,6 @@ __USER_TEXT void L4_map(memptr_t base, uint32_t size, L4_ThreadId_t tid)
     L4_MsgPut(&msg, 0, 0, NULL, 2, page);
     L4_MsgLoad(&msg);
     L4_Send(tid);
-
-    /* ((utcb_t *)current_utcb)->mr[0] = tag.raw; */
-    /* ((utcb_t *)current_utcb)->mr[1] = page[0]; */
-    /* ((utcb_t *)current_utcb)->mr[2] = page[1]; */
-
 }
 
 __USER_TEXT void map_user_sections(kip_t *kip_ptr, L4_ThreadId_t tid)
@@ -94,7 +87,8 @@ __USER_TEXT void map_user_sections(kip_t *kip_ptr, L4_ThreadId_t tid)
     for (i = 0; i < n; ++i) {
         uint32_t tag = desc[i].size & 0x3F;
         uint32_t size = desc[i].size & ~0x3F;
-        if (size > 0 && (tag == 2 || tag == 3)) { // tag 2 and 3 is user_text and user_data, from memory.h
+        /* tag 2 and 3 is user_text and user_data, from memory.h */
+        if (size > 0 && (tag == 2 || tag == 3)) {
             L4_map(desc[i].base, desc[i].size, tid);
         }
     }
@@ -117,20 +111,9 @@ __USER_TEXT memptr_t get_free_base(kip_t *kip_ptr)
 }
 
 __USER_TEXT void request_irq(uint16_t irq_num, uint32_t priority, L4_ThreadId_t thread_id, uint32_t handler_ptr) {
-    /* ipc_msg_tag_t irq_tag = {{0, 0, 0, 0}}; */
-    /* irq_tag.s.n_untyped = 5; */
-    /* irq_tag.s.label = USER_INTERRUPT_LABEL; */
-    /* ((utcb_t *)current_utcb)->mr[0] = irq_tag.raw; */
-    /* ((utcb_t *)current_utcb)->mr[1] = (uint16_t) irq_num; // IRQ_N */
-    /* ((utcb_t *)current_utcb)->mr[2] = thread_id.raw; */
-    /* ((utcb_t *)current_utcb)->mr[3] = (uint16_t) USER_IRQ_ENABLE; // action */
-    /* ((utcb_t *)current_utcb)->mr[4] = (uint32_t) handler_ptr; */
-    /* ((utcb_t *)current_utcb)->mr[5] = (uint16_t) priority; */
     L4_ThreadId_t irq_gid = {.raw = TID_TO_GLOBALID(THREAD_IRQ_REQUEST)};
-
     L4_Msg_t msg;
     L4_MsgClear(&msg);
-
     L4_Word_t msgs[5] = {
         (uint16_t) irq_num, // IRQ_N
         thread_id.raw,
@@ -138,9 +121,7 @@ __USER_TEXT void request_irq(uint16_t irq_num, uint32_t priority, L4_ThreadId_t 
         (uint32_t) handler_ptr,
         (uint16_t) priority,
     };
-
     L4_MsgPut(&msg, USER_INTERRUPT_LABEL, 5, msgs, 0, NULL);
     L4_MsgLoad(&msg);
-
     L4_Ipc(irq_gid, L4_nilthread, 0, (L4_ThreadId_t *)0);
 }

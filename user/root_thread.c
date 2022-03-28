@@ -42,24 +42,11 @@ void __USER_TEXT root_thread(kip_t *kip_ptr, utcb_t *utcb_ptr)
         0,
         0
     };
-    /* msg.msg[1] = (uint32_t) user_thread; */
-    /* msg.msg[2] = (uint32_t) &user_thread_stack_end; // sp */
-    /* msg.msg[3] = ((uint32_t) &user_thread_stack_end) - ((uint32_t) &user_thread_stack_start); // stack size */
 
     L4_MsgPut(&msg, 0, 5, msgs, 0, NULL);
     L4_MsgLoad(&msg);
-
-    /* ipc_msg_tag_t tag = {{0, 0, 0, 0}}; */
-    /* tag.s.n_untyped = 5; */
-    /* ((utcb_t *)current_utcb)->mr[0] = tag.raw; */
-    /* ((utcb_t *)current_utcb)->mr[1] = (uint32_t) user_thread; // pc */
-    /* ((utcb_t *)current_utcb)->mr[2] = (uint32_t) &user_thread_stack_end; // sp */
-    /* ((utcb_t *)current_utcb)->mr[3] = ((uint32_t) &user_thread_stack_end) - ((uint32_t) &user_thread_stack_start); // stack size */
-    /* ((utcb_t *)current_utcb)->mr[4] = 0; */
-    /* ((utcb_t *)current_utcb)->mr[5] = 0; */
     L4_Ipc(user_thread_id, myself, 0, (L4_ThreadId_t *)0);
 
-    /* Sleep to allow user thread to be scheduled. */
     while (1) {
         L4_Sleep();
     }
