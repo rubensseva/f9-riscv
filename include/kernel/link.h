@@ -48,6 +48,8 @@ extern uint32_t root_stack_start;
 extern uint32_t root_stack_end;
 extern uint32_t user_thread_stack_start;
 extern uint32_t user_thread_stack_end;
+extern uint32_t user_thread_heap_start;
+extern uint32_t user_thread_heap_end;
 
 extern uint32_t kip_start;
 extern uint32_t kip_end;

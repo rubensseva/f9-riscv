@@ -47,6 +47,7 @@ KERNEL_STACK_SIZE   = 0x00001000;
 /* ROOT_THREAD_STACK_SIZE   = 0x00000200; */
 ROOT_THREAD_STACK_SIZE  = 0x00001000;
 USER_THREAD_STACK_SIZE  = 0x00001000;
+USER_THREAD_HEAP_SIZE   = 0x00004000;
 
 MEM0_SIZE = 0x00001000;
 
@@ -144,6 +145,9 @@ SECTIONS {
         user_thread_stack_start = .;
         . += USER_THREAD_STACK_SIZE;
         user_thread_stack_end = .;
+        user_thread_heap_start = .;
+        . += USER_THREAD_HEAP_SIZE;
+        user_thread_heap_end = .;
         *(.user_data*)
         user_runtime_start = .;
         KEEP(*(.user_runtime))
