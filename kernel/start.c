@@ -31,12 +31,12 @@
 static char banner[] =
     "\n"
     "====================================================\n"
-    " Copyright(C) 2013-2014 The F9 Microkernel Project  \n"
-    "====================================================\n"
-    "Git head: " GIT_HEAD "\n"
-    "Host: " MACH_TYPE "\n"
-    "Build: "  BUILD_TIME "\n"
-    "\n";
+    " Copyright(C) 2013-2014 The F9 Microkernel Project  \n";
+    /* "====================================================\n" */
+    /* "Git head: " GIT_HEAD "\n" */
+    /* "Host: " MACH_TYPE "\n" */
+    /* "Build: "  BUILD_TIME "\n" */
+    /* "\n"; */
 
 __attribute__ ((aligned (16))) char stack0[16384];
 

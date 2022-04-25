@@ -1,0 +1,3 @@
+[submodule "user/clisp"]
+	path = user/clisp
+	url = git@github.com:rubensseva/ukernel-lisp.git

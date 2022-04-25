@@ -9,6 +9,8 @@
 #include <interrupt.h>
 #include <malloc.h>
 
+#define UART_IRQN 3
+
 extern void* current_utcb;
 
 __USER_TEXT void user_uart_handler() {
@@ -17,6 +19,38 @@ __USER_TEXT void user_uart_handler() {
     }
     UART_clear(0);
 }
+
+__USER_TEXT int read_line(char *buf) {
+    uint32_t count = 0;
+    while (1) {
+        UART_clear(0);
+        L4_ThreadId_t intr_tid = {.raw = TID_TO_GLOBALID(THREAD_INTERRUPT)};
+        L4_Ipc(L4_nilthread, intr_tid, 0, (L4_ThreadId_t *)0);
+
+        L4_Msg_t msg;
+        L4_MsgClear(&msg);
+        msg.tag.X.label = USER_INTERRUPT_LABEL;
+        msg.tag.X.u = IRQ_IPC_MSG_NUM;
+
+        L4_MsgStore(msg.tag, &msg);
+
+        irq_handler_t handler = (irq_handler_t) msg.msg[IRQ_IPC_HANDLER + 1];
+        uint32_t action = msg.msg[IRQ_IPC_ACTION + 1];
+        uint32_t irqn = msg.msg[IRQ_IPC_IRQN];
+
+
+        if (irqn == UART_IRQN) {
+            char c = UART_read(0);
+            UART_write(c, 0);
+            buf[count++] = c;
+            if (c == '\n') {
+                buf[count++] = '\0';
+                return 0;
+            }
+        }
+    }
+}
+
 
 __USER_TEXT void user_thread()
 {
@@ -28,7 +62,10 @@ __USER_TEXT void user_thread()
     void *mem_test4 = malloc(2);
 
     L4_ThreadId_t myself = {.raw = ((utcb_t *)current_utcb)->t_globalid};
-    request_irq(3, 1, myself, (uint32_t) user_uart_handler);
+    request_irq(UART_IRQN, 1, myself, (uint32_t) user_uart_handler);
+
+
+
 
 
     while (1) {

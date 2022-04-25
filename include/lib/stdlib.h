@@ -6,6 +6,8 @@
 #ifndef LIB_STDLIB_H_
 #define LIB_STDLIB_H_
 
+#include <stddef.h>
+
 void sort(void *, size_t, size_t, int (*)(const void *, const void *));
 void *bsearch(const void *key, const void *base0,
 		size_t nmemb, size_t size,
