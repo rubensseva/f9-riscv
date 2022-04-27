@@ -40,7 +40,8 @@ CFLAGS += -mabi=ilp32
 CFLAGS += -Wall -Wundef # -Wstrict-prototypes
 CFLAGS += -fno-toplevel-reorder -fno-strict-aliasing
 CFLAGS += -Werror-implicit-function-declaration
-CFLAGS += -fno-omit-frame-pointer -ggdb3
+CFLAGS += -fno-omit-frame-pointer
+CFLAGS += -ggdb3
 CFLAGS += -O0
 CFLAGS += -mcmodel=medany
 CFLAGS += -ffreestanding -fno-common -nostdlib -mno-relax

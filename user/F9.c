@@ -38,7 +38,7 @@ __USER_TEXT void L4_Sleep()
         mv a3, %3\n\t\
         ecall\n\t"
         :
-        : "r"(SYS_IPC), "r"(L4_NILTHREAD), "r"(L4_NILTHREAD), "r"(100000)
+        : "r"(SYS_IPC), "r"(L4_NILTHREAD), "r"(L4_NILTHREAD), "r"(10000000)
         : "a0", "a1", "a2", "a3");
 }
 
