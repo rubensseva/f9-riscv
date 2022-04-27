@@ -1,3 +1,3 @@
-[submodule "user/clisp"]
-	path = user/clisp
-	url = git@github.com:rubensseva/ukernel-lisp.git
+[submodule "user/hoppus"]
+	path = user/hoppus
+	url = https://github.com/rubensseva/hoppus.git
