@@ -2,7 +2,7 @@
 #define USER_STDIO_H_
 
 #include <types.h>
-#include <USER_stdarg.h>
+#include <user_stdarg.h>
 
 #define EOF     (-1)
 

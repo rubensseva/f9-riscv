@@ -7,10 +7,9 @@
 #include <ipc.h>
 #include <interrupt_ipc.h>
 #include <interrupt.h>
-// #include <malloc.h>
-#include <gc.h>
 
-#include <clisp_entry.h>
+#include <hoppus_entry.h>
+
 
 #define UART_IRQN 3
 
