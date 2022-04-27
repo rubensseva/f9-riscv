@@ -4,15 +4,17 @@
 #include <uart_ESP32_C3.h>
 
 #include <user_thread.h>
+#include <link.h>
+
 
 /* TODO: In the original F9 code, this function is part of a debug device abstraction.
  * That abstraction should be added here as well */
-void putchar(uint8_t c)
+__USER_TEXT void putchar(uint8_t c)
 {
     UART_write(c, 0);
 }
 
-void puts(char *str)
+__USER_TEXT void puts(char *str)
 {
     while (*str) {
         if (*str == '\n')
@@ -21,7 +23,7 @@ void puts(char *str)
     }
 }
 
-static void puts_x(char *str, int width, const char pad)
+__USER_TEXT static void puts_x(char *str, int width, const char pad)
 {
     while (*str) {
         if (*str == '\n')
@@ -41,7 +43,7 @@ static void puts_x(char *str, int width, const char pad)
         ('0' + (x)) :       \
         ('a' + ((x) - 10)))
 
-static int put_hex(const uint32_t val, int width, const char pad)
+__USER_TEXT static int put_hex(const uint32_t val, int width, const char pad)
 {
     int i, n = 0;
     int nwidth = 0;
@@ -65,7 +67,7 @@ static int put_hex(const uint32_t val, int width, const char pad)
     return n;
 }
 
-static void put_dec(const uint32_t val, const int width, const char pad)
+__USER_TEXT static void put_dec(const uint32_t val, const int width, const char pad)
 {
     uint32_t divisor;
     int digits;
@@ -85,7 +87,7 @@ static void put_dec(const uint32_t val, const int width, const char pad)
 }
 
 
-void printf(char *fmt, ...)
+__USER_TEXT void printf(char *fmt, ...)
 {
     va_list va;
     va_start(va, fmt);
@@ -93,7 +95,7 @@ void printf(char *fmt, ...)
     va_end(va);
 }
 
-void vprintf(char *fmt, va_list va)
+__USER_TEXT void vprintf(char *fmt, va_list va)
 {
     int mode = 0;   /* 0: usual char; 1: specifiers */
     int width = 0;

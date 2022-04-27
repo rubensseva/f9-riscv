@@ -67,6 +67,7 @@ define pmpcfg
   print /x $pmpcfg3
 end
 
+
 define thread_fpages
   set var $n = $arg0->as->first
   while $n
@@ -83,6 +84,12 @@ define curr_fpages
   end
 end
 
+define rst
+  file build/kernel.bin
+  reesp
+  lk
+end
+
 # Breakpoints
 define sbr
   break panic_dump_stack
@@ -94,10 +101,8 @@ define sbr
   break kerneltrap
   # break sys_ipc
   # when we return from kerneltrap:
-  break kernelvec.S:94
-
-  break root_thread.c:190
-  break trap.c:204
-
+  break kernelvec.S:93
+  break clisp_main
 end
+
 sbr

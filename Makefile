@@ -44,6 +44,7 @@ CFLAGS += -fno-omit-frame-pointer -ggdb3
 CFLAGS += -O0
 CFLAGS += -mcmodel=medany
 CFLAGS += -ffreestanding -fno-common -nostdlib -mno-relax
+CFLAGS += -fno-jump-tables # Need this to make switch statement not cause access faults
 CFLAGS += -I$(INCLUDES_DIR)
 CFLAGS += -I$(INCLUDES_DIR)/kernel
 CFLAGS += -I$(INCLUDES_DIR)/l4
