@@ -31,12 +31,12 @@
 static char banner[] =
     "\n"
     "====================================================\n"
-    " Copyright(C) 2013-2014 The F9 Microkernel Project  \n";
-    /* "====================================================\n" */
-    /* "Git head: " GIT_HEAD "\n" */
-    /* "Host: " MACH_TYPE "\n" */
-    /* "Build: "  BUILD_TIME "\n" */
-    /* "\n"; */
+    " Copyright(C) 2013-2014 The F9 Microkernel Project  \n"
+    "====================================================\n"
+    "Git head: " GIT_HEAD "\n"
+    "Host: " MACH_TYPE "\n"
+    "Build: "  BUILD_TIME "\n"
+    "\n";
 
 __attribute__ ((aligned (16))) char stack0[16384];
 
@@ -77,8 +77,10 @@ int main(void)
     UART_init(115200, 0);
     intr_setup(CONFIG_UART_CPU_INTR, 11);
 
-    dbg_init(DL_BASIC | DL_KDB  | DL_KTABLE | DL_SOFTIRQ | DL_THREAD |
-             DL_KTIMER | DL_SYSCALL | DL_SCHEDULE | DL_MEMORY | DL_IPC);
+    /* dbg_init(DL_BASIC | DL_KDB  | DL_KTABLE | DL_SOFTIRQ | DL_THREAD | */
+    /*          DL_KTIMER | DL_SYSCALL | DL_SCHEDULE | DL_MEMORY | DL_IPC); */
+    dbg_init(DL_BASIC | DL_KDB  | DL_KTABLE | DL_THREAD |
+             DL_KTIMER | DL_SCHEDULE);
     __l4_printf("%s", banner);
 
     ktimer_event_create(64, ipc_deliver, (ktimer_event_t *) NULL);
