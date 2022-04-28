@@ -77,7 +77,7 @@ __USER_TEXT void L4_map(memptr_t base, uint32_t size, L4_ThreadId_t tid)
     L4_Send(tid);
 }
 
-__USER_TEXT void map_user_sections(kip_t *kip_ptr, L4_ThreadId_t tid)
+__USER_TEXT void map_user_text(kip_t *kip_ptr, L4_ThreadId_t tid)
 {
     kip_mem_desc_t *desc = ((void *) kip_ptr) +
         kip_ptr->memory_info.s.memory_desc_ptr;
@@ -87,8 +87,7 @@ __USER_TEXT void map_user_sections(kip_t *kip_ptr, L4_ThreadId_t tid)
     for (i = 0; i < n; ++i) {
         uint32_t tag = desc[i].size & 0x3F;
         uint32_t size = desc[i].size & ~0x3F;
-        /* tag 2 and 3 is user_text and user_data, from memory.h */
-        if (size > 0 && (tag == 2 || tag == 3)) {
+        if (size > 0 && (tag == 2)) {
             L4_map(desc[i].base, desc[i].size, tid);
         }
     }

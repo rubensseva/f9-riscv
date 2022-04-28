@@ -93,7 +93,7 @@ uint32_t r_pmpcfgi(int pmp_entry) {
  *     n = 3 means pmp entries 6 and 7 */
 void mpu_setup_region(int n, fpage_t *fp) {
     if (n > (CONFIG_MAX_MAPPED_THREAD_FPAGES - 1)) {
-        dbg_printf(DL_MEMORY, "MEMORY: ignoring request to map fpage num %d since it is above the max number of mapped fpages: %d\n", n, CONFIG_MAX_MAPPED_THREAD_FPAGES);
+        dbg_printf(DL_MEMORY, "MEMORY: ignoring request to activate fpage num %d since the maximum number of fpages has been activated: %d\n", n, CONFIG_MAX_MAPPED_THREAD_FPAGES);
         return;
     }
     int pmp_entry_lower = n * 2;

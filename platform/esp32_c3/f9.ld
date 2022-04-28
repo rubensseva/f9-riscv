@@ -46,11 +46,15 @@ IDLE_STACK_SIZE         = 0x00000200;
 KERNEL_STACK_SIZE   = 0x00001000;
 /* ROOT_THREAD_STACK_SIZE   = 0x00000200; */
 ROOT_THREAD_STACK_SIZE  = 0x00001000;
-USER_THREAD_STACK_SIZE  = 0x00001000;
+/* USER_THREAD_STACK_SIZE  = 0x00001000; */
+USER_THREAD_STACK_SIZE  = 0x00004000;
 /* USER_THREAD_HEAP_SIZE   = 0x00004000; */
 USER_THREAD_HEAP_SIZE   = 0x00008000;
 
 MEM0_SIZE = 0x00001000;
+
+/* We need to align to 256 in order for the sections to match an fpage (because the
+last 6 bits of the fpage base is used for poolid */
 
 SECTIONS {
     .text :
@@ -85,6 +89,7 @@ SECTIONS {
     {
         idle_stack_start = .;
         . += IDLE_STACK_SIZE;
+        . = ALIGN (256);
         idle_stack_end = .;
         . += KERNEL_STACK_SIZE;
         kernel_stack_end = .;
@@ -142,20 +147,20 @@ SECTIONS {
         user_data_start = .;
         root_stack_start = .;
         . += ROOT_THREAD_STACK_SIZE;
+        . = ALIGN (256);
         root_stack_end = .;
         user_thread_stack_start = .;
         . += USER_THREAD_STACK_SIZE;
+        . = ALIGN (256);
         user_thread_stack_end = .;
         user_thread_heap_start = .;
         . += USER_THREAD_HEAP_SIZE;
+        . = ALIGN (256);
         user_thread_heap_end = .;
         user_data_misc_start = .;
         *(.user_data*)
-        user_data_misc_end = .;
-        user_runtime_start = .;
-        KEEP(*(.user_runtime))
-        user_runtime_end = .;
         . = ALIGN (256);
+        user_data_misc_end = .;
         user_data_end = .;
     } > dram
 

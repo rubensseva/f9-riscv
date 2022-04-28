@@ -29,7 +29,7 @@ void L4_ThreadControl(L4_ThreadId_t dest, L4_ThreadId_t SpaceSpecifier,
 void L4_map(memptr_t base, uint32_t size, L4_ThreadId_t tid);
 
 memptr_t get_free_base(kip_t *kip_ptr);
-void map_user_sections(kip_t *kip_ptr, L4_ThreadId_t tid);
+void map_user_text(kip_t *kip_ptr, L4_ThreadId_t tid);
 void request_irq(uint16_t irq_num, uint32_t priority, L4_ThreadId_t thread_id, uint32_t handler_ptr);
 
 

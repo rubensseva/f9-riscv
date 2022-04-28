@@ -26,9 +26,20 @@ void __USER_TEXT root_thread(kip_t *kip_ptr, utcb_t *utcb_ptr)
     char *free_mem = (char *) get_free_base(kip_ptr);
     /* Let threadid = spaceid, to tell the kernel to create a new address space, instead of sharing an existing one. */
     L4_ThreadControl(user_thread_id, user_thread_id, L4_nilthread, myself, free_mem);
-    /* Give user thread all user sections */
-    map_user_sections(kip_ptr, user_thread_id);
-    /* Give user thread uart space */
+
+    /* Give user thread all user text */
+    map_user_text(kip_ptr, user_thread_id);
+
+    /* Give user threads all other required regions */
+    L4_map((uint32_t)&user_thread_stack_start,
+           (char *)&user_thread_stack_end - (char *)&user_thread_stack_start,
+           user_thread_id);
+    L4_map((uint32_t)&user_thread_heap_start,
+           (char *)&user_thread_heap_end - (char *)&user_thread_heap_start,
+           user_thread_id);
+    L4_map((uint32_t)&user_data_misc_start,
+           (char *)&user_data_misc_end - (char *)&user_data_misc_start,
+           user_thread_id);
     L4_map(uart_mem_base, uart_mem_size, user_thread_id);
 
     /* Start user thread */
