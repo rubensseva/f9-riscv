@@ -36,8 +36,8 @@ __USER_TEXT int read_line(char *buf) {
 
         L4_MsgStore(msg.tag, &msg);
 
-        irq_handler_t handler = (irq_handler_t) msg.msg[IRQ_IPC_HANDLER + 1];
-        uint32_t action = msg.msg[IRQ_IPC_ACTION + 1];
+        // irq_handler_t handler = (irq_handler_t) msg.msg[IRQ_IPC_HANDLER + 1];
+        // uint32_t action = msg.msg[IRQ_IPC_ACTION + 1];
         uint32_t irqn = msg.msg[IRQ_IPC_IRQN + 1];
 
 

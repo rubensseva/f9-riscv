@@ -95,7 +95,9 @@ enum register_stack_t {
 	REG_S11
 };
 
-/* TODO: Can delete most of these, except sp */
+/* TODO: Can delete most of these, except mepc and sp
+ In addition, be careful when deleting a_regs as its used by
+ user_log, but user_log is only used in an unused IPC case */
 typedef struct {
 	uint32_t mepc;
 
