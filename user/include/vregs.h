@@ -138,54 +138,63 @@ __USER_TEXT L4_INLINE L4_Word_t L4_NumMRs(void)
     return __L4_NUM_MRS;
 }
 
+
+__USER_TEXT L4_INLINE void L4_StoreMR(int i, L4_Word_t *w)
+{
+    switch (i) {
+    case 0: *w = __L4_MR0; break;
+    case 1: *w = __L4_MR1; break;
+    case 2: *w = __L4_MR2; break;
+    case 3: *w = __L4_MR3; break;
+    case 4: *w = __L4_MR4; break;
+    case 5: *w = __L4_MR5; break;
+    case 6: *w = __L4_MR6; break;
+    case 7: *w = __L4_MR7; break;
+    default:
+        if (i >= 0 && i < __L4_NUM_MRS)
+            *w = __L4_Utcb()->mr[i - 8];
+        else
+            *w = 0;
+    }
+}
+
+__USER_TEXT L4_INLINE void L4_LoadMR(int i, L4_Word_t w)
+{
+    switch (i) {
+    case 0: __L4_MR0 = w; break;
+    case 1: __L4_MR1 = w; break;
+    case 2: __L4_MR2 = w; break;
+    case 3: __L4_MR3 = w; break;
+    case 4: __L4_MR4 = w; break;
+    case 5: __L4_MR5 = w; break;
+    case 6: __L4_MR6 = w; break;
+    case 7: __L4_MR7 = w; break;
+    default:
+        if (i >= 0 && i < __L4_NUM_MRS)
+            __L4_Utcb()->mr[i - 8] = w;
+    }
+}
+
 __USER_TEXT L4_INLINE void L4_StoreMRs(int i, int k, L4_Word_t * w)
 {
     if (i < 0 || k <= 0 || i + k > __L4_NUM_MRS)
         return;
 
-    if (i <= 0) {
-        *w++ = __L4_MR0;
-        if (--k <= 0)
-            return;
-    }
-    if (i <= 1) {
-        *w++ = __L4_MR1;
-        if (--k <= 0)
-            return;
-    }
-    if (i <= 2) {
-        *w++ = __L4_MR2;
-        if (--k <= 0)
-            return;
-    }
-    if (i <= 3) {
-        *w++ = __L4_MR3;
-        if (--k <= 0)
-            return;
-    }
-    if (i <= 4) {
-        *w++ = __L4_MR4;
-        if (--k <= 0)
-            return;
-    }
-    if (i <= 5) {
-        *w++ = __L4_MR5;
-        if (--k <= 0)
-            return;
-    }
-    if (i <= 6) {
-        *w++ = __L4_MR6;
-        if (--k <= 0)
-            return;
-    }
-    if (i <= 7) {
-        *w++ = __L4_MR7;
-        if (--k <= 0)
-            return;
-    }
-    uint32_t *mr = __L4_Utcb()->mr;
-    while (k-- > 0) {
-        *w++ = *mr++;
+    switch (i) {
+    case 0: *w++ = __L4_MR0; if (--k <= 0) break;
+    case 1: *w++ = __L4_MR1; if (--k <= 0) break;
+    case 2: *w++ = __L4_MR2; if (--k <= 0) break;
+    case 3: *w++ = __L4_MR3; if (--k <= 0) break;
+    case 4: *w++ = __L4_MR4; if (--k <= 0) break;
+    case 5: *w++ = __L4_MR5; if (--k <= 0) break;
+    case 6: *w++ = __L4_MR6; if (--k <= 0) break;
+    case 7: *w++ = __L4_MR7; if (--k <= 0) break;
+    default:
+        {
+            uint32_t *mr = __L4_Utcb()->mr;
+            while (k-- > 0)
+                *w++ = *mr++;
+        }
     }
 }
 
@@ -194,49 +203,21 @@ __USER_TEXT L4_INLINE void L4_LoadMRs(int i, int k, L4_Word_t *w)
     if (i < 0 || k <= 0 || i + k > __L4_NUM_MRS)
         return;
 
-    if (i <= 0) {
-        __L4_MR0 = *w++;
-        if (--k <= 0)
-            return;
-    }
-    if (i <= 1) {
-        __L4_MR1 = *w++;
-        if (--k <= 0)
-            return;
-    }
-    if (i <= 2) {
-        __L4_MR2 = *w++;
-        if (--k <= 0)
-            return;
-    }
-    if (i <= 3) {
-        __L4_MR3 = *w++;
-        if (--k <= 0)
-            return;
-    }
-    if (i <= 4) {
-        __L4_MR4 = *w++;
-        if (--k <= 0)
-            return;
-    }
-    if (i <= 5) {
-        __L4_MR5 = *w++;
-        if (--k <= 0)
-            return;
-    }
-    if (i <= 6) {
-        __L4_MR6 = *w++;
-        if (--k <= 0)
-            return;
-    }
-    if (i <= 7) {
-        __L4_MR7 = *w++;
-        if (--k <= 0)
-            return;
-    }
-    uint32_t *mr = __L4_Utcb()->mr;
-    while (k-- > 0) {
-        *mr++ = *w++;
+    switch (i) {
+    case 0: __L4_MR0 = *w++; if (--k <= 0) break;
+    case 1: __L4_MR1 = *w++; if (--k <= 0) break;
+    case 2: __L4_MR2 = *w++; if (--k <= 0) break;
+    case 3: __L4_MR3 = *w++; if (--k <= 0) break;
+    case 4: __L4_MR4 = *w++; if (--k <= 0) break;
+    case 5: __L4_MR5 = *w++; if (--k <= 0) break;
+    case 6: __L4_MR6 = *w++; if (--k <= 0) break;
+    case 7: __L4_MR7 = *w++; if (--k <= 0) break;
+    default:
+        {
+            uint32_t *mr = __L4_Utcb()->mr;
+            while (k-- > 0)
+                *mr++ = *w++;
+        }
     }
 }
 
