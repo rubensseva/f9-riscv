@@ -2,6 +2,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+# Inspiration for auto dependency management taken from http://make.mad-scientist.net/papers/advanced-auto-dependency-generation/
+
 CC:=riscv32-unknown-elf-gcc
 LD:=riscv32-unknown-elf-ld
 
@@ -17,6 +19,9 @@ CFLAGS_HOPPUS_DEFINE = -DHOPPUS_RISCV_F9
 BUILD_DIR:=build
 TARGET:=$(BUILD_DIR)/kernel.bin
 default: $(TARGET)
+
+DEP_DIR:=$(BUILD_DIR)/.deps
+DEP_FLAGS=-MT $@ -MMD -MP -MF $(DEP_DIR)/$*.d
 
 KERNEL_DIR:=kernel
 PLATFORM_DIR:=platform
@@ -46,8 +51,8 @@ C_OBJECTS = $(addprefix $(BUILD_DIR)/, $(C_SOURCES:.c=.o))
 ASSEMBLY_OBJECTS = $(addprefix $(BUILD_DIR)/, $(ASSEMBLY_SOURCES:.S=.o))
 ALL_OBJECTS = $(C_OBJECTS) $(ASSEMBLY_OBJECTS)
 
-$(BUILD_DIR)/%.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
+$(BUILD_DIR)/%.o: %.c $(DEP_DIR)/%.d | $(DEP_DIR)
+	$(CC) $(DEP_FLAGS) $(CFLAGS) -c $< -o $@
 
 $(BUILD_DIR)/%.o: %.S
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -55,11 +60,20 @@ $(BUILD_DIR)/%.o: %.S
 $(TARGET): $(ALL_OBJECTS) $(LINKER_SCRIPT) $(INCL_DIRS) $(HEADERS)
 	$(LD) $(LDFLAGS) -T $(LINKER_SCRIPT) -o $(TARGET) $(ALL_OBJECTS)
 
+.PHONY: clean
+clean:
+	rm -r build/
+
+DEP_FILES := $(C_SOURCES:%.c=$(DEP_DIR)/%.d)
+$(DEP_DIR): ; @mkdir -p $@
+
 # Only create directories when required
 $(BUILD_DIR)%/:
 	mkdir -p $@
 $(foreach OBJECT,$(ALL_OBJECTS),$(eval $(OBJECT): | $(dir $(OBJECT))))
+$(DEP_DIR)%/:
+	mkdir -p $@
+$(foreach DEP,$(DEP_FILES),$(eval $(DEP): | $(dir $(DEP))))
 
-.PHONY: clean
-clean:
-	rm -r build/
+$(DEP_FILES):
+include $(wildcard $(DEP_FILES))
