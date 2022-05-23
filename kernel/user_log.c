@@ -6,10 +6,13 @@
 #include <user_log.h>
 #include <debug.h>
 #include <thread.h>
+#include <ipc.h>
 
 void user_log(tcb_t *from)
 {
-	char *format = (char *) from->ctx.a_regs[1];
-	va_list *va = (va_list *) from->ctx.a_regs[2];
+	/* char *format = (char *) from->ctx.regs[1]; */
+	/* va_list *va = (va_list *) from->ctx.regs[2]; */
+    char *format = (char *) ipc_read_mr(from, 0);
+    va_list *va = (va_list *) ipc_read_mr(from, 1);
 	dbg_vprintf(DL_KDB, format, *va);
 }
