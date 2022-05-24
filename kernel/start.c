@@ -13,7 +13,6 @@
 #include <softirq.h>
 #include <syscall.h>
 #include <systhread.h>
-#include <ksym.h>
 #include <init_hook.h>
 #include <lib/string.h>
 #include <config.h>

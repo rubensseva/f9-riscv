@@ -4,11 +4,13 @@
 #include <syscall.h>
 #include <ipc.h>
 #include <uart_ESP32_C3.h>
+#include <timer_ESP32_C3.h>
 #include <interrupt_ipc.h>
 #include <l4/utcb.h>
 #include <F9.h>
 #include <user_thread.h>
 #include <message.h>
+#include <user_stdio.h>
 
 
 __USER_DATA uint32_t uart_mem_base = 0x60000000;
@@ -19,6 +21,8 @@ extern void* current_utcb;
 /* Kip_ptr and utcb_ptr will be passed through a0 and a1 by create_root_thread() */
 void __USER_TEXT root_thread(kip_t *kip_ptr, utcb_t *utcb_ptr)
 {
+    timer_init();
+    timer_start();
     L4_ThreadId_t myself = {.raw = utcb_ptr->t_globalid};
     L4_ThreadId_t user_thread_id = {.raw = TID_TO_GLOBALID(24)};
 
@@ -57,6 +61,10 @@ void __USER_TEXT root_thread(kip_t *kip_ptr, utcb_t *utcb_ptr)
     L4_MsgPut(&msg, 0, 5, msgs, 0, NULL);
     L4_MsgLoad(&msg);
     L4_Ipc(user_thread_id, myself, 0, (L4_ThreadId_t *)0);
+
+    TIMER_LATCH();
+    int res = timer_get();
+    user_printf("timer result: %d\n", res);
 
     while (1) {
         L4_Sleep();

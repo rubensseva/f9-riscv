@@ -38,12 +38,10 @@
 // CONFIG_DBGPORT_USE_USART4=y
 
 // Memory regions
-#define CONFIG_PERIPHERAL_MEM_START 0x60000000
-/* HACK: Peripheral size is actually 836KB, but we only have 16 bit fpage and we dont
-   need the peripherals at higher addresses for now, so lets just say that peripheral
-   memory is smaller than it actually is */
-/* FIXME: allow for larger fpages, or split them if size is too large */
-#define CONFIG_PERIPHERAL_MEM_SIZE 60000
+#define CONFIG_PERIPHERAL_MEM_UART0_START 0x60000000
+#define CONFIG_PERIPHERAL_MEM_UART0_SIZE 4095
+#define CONFIG_PERIPHERAL_MEM_TIMERG0_START 0x6001F000
+#define CONFIG_PERIPHERAL_MEM_TIMERG0_SIZE 4095
 
 //
 // Limitations
