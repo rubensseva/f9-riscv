@@ -22,22 +22,6 @@ void fpage_table_init_ktable() {
 	ktable_init(&fpage_table, (ptr_t)kt_fpage_table_data);
 }
 
-#define remove_fpage_from_list(as, fpage, first, next) {	\
-	fpage_t *fpprev = (as)->first;				\
-	int end = 0;						\
-	if (fpprev == (fpage)) {				\
-		(as)->first = fpprev->next;			\
-	}							\
-	else {							\
-		while (!end && fpprev->next != (fpage)) {	\
-			if (!fpprev->next)			\
-				end = 1;			\
-			fpprev = fpprev->next;			\
-		}						\
-		fpprev->next = (fpage)->next;			\
-	}							\
-}
-
 /**
  * Insert chain of fpages into address space
  * @param first, last - fpage chain

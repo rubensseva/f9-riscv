@@ -3,6 +3,7 @@
 #include <thread.h>
 #include <debug.h>
 #include <config.h>
+#include <fpage.h>
 
 
 void (*w_pmpaddrarr[16])(uint32_t) = {
@@ -160,6 +161,9 @@ int mpu_select_lru(as_t *as, uint32_t addr)
     while (fp) {
         if (addr_in_fpage(addr, fp, 0)) {
             fpage_t *sfp = as->mpu_stack_first;
+
+            /* Remove the fpage from the list first, otherwise we might get a circular list */
+            remove_fpage_from_list(as, fp, mpu_first, mpu_next);
 
             fp->mpu_next = as->mpu_first;
             as->mpu_first = fp;

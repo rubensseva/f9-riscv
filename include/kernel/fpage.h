@@ -48,6 +48,22 @@ struct fpage {
 
 typedef struct fpage fpage_t;
 
+#define remove_fpage_from_list(as, fpage, first, next) {	\
+	fpage_t *fpprev = (as)->first;				\
+	int end = 0;						\
+	if (fpprev == (fpage)) {				\
+		(as)->first = fpprev->next;			\
+	}							\
+	else {							\
+		while (!end && fpprev->next != (fpage)) {	\
+			if (!fpprev->next)			\
+				end = 1;			\
+			fpprev = fpprev->next;			\
+		}						\
+		fpprev->next = (fpage)->next;			\
+	}							\
+}
+
 #define FPAGE_BASE(fp) 	(fp)->fpage.base
 #define FPAGE_SIZE(fp)  (fp)->fpage.size
 #define FPAGE_END(fp)	(FPAGE_BASE(fp) + FPAGE_SIZE(fp))
