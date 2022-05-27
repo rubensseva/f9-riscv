@@ -14,7 +14,7 @@ void putchar(uint8_t chr);
 uint8_t getchar(void);
 #endif
 
-/* Literal strings are placed in .rodata segment, which is kernel
+/* Literal strings are placed in .rodata section, which is kernel
    space, so we need this hackery to be able to print literal strings */
 #define user_printf(str, ...) { \
     static __USER_DATA char s[] = str; \

@@ -1,3 +1,10 @@
+F9 RISC-V
+=========
+
+This is an experimental port of the F9 Microkernel to the RISC-V based ESP32-C3 SoC.
+
+The original readme for F9 follows
+
 F9 Microkernel
 ==============
 
