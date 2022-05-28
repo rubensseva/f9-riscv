@@ -6,7 +6,7 @@
 
 // These could be deleted since we dont care about
 // tickless timer for now
-#define CONFIG_KTIMER_MINTICKS 128
+// #define CONFIG_KTIMER_MINTICKS 128
 
 
 // from /f9-kernel/include/platform/armv7m.h"
@@ -57,13 +57,25 @@
 #define CONFIG_MAX_MAPPED_THREAD_FPAGES 7
 
 //
+// System timer
+//
+// #define CONFIG_SYSTEM_TIMER_ALARM_THRESH 160000 // Should be every 10 milliseconds
+#define CONFIG_SYSTEM_TIMER_ALARM_THRESH 1600000 // Should be every 100 milliseconds
+
+//
 // Kernel Timer
 //
 #define CONFIG_KTIMER_TICKLESS 1
 // # CONFIG_KTIMER_TICKLESS_VERIFY is not set
 #define CONFIG_KTIMER_TICKLESS_COMPENSATION 0
 #define CONFIG_KTIMER_TICKLESS_INT_COMPENSATION 0
-#define CONFIG_KTIMER_HEARTBEAT 65536
+
+/* CONFIG_KTIMER_HEARTBEAT is changed from F9 ARM. In F9 ARM it means number
+   of CPU cycles per ktimer tick, while in this port it means number of timer
+   interrupts for each tick. */
+// #define CONFIG_KTIMER_HEARTBEAT 65536
+#define CONFIG_KTIMER_HEARTBEAT 2
+
 #define CONFIG_KTIMER_MINTICKS 128
 
 //

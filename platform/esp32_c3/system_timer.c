@@ -4,13 +4,18 @@
 #include <utility.h>
 
 void system_timer_init() {
+    /* The counters and comparators are driven by XTAL_CLK. After scaled by a fractional
+       divider, the average clock frequency is 16MHz. */
+
+
     /* Following the steps in 10.5.3 in TRM */
     /* 1. Set SYSTIMER_TARGETx_TIMER_UNIT_SEL to select the counter (UNIT0 or UNIT1) used for COMPx. */
     /* NOTE: We will set this to 0, which I believe will select UNIT0 */
     volatile uint32_t *systimer_target0_conf = REG(SYSTEM_TIMER_BASE + SYSTIMER_TARGET0_CONF_REG);
     *systimer_target0_conf &= ~(1 << SYSTIMER_TARGET0_CONF_REG__SYSTIMER_TARGET0_TIMER_UNIT_SEL);
     /* 2. Set an alarm period (δt), and fill it to SYSTIMER_TARGETx_PERIOD. */
-    int alarm = 16000000;
+    /* The counters run at 16MHz, so setting this 16000000 wile give onw interrupt each second */
+    int alarm = CONFIG_SYSTEM_TIMER_ALARM_THRESH; // Should be every 10 milliseconds
     *systimer_target0_conf &= ~0x3ffffff; // zero out whatever is in period field (bits 0 - 25)
     *systimer_target0_conf |= alarm;
     /* 3. Set SYSTIMER_TIMER_COMPx_LOAD to synchronize the alarm period (δt) to COMPx, i.e. load the alarm period (δt) to COMPx. */

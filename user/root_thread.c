@@ -47,26 +47,44 @@ void __USER_TEXT root_thread(kip_t *kip_ptr, utcb_t *utcb_ptr)
     L4_map(uart_mem_base, uart_mem_size, user_thread_id);
 
     /* Start user thread */
-    L4_Msg_t msg;
-    L4_MsgClear(&msg);
+    /* L4_Msg_t msg; */
+    /* L4_MsgClear(&msg); */
 
-    L4_Word_t msgs[5] = {
-        (L4_Word_t) user_thread,
-        (L4_Word_t) &user_thread_stack_end,
-        (L4_Word_t)(((uint32_t) &user_thread_stack_end) - ((uint32_t) &user_thread_stack_start)), // stack size
-        0,
-        0
-    };
+    /* L4_Word_t msgs[5] = { */
+    /*     (L4_Word_t) user_thread, */
+    /*     (L4_Word_t) &user_thread_stack_end, */
+    /*     (L4_Word_t)(((uint32_t) &user_thread_stack_end) - ((uint32_t) &user_thread_stack_start)), // stack size */
+    /*     0, */
+    /*     0 */
+    /* }; */
 
-    L4_MsgPut(&msg, 0, 5, msgs, 0, NULL);
-    L4_MsgLoad(&msg);
-    L4_Ipc(user_thread_id, myself, 0, (L4_ThreadId_t *)0);
+    /* L4_MsgPut(&msg, 0, 5, msgs, 0, NULL); */
+    /* L4_MsgLoad(&msg); */
+    /* L4_Ipc(user_thread_id, myself, 0, (L4_ThreadId_t *)0); */
 
     TIMER_LATCH();
     int res = timer_get();
     user_printf("timer result: %d\n", res);
 
+
+    ipc_time_t sleep = {.raw = 0};
+    sleep.period.m = 500;
+
+
+    sleep.period.e = 5;
+    user_printf("root sleeping for %d\n", (sleep.period.m << sleep.period.e));
+    L4_Sleep(sleep);
+    user_puts("done sleeping 100\n");
+
+
+    sleep.period.e = 8;
+    user_printf("root sleeping for %d\n", (sleep.period.m << sleep.period.e));
+    L4_Sleep(sleep);
+    user_puts("done sleeping 100\n");
+
+
     while (1) {
-        L4_Sleep();
+        /* TODO: Need to use proper timeout object here */
+        L4_Sleep(100000);
     }
 }

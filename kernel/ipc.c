@@ -196,10 +196,18 @@ static void sys_ipc_timeout(uint32_t timeout)
 	ktimer_event_t *kevent;
 	ipc_time_t t = { .raw = timeout };
 
+    /* system timer average frequency is 16 MHz */
+    int ms_per_tick = 1000 / (16000000 / CONFIG_SYSTEM_TIMER_ALARM_THRESH);
 	/* millisec to ticks */
-	uint32_t ticks = (t.period.m << t.period.e) /
-	                 ((1000000) / (CORE_CLOCK/CONFIG_KTIMER_HEARTBEAT));
+	uint32_t ticks = (t.period.m << t.period.e) / ms_per_tick;
+    dbg_printf(DL_IPC, "IPC: Got request for timeout for %d ms, which I've translated to %d ticks\n",
+               (t.period.m << t.period.e), ticks);
 
+	/* millisec to ticks */
+	/* uint32_t ticks = (t.period.m << t.period.e) / */
+	/*                  ((1000000) / (CORE_CLOCK/CONFIG_KTIMER_HEARTBEAT)); */
+
+    dbg_printf(DL_IPC, "IPC: Creating new timeout event with %d ticks\n", ticks);
 	kevent = ktimer_event_create(ticks, ipc_timeout, caller);
 
 	caller->timeout_event = (uint32_t) kevent;

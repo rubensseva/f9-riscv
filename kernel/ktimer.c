@@ -58,6 +58,10 @@ void ktimer_handler(void)
 		++ktimer_time;
 		--ktimer_delta;
 
+		dbg_printf(DL_KTIMER,
+		           "KTE: Ktimer_delta is now %d\n", ktimer_delta);
+
+
 		if (ktimer_delta == 0) {
 			ktimer_enabled = 0;
 			ktimer_time = ktimer_delta = 0;
@@ -83,8 +87,11 @@ int ktimer_event_schedule(uint32_t ticks, ktimer_event_t *kte)
 	long etime = 0, delta = 0;
 	ktimer_event_t *event = NULL, *next_event = NULL;
 
-	if (!ticks)
+	if (!ticks) {
+        dbg_printf(DL_KTIMER,
+                   "KTE: Trying to schedule with 0 ticks\n");
 		return -1;
+    }
 	ticks -= ktimer_time;
 	kte->next = NULL;
 
@@ -138,8 +145,10 @@ int ktimer_event_schedule(uint32_t ticks, ktimer_event_t *kte)
 		}
 
 		/* Chaining events */
-		if (delta < CONFIG_KTIMER_MINTICKS)
+		if (delta < CONFIG_KTIMER_MINTICKS) {
+            dbg_printf(DL_KTIMER, "KTE: delta was under min tick\n");
 			delta = 0;
+        }
 
 
 		kte->next = next_event;

@@ -2,7 +2,8 @@
 #define PLATFORM_STM32F429_SYSTICK_H_
 
 #include <stdint.h>
-#define CORE_CLOCK		(0x0a037a00) /* 168MHz */
+// #define CORE_CLOCK		(0x0a037a00) /* 168MHz */
+#define CORE_CLOCK		(20000000) /* 20MHz, default for ESP32-C3 */
 #define SYSTICK_MAXRELOAD	(0x00ffffff)
 
 void init_systick(uint32_t tick_reload, uint32_t tick_next_reload);

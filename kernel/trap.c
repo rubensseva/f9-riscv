@@ -99,22 +99,25 @@ void instruction_address_misaligned_handler(void) {
     dbg_printf(DL_EMERG, "Instruction address misaligned exception. mepc: %x, mtval: %x\n",
                r_mepc(), r_mtval());
     dump_state();
+    panic("ERROR: Instruction address misaligned\n");
 }
 void illegal_instruction_handler(void) {
     dbg_printf(DL_EMERG, "Illegal instruction exception. mepc: %x, mtval: %x\n",
                r_mepc(), r_mtval());
     dump_state();
+    panic("ERROR: Illegal_instruction\n");
 }
 void load_address_misaligned_handler(void) {
     dbg_printf(DL_EMERG, "Load address misalgined exception. mepc: %x, mtval: %x\n",
                r_mepc(), r_mtval());
     dump_state();
+    panic("ERROR: Load address misaligned\n");
 }
 void store_or_AMO_address_misaligned_handler(void) {
     dbg_printf(DL_EMERG, "Store/AMO address misaligned exception. mepc: %x, mtval: %x\n",
                r_mepc(), r_mtval());
     dump_state();
-    panic("Unrecoverable Store/AMO address misaligned exception");
+    panic("ERROR: Store/AMO address misaligned exception");
 }
 
 void ecall_from_u_handler(void) {
@@ -211,6 +214,7 @@ extern void kerneltrap(uint32_t* caller_sp)
     current->ctx.sp = (uint32_t) caller_sp;
     tcb_t* sel = schedule_select();
     if (sel != current) {
+        dbg_printf(DL_EMERG, "Shifting to %s\n", sel->name);
         thread_switch(sel);
     }
 

@@ -29,7 +29,7 @@ __USER_TEXT L4_MsgTag_t L4_Ipc(L4_ThreadId_t to,
     return result;
 }
 
-__USER_TEXT void L4_Sleep()
+__USER_TEXT void L4_Sleep(int time)
 {
     __asm__ __volatile__(
         "mv a0, %0\n\t\
@@ -38,7 +38,7 @@ __USER_TEXT void L4_Sleep()
         mv a3, %3\n\t\
         ecall\n\t"
         :
-        : "r"(SYS_IPC), "r"(L4_NILTHREAD), "r"(L4_NILTHREAD), "r"(10000000)
+        : "r"(SYS_IPC), "r"(L4_NILTHREAD), "r"(L4_NILTHREAD), "r"(time)
         : "a0", "a1", "a2", "a3");
 }
 
