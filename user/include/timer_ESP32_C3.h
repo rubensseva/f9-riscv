@@ -3,11 +3,11 @@
 
 #include <stdint.h>
 
-extern volatile uint32_t *timg_t0update;
+extern volatile uint32_t *timg_0_update;
 extern volatile uint32_t *timg_0_conf;
 extern uint32_t timer_conf_en_bit;
 
-#define TIMER_LATCH() (*timg_t0update = 1)
+#define TIMER_LATCH() (*timg_0_update = 1)
 #define TIMER_START() (*timg_0_conf |= timer_conf_en_bit)
 
 void timer_init();

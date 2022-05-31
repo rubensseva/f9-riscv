@@ -6,7 +6,7 @@
 #include <timer_ESP32_C3.h>
 
 
-__USER_DATA volatile uint32_t *timg_t0update = REG(TIMER_GROUP_0_BASE + TIMG_T0UPDATE_REG);
+__USER_DATA volatile uint32_t *timg_0_update = REG(TIMER_GROUP_0_BASE + TIMG_T0UPDATE_REG);
 __USER_DATA volatile uint32_t *timg_0_conf = REG(TIMER_GROUP_0_BASE + TIMG_T0CONFIG_REG);
 
 __USER_DATA uint32_t timer_conf_en_bit = (1 << 31);
@@ -14,12 +14,16 @@ __USER_DATA uint32_t timer_conf_en_bit = (1 << 31);
 __USER_TEXT void timer_init() {
     volatile uint32_t *timg_0_conf = REG(TIMER_GROUP_0_BASE + TIMG_T0CONFIG_REG);
 
+    /* Make sure the timer is stopped */
+    *timg_0_conf &= ~(1 << 31);
+
     /* Select clock source by setting or clearing TIMG_TO_USE_XTAL field */
     *timg_0_conf |= (1 << 9); // Choose XTAL_CLK as source, which is 40Mhz
 
     /* Configure the 16-bit prescaler by setting TIMG_TO_DIVIDER */
     *timg_0_conf &= ~(0xffff << 13); // Clear divider field in conf register
-    *timg_0_conf &= ~(2 << 13); // Set prescaler field to 2. This gives 20MHz if the source clock is XTAL_CLK.
+    *timg_0_conf |= (10000 << 13); // Set prescaler field to 10000. This gives 4000Hz if the source clock is XTAL_CLK.
+    *timg_0_conf |= (1 << 12); // Reset prescaler (needs to be done for prescaler to work, according to TRM section 11.2.1)
 
     /* Configure the timer direction by setting or clearing TIMG_TO_INCREASE */
     *timg_0_conf |= (1 << 30); // Set direction upwards
@@ -33,10 +37,6 @@ __USER_TEXT void timer_init() {
     *timg_t0load = 1;
 }
 
-__USER_TEXT void timer_start() {
-    volatile uint32_t *timg_0_conf = REG(TIMER_GROUP_0_BASE + TIMG_T0CONFIG_REG);
-    *timg_0_conf |= (1 << 31);
-}
 
 /* Stop the timer and reset its value */
 __USER_TEXT void timer_reset() {
@@ -47,10 +47,9 @@ __USER_TEXT void timer_reset() {
 }
 
 __USER_TEXT uint64_t timer_counter_to_microseconds(int counter_value) {
-    /* Assuming XTAL_CLK source with prescaler value of 2 */
-    int clk_freq = 20000000; // 20 MHz
-    int cycles_per_usecond = clk_freq / 1000000;
-    return counter_value / cycles_per_usecond;
+    int clk_freq = 4000; // 4000 Hz
+    int useconds_per_cycle = 1000000 / clk_freq;
+    return counter_value * useconds_per_cycle;
 }
 
 /* Read the timer value. Remember to latch the timer first! */

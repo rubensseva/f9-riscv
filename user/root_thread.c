@@ -21,8 +21,7 @@ extern void* current_utcb;
 /* Kip_ptr and utcb_ptr will be passed through a0 and a1 by create_root_thread() */
 void __USER_TEXT root_thread(kip_t *kip_ptr, utcb_t *utcb_ptr)
 {
-    timer_init();
-    timer_start();
+
     L4_ThreadId_t myself = {.raw = utcb_ptr->t_globalid};
     L4_ThreadId_t user_thread_id = {.raw = TID_TO_GLOBALID(24)};
 
@@ -62,26 +61,35 @@ void __USER_TEXT root_thread(kip_t *kip_ptr, utcb_t *utcb_ptr)
     /* L4_MsgLoad(&msg); */
     /* L4_Ipc(user_thread_id, myself, 0, (L4_ThreadId_t *)0); */
 
-    TIMER_LATCH();
-    int res = timer_get();
-    user_printf("timer result: %d\n", res);
-
 
     ipc_time_t sleep = {.raw = 0};
     sleep.period.m = 500;
 
 
+
     sleep.period.e = 5;
     user_printf("root sleeping for %d\n", (sleep.period.m << sleep.period.e));
+    timer_init();
+    TIMER_START();
     L4_Sleep(sleep);
-    user_puts("done sleeping 100\n");
+    TIMER_LATCH();
+    int res = timer_get();
+    user_puts("done sleeping\n");
+    user_printf("timed sleep: %d\n", res);
+    int useconds = timer_counter_to_microseconds(res);
+    user_printf("timed sleep us: %dus\n", useconds);
 
-
-    sleep.period.e = 8;
+    sleep.period.e = 4;
     user_printf("root sleeping for %d\n", (sleep.period.m << sleep.period.e));
+    timer_reset();
+    TIMER_START();
     L4_Sleep(sleep);
-    user_puts("done sleeping 100\n");
-
+    TIMER_LATCH();
+    res = timer_get();
+    user_puts("done sleeping\n");
+    user_printf("timed sleep: %d\n", res);
+    useconds = timer_counter_to_microseconds(res);
+    user_printf("timed sleep us: %dus\n", useconds);
 
     while (1) {
         /* TODO: Need to use proper timeout object here */

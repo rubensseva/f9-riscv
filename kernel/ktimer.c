@@ -43,11 +43,9 @@ static void ktimer_disable(void)
 
 static void ktimer_enable(uint32_t delta)
 {
-	if (!ktimer_enabled) {
-		ktimer_delta = delta;
-		ktimer_time = 0;
-		ktimer_enabled = 1;
-	}
+    ktimer_delta = delta;
+    ktimer_time = 0;
+	ktimer_enabled = 1;
 }
 
 void ktimer_handler(void)
@@ -92,7 +90,7 @@ int ktimer_event_schedule(uint32_t ticks, ktimer_event_t *kte)
                    "KTE: Trying to schedule with 0 ticks\n");
 		return -1;
     }
-	ticks -= ktimer_time;
+	ticks += ktimer_time;
 	kte->next = NULL;
 
 	if (!event_queue) {

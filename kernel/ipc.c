@@ -202,10 +202,9 @@ static void sys_ipc_timeout(uint32_t timeout)
 	uint32_t ticks = (t.period.m << t.period.e) / ms_per_tick;
     dbg_printf(DL_IPC, "IPC: Got request for timeout for %d ms, which I've translated to %d ticks\n",
                (t.period.m << t.period.e), ticks);
+    dbg_printf(DL_IPC, "IPC: One tick is 100ms which means that this timeout should complete in %d * 100ms = %dms\n",
+               ticks, ticks * 100);
 
-	/* millisec to ticks */
-	/* uint32_t ticks = (t.period.m << t.period.e) / */
-	/*                  ((1000000) / (CORE_CLOCK/CONFIG_KTIMER_HEARTBEAT)); */
 
     dbg_printf(DL_IPC, "IPC: Creating new timeout event with %d ticks\n", ticks);
 	kevent = ktimer_event_create(ticks, ipc_timeout, caller);

@@ -84,6 +84,16 @@ define curr_fpages
   end
 end
 
+define event_queue
+  p ktimer_delta
+  set var $n = event_queue
+  while $n
+    printf "%d -> ", $n->delta
+    set var $n = $n->next
+  end
+  printf "\n"
+end
+
 define rst
   file build/kernel.bin
   reesp
