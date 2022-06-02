@@ -144,7 +144,7 @@ int ktimer_event_schedule(uint32_t ticks, ktimer_event_t *kte)
 
 		/* Chaining events */
 		if (delta < CONFIG_KTIMER_MINTICKS) {
-            dbg_printf(DL_KTIMER, "KTE: delta was under min tick\n");
+            dbg_printf(DL_KTIMER, "KTE: delta (%d) was under min tick (%d)\n", delta, CONFIG_KTIMER_MINTICKS);
 			delta = 0;
         }
 

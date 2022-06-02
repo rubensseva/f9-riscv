@@ -214,7 +214,7 @@ extern void kerneltrap(uint32_t* caller_sp)
     current->ctx.sp = (uint32_t) caller_sp;
     tcb_t* sel = schedule_select();
     if (sel != current) {
-        dbg_printf(DL_EMERG, "Shifting to %s\n", sel->name);
+        /* dbg_printf(DL_EMERG, "Shifting to %s\n", sel->name); */
         thread_switch(sel);
     }
 

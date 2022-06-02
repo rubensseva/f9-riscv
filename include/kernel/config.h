@@ -59,7 +59,9 @@
 //
 // System timer
 //
-#define CONFIG_SYSTEM_TIMER_ALARM_THRESH 1600000 // Should be every 100 milliseconds
+// #define CONFIG_SYSTEM_TIMER_ALARM_THRESH 1600000 // Should be every 100 milliseconds
+#define CONFIG_SYSTEM_TIMER_ALARM_THRESH 16000000 // Should be every 1000 milliseconds
+// #define CONFIG_SYSTEM_TIMER_ALARM_THRESH 4000000 // Should be every 250 milliseconds
 
 //
 // Kernel Timer
@@ -75,7 +77,8 @@
 /* TODO: Not used anywhere, fix it */
 #define CONFIG_KTIMER_HEARTBEAT 2
 
-#define CONFIG_KTIMER_MINTICKS 5
+// #define CONFIG_KTIMER_MINTICKS 5
+#define CONFIG_KTIMER_MINTICKS 0
 
 //
 // Flexible page tweaks

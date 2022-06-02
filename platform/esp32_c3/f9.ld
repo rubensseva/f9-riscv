@@ -46,10 +46,13 @@ IDLE_STACK_SIZE         = 0x00000200;
 KERNEL_STACK_SIZE   = 0x00001000;
 /* ROOT_THREAD_STACK_SIZE   = 0x00000200; */
 ROOT_THREAD_STACK_SIZE  = 0x00001000;
-/* USER_THREAD_STACK_SIZE  = 0x00001000; */
-USER_THREAD_STACK_SIZE  = 0x00004000;
-/* USER_THREAD_HEAP_SIZE   = 0x00004000; */
-USER_THREAD_HEAP_SIZE   = 0x00008000;
+/* HOPPUS_THREAD_STACK_SIZE  = 0x00001000; */
+HOPPUS_THREAD_STACK_SIZE  = 0x00004000;
+/* HOPPUS_THREAD_HEAP_SIZE   = 0x00004000; */
+HOPPUS_THREAD_HEAP_SIZE   = 0x00004000;
+
+PING_THREAD_STACK_SIZE  = 0x00001000;
+PONG_THREAD_STACK_SIZE  = 0x00001000;
 
 MEM0_SIZE = 0x00001000;
 
@@ -149,18 +152,32 @@ SECTIONS {
         . += ROOT_THREAD_STACK_SIZE;
         . = ALIGN (256);
         root_stack_end = .;
-        user_thread_stack_start = .;
-        . += USER_THREAD_STACK_SIZE;
+
+        hoppus_thread_stack_start = .;
+        . += HOPPUS_THREAD_STACK_SIZE;
         . = ALIGN (256);
-        user_thread_stack_end = .;
-        user_thread_heap_start = .;
-        . += USER_THREAD_HEAP_SIZE;
+        hoppus_thread_stack_end = .;
+
+        hoppus_thread_heap_start = .;
+        . += HOPPUS_THREAD_HEAP_SIZE;
         . = ALIGN (256);
-        user_thread_heap_end = .;
-        user_data_misc_start = .;
+        hoppus_thread_heap_end = .;
+
+        user_threads_data_start = .;
         *(.user_data*)
         . = ALIGN (256);
-        user_data_misc_end = .;
+        user_threads_data_end = .;
+
+        /* ping_thread_stack_start = .; */
+        /* . += PING_THREAD_STACK_SIZE; */
+        /* . = ALIGN (256); */
+        /* ping_thread_stack_end = .; */
+
+        /* pong_thread_stack_start = .; */
+        /* . += PONG_THREAD_STACK_SIZE; */
+        /* . = ALIGN (256); */
+        /* pong_thread_stack_end = .; */
+
         user_data_end = .;
     } > dram
 

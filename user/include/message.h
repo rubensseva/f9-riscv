@@ -45,6 +45,16 @@ __USER_TEXT L4_INLINE void L4_MsgClear(L4_Msg_t *msg)
     msg->msg[0] = 0;
 }
 
+__USER_TEXT L4_INLINE void L4_MsgAppendWord(L4_Msg_t *msg, L4_Word_t w)
+{
+    if (msg->tag.X.t) {
+        L4_Word_t i = 1 + msg->tag.X.u + msg->tag.X.t;
+        for ( ; i > (L4_Word_t)(msg->tag.X.u + 1); i--)
+            msg->msg[i] = msg->msg[i-1];
+    }
+    msg->msg[++msg->tag.X.u] = w;
+}
+
 __USER_TEXT L4_INLINE void L4_MsgPut(
         L4_Msg_t *msg, L4_Word_t label,
         int u, L4_Word_t *Untyped,

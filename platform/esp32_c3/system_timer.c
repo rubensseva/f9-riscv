@@ -15,7 +15,7 @@ void system_timer_init() {
     *systimer_target0_conf &= ~(1 << SYSTIMER_TARGET0_CONF_REG__SYSTIMER_TARGET0_TIMER_UNIT_SEL);
     /* 2. Set an alarm period (δt), and fill it to SYSTIMER_TARGETx_PERIOD. */
     /* The counters run at 16MHz, so setting this 16000000 wile give onw interrupt each second */
-    int alarm = CONFIG_SYSTEM_TIMER_ALARM_THRESH; // Should be every 10 milliseconds
+    int alarm = CONFIG_SYSTEM_TIMER_ALARM_THRESH;
     *systimer_target0_conf &= ~0x3ffffff; // zero out whatever is in period field (bits 0 - 25)
     *systimer_target0_conf |= alarm;
     /* 3. Set SYSTIMER_TIMER_COMPx_LOAD to synchronize the alarm period (δt) to COMPx, i.e. load the alarm period (δt) to COMPx. */

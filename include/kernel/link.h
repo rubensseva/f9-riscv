@@ -46,12 +46,18 @@ extern uint32_t user_text_flash_end;
 
 extern uint32_t root_stack_start;
 extern uint32_t root_stack_end;
-extern uint32_t user_thread_stack_start;
-extern uint32_t user_thread_stack_end;
-extern uint32_t user_thread_heap_start;
-extern uint32_t user_thread_heap_end;
-extern uint32_t user_data_misc_start ;
-extern uint32_t user_data_misc_end;
+extern uint32_t hoppus_thread_stack_start;
+extern uint32_t hoppus_thread_stack_end;
+extern uint32_t hoppus_thread_heap_start;
+extern uint32_t hoppus_thread_heap_end;
+
+extern uint32_t user_threads_data_start;
+extern uint32_t user_threads_data_end;
+
+extern uint32_t ping_thread_stack_start;
+extern uint32_t ping_thread_stack_end;
+extern uint32_t pong_thread_stack_start;
+extern uint32_t pong_thread_stack_end;
 
 extern uint32_t kip_start;
 extern uint32_t kip_end;
