@@ -71,7 +71,7 @@ end
 define thread_fpages
   set var $n = $arg0->as->first
   while $n
-    printf "%x -> %x\n", $n->fpage->base, $n->fpage->base + $n->fpage->size
+    printf "%x -> %x\n", $n->fpage->base, $n->fpage->end
     set var $n = $n->as_next
   end
 end

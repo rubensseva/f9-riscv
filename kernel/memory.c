@@ -406,7 +406,7 @@ int map_area(as_t *src, as_t *dst, memptr_t base, size_t size,
 					return -1;
 				}
 
-				probe += fp->fpage.size;
+				probe += FPAGE_SIZE(fp);
 			}
 
 			fp = fp->as_next;
@@ -542,7 +542,7 @@ void kdb_dump_as(void)
 			           "MEM: %c fpage %5s [b:%p, sz:2**%d]\n",
 			           fpage->used ? 'o' : ' ',
 			           memmap[fpage->fpage.mpid].name,
-			           fpage->fpage.base, fpage->fpage.size);
+			           fpage->fpage.base, FPAGE_SIZE(fpage));
 			fpage = fpage->as_next;
 			++nl;
 		}

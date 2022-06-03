@@ -487,7 +487,7 @@ void dump_current_thread(void)
 	fpage_t *fpage = current->as->first;
 	while (fpage) {
 		dbg_printf(DL_KDB, "%x -> %x\n",
-				   fpage->fpage.base, fpage->fpage.base + fpage->fpage.size);
+				   fpage->fpage.base, fpage->fpage.end);
 		fpage = fpage->as_next;
 	};
 }

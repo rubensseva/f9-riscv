@@ -92,6 +92,7 @@ static fpage_t *create_fpage(memptr_t base, size_t size, int mpid)
 {
 	if (size > CONFIG_FPAGE_MAX_SIZE) {
 		dbg_printf(DL_EMERG, "ERROR: fpage is too large. base: 0x%p, size: %d\n", base, size);
+		dbg_printf(DL_EMERG, "should be fine now though?\n", base, size);
 	}
 
 	fpage_t *fpage = (fpage_t *) ktable_alloc(&fpage_table);
@@ -106,7 +107,7 @@ static fpage_t *create_fpage(memptr_t base, size_t size, int mpid)
 	fpage->fpage.rwx = MP_USER_PERM(mempool_getbyid(mpid)->flags);
 
 	fpage->fpage.base = base;
-	fpage->fpage.size = size;
+	fpage->fpage.end = base + size;
 
 	if (mempool_getbyid(mpid)->flags & MP_MAP_ALWAYS)
 		fpage->fpage.flags |= FPAGE_ALWAYS;
@@ -127,9 +128,9 @@ static void create_fpage_chain(memptr_t base, size_t size, int mpid,
 		dbg_printf(DL_EMERG, "ERROR: cant create fpage chaing since address is not four-byte aligned. base: 0x%p, size: %d\n", base, size);
 		return;
 	}
-	if (size > 65535) {
+	if (size > CONFIG_FPAGE_MAX_SIZE) {
 		dbg_printf(DL_EMERG, "ERROR: fpage is too large. base: 0x%p, size: %d\n", base, size);
-		return;
+		// return;
 	}
 
 	/* int shift, sshift, bshift; */
@@ -142,7 +143,7 @@ static void create_fpage_chain(memptr_t base, size_t size, int mpid,
 fpage_t *split_fpage(as_t *as, fpage_t *fpage, memptr_t split)
 {
 	memptr_t base = fpage->fpage.base,
-	         end = fpage->fpage.base + fpage->fpage.size;
+	         end = fpage->fpage.end;
 	/* fpage_t *lfirst = NULL, *llast = NULL, *rfirst = NULL, *rlast = NULL; */
 	split = mempool_align(fpage->fpage.mpid, split);
 
@@ -286,6 +287,7 @@ int map_fpage(as_t *src, as_t *dst, fpage_t *fpage, map_action_t action)
 	/* Copy fpage description */
 	fpmap->raw[0] = fpage->raw[0];
 	fpmap->raw[1] = fpage->raw[1];
+	fpmap->raw[2] = fpage->raw[2];
 
 	/* Set flags correctly */
 	if (action == MAP)

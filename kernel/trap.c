@@ -180,6 +180,14 @@ extern void kerneltrap(uint32_t* caller_sp)
 {
     unsigned long mcause_value = r_mcause();
 
+    if (r_mstatus() & ~MSTATUS_MIE) {
+        dbg_printf(DL_EMERG, "ERROR: interrupts are enabled in trap handler\n");
+    }
+
+    if (r_mepc() == 8) {
+        dbg_printf(DL_EMERG, "ERROR: mepc is 8, before interrupt handling\n");
+    }
+
     current->ctx.mepc = r_mepc();
     if (mcause_value & MCAUSE_INT_MASK) {
         if ((mcause_value & MCAUSE_CODE_MASK) == CONFIG_SYSTEM_TIMER_CPU_INTR) {
@@ -216,6 +224,10 @@ extern void kerneltrap(uint32_t* caller_sp)
     if (sel != current) {
         /* dbg_printf(DL_EMERG, "Shifting to %s\n", sel->name); */
         thread_switch(sel);
+    }
+
+    if (r_mepc() == 8) {
+        dbg_printf(DL_EMERG, "mepc is 8, after interrupt handling\n");
     }
 
     /* Kernel thread should run in m-mode, rest should run in u-mode
