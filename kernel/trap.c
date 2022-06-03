@@ -180,7 +180,7 @@ extern void kerneltrap(uint32_t* caller_sp)
 {
     unsigned long mcause_value = r_mcause();
 
-    if (r_mstatus() & ~MSTATUS_MIE) {
+    if (r_mstatus() & MSTATUS_MIE) {
         dbg_printf(DL_EMERG, "ERROR: interrupts are enabled in trap handler\n");
     }
 
@@ -243,7 +243,19 @@ extern void kerneltrap(uint32_t* caller_sp)
     } else {
         x |= MSTATUS_MPP_U;
     }
+
+    /* HACK: Always disable interrupts in kernel thread, always enable anytime else */
+    /* This will cause problems if kernel thread takes longer time than timer interrupt */
+    if (thread_current() == kernel) {
+        x &= ~MSTATUS_MPIE;
+    } else {
+        x |= MSTATUS_MPIE;
+    }
     w_mstatus(x);
+
+    if (r_mstatus() & MSTATUS_MIE) {
+        dbg_printf(DL_EMERG, "ERROR: interrupts are enabled in trap handler\n");
+    }
 
     __asm__ ("csrw mepc, %0" : : "r" (current->ctx.mepc));
     __asm__ volatile ("mv a0, %0" : : "r" (current->ctx.sp));
