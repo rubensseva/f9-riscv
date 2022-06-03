@@ -7,6 +7,11 @@
 .globl kernelvec
 .align 4
 kernelvec:
+        # For some reason, interrupts are sometimes not disabled
+        # when enterring interrupt handler, so we manually clear interrupts
+        # in case that happens. Note we might get an interrupt
+        # at this very instruction so it might not be in time
+        csrci mstatus, 0x8
         # make room to save registers.
         addi sp, sp, -128
 
