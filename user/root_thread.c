@@ -89,6 +89,7 @@ void __USER_TEXT root_thread(kip_t *kip_ptr, utcb_t *utcb_ptr)
         L4_map((uint32_t)&user_threads_data_start,
             (char *)&user_threads_data_end - (char *)&user_threads_data_start,
             ping_id);
+        L4_map(timer_mem_base, timer_mem_size, ping_id);
 
         L4_Msg_t msg;
         L4_MsgClear(&msg);

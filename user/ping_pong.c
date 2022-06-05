@@ -3,7 +3,7 @@
 #include <user_thread_log.h>
 #include <user_types.h>
 #include <F9.h>
-
+#include <timer_ESP32_C3.h>
 
 __USER_DATA L4_ThreadId_t ping_id;
 __USER_DATA L4_ThreadId_t pong_id;
@@ -15,24 +15,27 @@ __USER_TEXT void print_msg(L4_Msg_t *msg) {
                     msg->tag.X.u, msg->tag.X.t);
     int i;
     for (i = 1; i < msg->tag.X.u; i++)
-        user_log_printf("%d: untyped, %d", i, msg->msg[i]);
+        user_log_printf("%d: untyped, %d\n", i, msg->msg[i]);
     for (; i < msg->tag.X.u + msg->tag.X.t; i++)
-        user_log_printf("%d: typed, %d", i, msg->msg[i]);
+        user_log_printf("%d: typed, %d\n", i, msg->msg[i]);
 }
+
+/* This one fails because memcpy is in kernel space */
 __USER_TEXT void print_msg_cpy(L4_Msg_t msg) {
     user_log_printf("tag - u: %d n: %d\n",
                     msg.tag.X.u, msg.tag.X.t);
     int i;
     for (i = 1; i < msg.tag.X.u; i++)
-        user_log_printf("%d: untyped, %d", i, msg.msg[i]);
+        user_log_printf("%d: untyped, %d\n", i, msg.msg[i]);
     for (; i < msg.tag.X.u + msg.tag.X.t; i++)
-        user_log_printf("%d: typed, %d", i, msg.msg[i]);
+        user_log_printf("%d: typed, %d\n", i, msg.msg[i]);
 }
 
 __USER_TEXT void ping() {
     user_log_puts("ping start\n");
+    timer_init();
 
-
+    TIMER_START();
     for (int i = 0; i < 1000; i++) {
         /* Initial message */
         L4_Msg_t msg;
@@ -43,7 +46,7 @@ __USER_TEXT void ping() {
         L4_MsgAppendWord(&msg, 3);
         ping_pong_tag = msg.tag;
 
-        print_msg(&msg);
+        /* print_msg(&msg); */
         /* user_log_printf("ping sending %d, %d, %d, %d\n", */
         /*                 msg.tag, msg.msg[1], msg.msg[2], msg.msg[3]); */
 
@@ -58,7 +61,11 @@ __USER_TEXT void ping() {
         /* user_log_printf("ping got response %d, %d, %d, %d\n", */
         /*                 msg.tag, msg.msg[1], msg.msg[2], msg.msg[3]); */
     }
+    TIMER_LATCH();
     user_log_puts("ping done\n");
+    int counter_val = timer_get();
+    int us = timer_counter_to_microseconds(counter_val);
+    user_log_printf("time: %d\n", us);
 
     while (1) {
         /* TODO: Need to use proper timeout object here */
