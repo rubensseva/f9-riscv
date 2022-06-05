@@ -43,7 +43,7 @@ __USER_TEXT void ping() {
         L4_MsgAppendWord(&msg, 3);
         ping_pong_tag = msg.tag;
 
-        print_msg_cpy(msg);
+        print_msg(&msg);
         /* user_log_printf("ping sending %d, %d, %d, %d\n", */
         /*                 msg.tag, msg.msg[1], msg.msg[2], msg.msg[3]); */
 
