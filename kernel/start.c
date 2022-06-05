@@ -51,8 +51,30 @@ void irq_init() {
     w_mstatus(r_mstatus() | MSTATUS_MPIE);
 }
 
+void cpu_freq_init() {
+    /* Set CPU frequency to 160MHz (max) by setting all three config
+       registers to 1 (see 6.2.4.1 in ESP32-C3 TRM) */
+
+    volatile uint32_t *system_cpu_per_conf = REG(SYSTEM_REGISTERS_BASE + SYSTEM_CPU_PER_CONF_REG);
+
+    /* Set SYSTEM_CPUPERIOD_SEL to 1 */
+    *system_cpu_per_conf &= ~3;
+    *system_cpu_per_conf |= 1;
+
+    /* Set SYSTEM_PLL_FREQ_SEL to 1 */
+    *system_cpu_per_conf |= (1 << 2);
+
+    volatile uint32_t *system_sysclk_conf = REG(SYSTEM_REGISTERS_BASE + SYSTEM_SYSCLK_CONF_REG);
+    /* Set SYSTEM_SOC_CLK_SEL to 1 */
+    *system_sysclk_conf &= ~(3 << 10);
+    *system_sysclk_conf |= (1 << 10);
+}
+
 int main(void)
 {
+    /* Set cpu frequency */
+    cpu_freq_init();
+
     /* Init PMP */
     w_pmpcfg0(0x0);
     w_pmpcfg1(0x0);
