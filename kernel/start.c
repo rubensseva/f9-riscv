@@ -73,7 +73,7 @@ void cpu_freq_init() {
 int main(void)
 {
     /* Set cpu frequency */
-    /* cpu_freq_init(); */
+    cpu_freq_init();
 
     /* Init PMP */
     w_pmpcfg0(0x0);

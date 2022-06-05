@@ -4,6 +4,7 @@
 #include <F9.h>
 #include <user_thread.h>
 #include <uart_ESP32_C3.h>
+#include <timer_ESP32_C3.h>
 #include <ipc.h>
 #include <interrupt_ipc.h>
 #include <interrupt.h>
@@ -63,6 +64,8 @@ __USER_TEXT void user_thread()
 {
     UART_receive_init(0);
     UART_receive_en(0);
+
+    timer_init();
 
     L4_ThreadId_t myself = {.raw = ((utcb_t *)current_utcb)->t_globalid};
     request_irq(UART_IRQN, 1, myself, (uint32_t) user_uart_handler);
