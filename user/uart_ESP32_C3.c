@@ -28,10 +28,22 @@ __USER_TEXT void UART_receive_init(int controller_num)
     volatile uint32_t *uart_conf1 = REG(controller + UART_CONF1_REG);
     *uart_conf1 &= ~(0xFF);
     *uart_conf1 |= (1 << UART_CONF1_REG__UART_RXFIFO_FULL_THRHD);
+};
+__USER_TEXT void UART_receive_en(int controller_num)
+{
+    uint32_t controller = controller_num ? UART_CONTROLLER_1_BASE : UART_CONTROLLER_0_BASE;
 
     /* Enable UART interrupt when RXFIFO is full */
     volatile uint32_t *uart_int_ena = REG(controller + UART_INT_ENA_REG);
     *uart_int_ena |= (1 << UART_INTR__UART_RXFIFO_FULL);
+};
+__USER_TEXT void UART_receive_dis(int controller_num)
+{
+    uint32_t controller = controller_num ? UART_CONTROLLER_1_BASE : UART_CONTROLLER_0_BASE;
+
+    /* Disable UART interrupt */
+    volatile uint32_t *uart_int_ena = REG(controller + UART_INT_ENA_REG);
+    *uart_int_ena &= ~(1 << UART_INTR__UART_RXFIFO_FULL);
 };
 
 __USER_TEXT uint32_t UART_txfifo_count(int controller_num) {
