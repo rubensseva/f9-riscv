@@ -168,15 +168,15 @@ SECTIONS {
         . = ALIGN (256);
         user_threads_data_end = .;
 
-        /* ping_thread_stack_start = .; */
-        /* . += PING_THREAD_STACK_SIZE; */
-        /* . = ALIGN (256); */
-        /* ping_thread_stack_end = .; */
+        ping_thread_stack_start = .;
+        . += PING_THREAD_STACK_SIZE;
+        . = ALIGN (256);
+        ping_thread_stack_end = .;
 
-        /* pong_thread_stack_start = .; */
-        /* . += PONG_THREAD_STACK_SIZE; */
-        /* . = ALIGN (256); */
-        /* pong_thread_stack_end = .; */
+        pong_thread_stack_start = .;
+        . += PONG_THREAD_STACK_SIZE;
+        . = ALIGN (256);
+        pong_thread_stack_end = .;
 
         user_data_end = .;
     } > dram
