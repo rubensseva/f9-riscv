@@ -30,12 +30,24 @@ INCL_DIRS:= include $(shell find include/* -type d) user/include user/hoppus/inc
 LINKER_SCRIPT:=platform/esp32_c3/f9.ld
 
 CFLAGS += -march=rv32imc -mabi=ilp32
-CFLAGS += -ggdb3 -O0
+# CFLAGS += -ggdb3 -O0
+CFLAGS += -Og -gdwarf-2
 CFLAGS += -Wall -Wundef -Werror-implicit-function-declaration
 CFLAGS += -fno-toplevel-reorder -fno-strict-aliasing -fno-omit-frame-pointer
 CFLAGS += -ffreestanding -fno-common -nostdlib -mno-relax
 CFLAGS += -mcmodel=medany
 CFLAGS += -fno-jump-tables # Need this to make switch statement not cause access faults
+
+# Tell gcc to not touch registers used for MRs
+CFLAGS += -ffixed-s4
+CFLAGS += -ffixed-s5
+CFLAGS += -ffixed-s6
+CFLAGS += -ffixed-s7
+CFLAGS += -ffixed-s8
+CFLAGS += -ffixed-s9
+CFLAGS += -ffixed-s10
+CFLAGS += -ffixed-s11
+
 CFLAGS += $(foreach d, $(INCL_DIRS), -I$d)
 CFLAGS += $(CFLAGS_MISC_DEFINE)
 CFLAGS += $(CFLAGS_HOPPUS_DEFINE)
