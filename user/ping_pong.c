@@ -1,4 +1,4 @@
-#include "include/message.h"
+#include <message.h>
 #include <ping_pong.h>
 #include <user_thread_log.h>
 #include <user_types.h>
@@ -9,6 +9,25 @@ __USER_DATA L4_ThreadId_t ping_id;
 __USER_DATA L4_ThreadId_t pong_id;
 __USER_DATA L4_MsgTag_t ping_pong_tag;
 __USER_DATA L4_MsgTag_t ping_pong_res_tag;
+
+__USER_TEXT void print_msg(L4_Msg_t *msg) {
+    user_log_printf("tag - u: %d n: %d\n",
+                    msg->tag.X.u, msg->tag.X.t);
+    int i;
+    for (i = 1; i < msg->tag.X.u; i++)
+        user_log_printf("%d: untyped, %d", i, msg->msg[i]);
+    for (; i < msg->tag.X.u + msg->tag.X.t; i++)
+        user_log_printf("%d: typed, %d", i, msg->msg[i]);
+}
+__USER_TEXT void print_msg_cpy(L4_Msg_t msg) {
+    user_log_printf("tag - u: %d n: %d\n",
+                    msg.tag.X.u, msg.tag.X.t);
+    int i;
+    for (i = 1; i < msg.tag.X.u; i++)
+        user_log_printf("%d: untyped, %d", i, msg.msg[i]);
+    for (; i < msg.tag.X.u + msg.tag.X.t; i++)
+        user_log_printf("%d: typed, %d", i, msg.msg[i]);
+}
 
 __USER_TEXT void ping() {
     user_log_puts("ping start\n");
@@ -24,6 +43,7 @@ __USER_TEXT void ping() {
         L4_MsgAppendWord(&msg, 3);
         ping_pong_tag = msg.tag;
 
+        print_msg_cpy(msg);
         /* user_log_printf("ping sending %d, %d, %d, %d\n", */
         /*                 msg.tag, msg.msg[1], msg.msg[2], msg.msg[3]); */
 
