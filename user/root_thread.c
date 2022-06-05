@@ -37,107 +37,107 @@ void __USER_TEXT root_thread(kip_t *kip_ptr, utcb_t *utcb_ptr)
     /***** Hoppus thread *****/
     /* Create user thread */
     /* Let threadid = spaceid, to tell the kernel to create a new address space, instead of sharing an existing one. */
-    /* L4_ThreadControl(user_thread_id, user_thread_id, L4_nilthread, myself, free_mem); */
+    L4_ThreadControl(user_thread_id, user_thread_id, L4_nilthread, myself, free_mem);
 
     /* Give user thread all user text */
-    /* map_user_text(kip_ptr, user_thread_id); */
+    map_user_text(kip_ptr, user_thread_id);
 
     /* Give user threads all other required regions */
-    /* L4_map((uint32_t)&hoppus_thread_stack_start, */
-    /*        (char *)&hoppus_thread_stack_end - (char *)&hoppus_thread_stack_start, */
-    /*        user_thread_id); */
-    /* L4_map((uint32_t)&hoppus_thread_heap_start, */
-    /*        (char *)&hoppus_thread_heap_end - (char *)&hoppus_thread_heap_start, */
-    /*        user_thread_id); */
-    /* L4_map((uint32_t)&user_threads_data_start, */
-    /*        (char *)&user_threads_data_end - (char *)&user_threads_data_start, */
-    /*        user_thread_id); */
-    /* L4_map(uart_mem_base, uart_mem_size, user_thread_id); */
-    /* L4_map(timer_mem_base, timer_mem_size, user_thread_id); */
+    L4_map((uint32_t)&hoppus_thread_stack_start,
+           (char *)&hoppus_thread_stack_end - (char *)&hoppus_thread_stack_start,
+           user_thread_id);
+    L4_map((uint32_t)&hoppus_thread_heap_start,
+           (char *)&hoppus_thread_heap_end - (char *)&hoppus_thread_heap_start,
+           user_thread_id);
+    L4_map((uint32_t)&user_threads_data_start,
+           (char *)&user_threads_data_end - (char *)&user_threads_data_start,
+           user_thread_id);
+    L4_map(uart_mem_base, uart_mem_size, user_thread_id);
+    L4_map(timer_mem_base, timer_mem_size, user_thread_id);
 
     /* Start user thread */
-    /* L4_Msg_t msg; */
-    /* L4_MsgClear(&msg); */
+    L4_Msg_t msg;
+    L4_MsgClear(&msg);
 
-    /* L4_Word_t msgs[5] = { */
-    /*     (L4_Word_t) user_thread, */
-    /*     (L4_Word_t) &hoppus_thread_stack_end, */
-    /*     (L4_Word_t)(((uint32_t) &hoppus_thread_stack_end) - ((uint32_t) &hoppus_thread_stack_start)), // stack size */
-    /*     0, */
-    /*     0 */
-    /* }; */
+    L4_Word_t msgs[5] = {
+        (L4_Word_t) user_thread,
+        (L4_Word_t) &hoppus_thread_stack_end,
+        (L4_Word_t)(((uint32_t) &hoppus_thread_stack_end) - ((uint32_t) &hoppus_thread_stack_start)), // stack size
+        0,
+        0
+    };
 
-    /* L4_MsgPut(&msg, 0, 5, msgs, 0, NULL); */
-    /* L4_MsgLoad(&msg); */
-    /* L4_Ipc(user_thread_id, myself, 0, (L4_ThreadId_t *)0); */
+    L4_MsgPut(&msg, 0, 5, msgs, 0, NULL);
+    L4_MsgLoad(&msg);
+    L4_Ipc(user_thread_id, myself, 0, (L4_ThreadId_t *)0);
 
 
 
 
     /***** Ping thread *****/
-    {
-        ping_id = (L4_ThreadId_t){.raw = TID_TO_GLOBALID(50)};
+    /* { */
+    /*     ping_id = (L4_ThreadId_t){.raw = TID_TO_GLOBALID(50)}; */
 
 
-        L4_ThreadControl(ping_id, ping_id, L4_nilthread, myself, free_mem);
+    /*     L4_ThreadControl(ping_id, ping_id, L4_nilthread, myself, free_mem); */
 
-        map_user_text(kip_ptr, ping_id);
+    /*     map_user_text(kip_ptr, ping_id); */
 
-        L4_map((uint32_t)&ping_thread_stack_start,
-            (char *)&ping_thread_stack_end - (char *)&ping_thread_stack_start,
-            ping_id);
-        L4_map((uint32_t)&user_threads_data_start,
-            (char *)&user_threads_data_end - (char *)&user_threads_data_start,
-            ping_id);
-        L4_map(timer_mem_base, timer_mem_size, ping_id);
+    /*     L4_map((uint32_t)&ping_thread_stack_start, */
+    /*         (char *)&ping_thread_stack_end - (char *)&ping_thread_stack_start, */
+    /*         ping_id); */
+    /*     L4_map((uint32_t)&user_threads_data_start, */
+    /*         (char *)&user_threads_data_end - (char *)&user_threads_data_start, */
+    /*         ping_id); */
+    /*     L4_map(timer_mem_base, timer_mem_size, ping_id); */
 
-        L4_Msg_t msg;
-        L4_MsgClear(&msg);
-        L4_Word_t msgs[5] = {
-            (L4_Word_t) ping,
-            (L4_Word_t) &ping_thread_stack_end,
-            (L4_Word_t)(((uint32_t) &ping_thread_stack_end) - ((uint32_t) &ping_thread_stack_start)), // stack size
-            0,
-            0
-        };
+    /*     L4_Msg_t msg; */
+    /*     L4_MsgClear(&msg); */
+    /*     L4_Word_t msgs[5] = { */
+    /*         (L4_Word_t) ping, */
+    /*         (L4_Word_t) &ping_thread_stack_end, */
+    /*         (L4_Word_t)(((uint32_t) &ping_thread_stack_end) - ((uint32_t) &ping_thread_stack_start)), // stack size */
+    /*         0, */
+    /*         0 */
+    /*     }; */
 
-        L4_MsgPut(&msg, 0, 5, msgs, 0, NULL);
-        L4_MsgLoad(&msg);
-        L4_Ipc(ping_id, myself, 0, (L4_ThreadId_t *)0);
-    }
+    /*     L4_MsgPut(&msg, 0, 5, msgs, 0, NULL); */
+    /*     L4_MsgLoad(&msg); */
+    /*     L4_Ipc(ping_id, myself, 0, (L4_ThreadId_t *)0); */
+    /* } */
 
 
 
     /***** Pong thread *****/
-    {
-        pong_id = (L4_ThreadId_t){.raw = TID_TO_GLOBALID(51)};
+    /* { */
+    /*     pong_id = (L4_ThreadId_t){.raw = TID_TO_GLOBALID(51)}; */
 
-        L4_ThreadControl(pong_id, pong_id, L4_nilthread, myself, free_mem);
+    /*     L4_ThreadControl(pong_id, pong_id, L4_nilthread, myself, free_mem); */
 
-        map_user_text(kip_ptr, pong_id);
+    /*     map_user_text(kip_ptr, pong_id); */
 
-        L4_map((uint32_t)&pong_thread_stack_start,
-            (char *)&pong_thread_stack_end - (char *)&pong_thread_stack_start,
-            pong_id);
-        L4_map((uint32_t)&user_threads_data_start,
-               (char *)&user_threads_data_end - (char *)&user_threads_data_start,
-            pong_id);
+    /*     L4_map((uint32_t)&pong_thread_stack_start, */
+    /*         (char *)&pong_thread_stack_end - (char *)&pong_thread_stack_start, */
+    /*         pong_id); */
+    /*     L4_map((uint32_t)&user_threads_data_start, */
+    /*            (char *)&user_threads_data_end - (char *)&user_threads_data_start, */
+    /*         pong_id); */
 
-        L4_Msg_t msg;
-        L4_MsgClear(&msg);
+    /*     L4_Msg_t msg; */
+    /*     L4_MsgClear(&msg); */
 
-        L4_Word_t msgs[5] = {
-            (L4_Word_t) pong,
-            (L4_Word_t) &pong_thread_stack_end,
-            (L4_Word_t)(((uint32_t) &pong_thread_stack_end) - ((uint32_t) &pong_thread_stack_start)), // stack size
-            0,
-            0
-        };
+    /*     L4_Word_t msgs[5] = { */
+    /*         (L4_Word_t) pong, */
+    /*         (L4_Word_t) &pong_thread_stack_end, */
+    /*         (L4_Word_t)(((uint32_t) &pong_thread_stack_end) - ((uint32_t) &pong_thread_stack_start)), // stack size */
+    /*         0, */
+    /*         0 */
+    /*     }; */
 
-        L4_MsgPut(&msg, 0, 5, msgs, 0, NULL);
-        L4_MsgLoad(&msg);
-        L4_Ipc(pong_id, myself, 0, (L4_ThreadId_t *)0);
-    }
+    /*     L4_MsgPut(&msg, 0, 5, msgs, 0, NULL); */
+    /*     L4_MsgLoad(&msg); */
+    /*     L4_Ipc(pong_id, myself, 0, (L4_ThreadId_t *)0); */
+    /* } */
 
 
 

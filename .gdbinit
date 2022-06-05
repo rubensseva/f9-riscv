@@ -33,11 +33,11 @@ define timer_dis
 end
 
 
-reesp
-set remote hardware-watchpoint-limit 2
-mon reset halt
-flushregs
-thb app_main
+# reesp
+# set remote hardware-watchpoint-limit 2
+# mon reset halt
+# flushregs
+# thb app_main
 
 # Convenience functions
 # Print some common registers
@@ -115,4 +115,4 @@ define sbr
   break clisp_main
 end
 
-sbr
+# sbr
