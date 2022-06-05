@@ -16,6 +16,8 @@
 
 __USER_DATA uint32_t uart_mem_base = 0x60000000;
 __USER_DATA uint32_t uart_mem_size = 0xFFF;
+__USER_DATA uint32_t timer_mem_base = 0x6001F000;
+__USER_DATA uint32_t timer_mem_size = 0xFFF;
 
 extern void* current_utcb;
 
@@ -51,6 +53,7 @@ void __USER_TEXT root_thread(kip_t *kip_ptr, utcb_t *utcb_ptr)
            (char *)&user_threads_data_end - (char *)&user_threads_data_start,
            user_thread_id);
     L4_map(uart_mem_base, uart_mem_size, user_thread_id);
+    L4_map(timer_mem_base, timer_mem_size, user_thread_id);
 
     /* Start user thread */
     L4_Msg_t msg;
