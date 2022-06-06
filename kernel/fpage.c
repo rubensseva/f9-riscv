@@ -90,11 +90,6 @@ static void remove_fpage_from_as(as_t *as, fpage_t *fp)
  */
 static fpage_t *create_fpage(memptr_t base, size_t size, int mpid)
 {
-	if (size > CONFIG_FPAGE_MAX_SIZE) {
-		dbg_printf(DL_EMERG, "ERROR: fpage is too large. base: 0x%p, size: %d\n", base, size);
-		dbg_printf(DL_EMERG, "should be fine now though?\n", base, size);
-	}
-
 	fpage_t *fpage = (fpage_t *) ktable_alloc(&fpage_table);
 
 	assert((intptr_t) fpage);
@@ -123,17 +118,12 @@ void destroy_fpage(fpage_t *fpage)
 static void create_fpage_chain(memptr_t base, size_t size, int mpid,
                                fpage_t **pfirst, fpage_t **plast)
 {
-	// Make sure the base address is four-byte aligned
+	/* Make sure the base address is four-byte aligned */
 	if ((base & ~0x3) != base) {
 		dbg_printf(DL_EMERG, "ERROR: cant create fpage chaing since address is not four-byte aligned. base: 0x%p, size: %d\n", base, size);
 		return;
 	}
-	if (size > CONFIG_FPAGE_MAX_SIZE) {
-		dbg_printf(DL_EMERG, "ERROR: fpage is too large. base: 0x%p, size: %d\n", base, size);
-		// return;
-	}
 
-	/* int shift, sshift, bshift; */
 	fpage_t *fpage = NULL;
 	fpage = create_fpage(base, size, mpid);
 	*pfirst = fpage;
@@ -144,7 +134,6 @@ fpage_t *split_fpage(as_t *as, fpage_t *fpage, memptr_t split)
 {
 	memptr_t base = fpage->fpage.base,
 	         end = fpage->fpage.end;
-	/* fpage_t *lfirst = NULL, *llast = NULL, *rfirst = NULL, *rlast = NULL; */
 	split = mempool_align(fpage->fpage.mpid, split);
 
 	if (!as)
@@ -158,7 +147,6 @@ fpage_t *split_fpage(as_t *as, fpage_t *fpage, memptr_t split)
 	/* Since map_next is a cyclic list, if fpage->map_next == fpage then it is "empty" */
 	if (fpage->map_next != fpage) {
 		/* Splitting not supported for mapped pages */
-		/* UNIMPLIMENTED */
 		dbg_printf(DL_MEMORY,
 					"ERROR: Splitting not supported for mapped pages. as: 0x%p, fpage: 0x%p, split: 0x%p\n",
 				   as, fpage, split);

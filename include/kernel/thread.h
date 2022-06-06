@@ -132,6 +132,8 @@ struct tcb {
 };
 typedef struct tcb tcb_t;
 
+extern volatile tcb_t *current;
+
 void thread_init_subsys(void);
 
 tcb_t *thread_by_globalid(l4_thread_t globalid);

@@ -3,8 +3,6 @@
  * found in the LICENSE file.
  */
 
-#include <systick.h>
-
 #include <error.h>
 #include <types.h>
 #include <thread.h>

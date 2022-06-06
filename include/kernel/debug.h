@@ -10,7 +10,6 @@
 #include <lib/stdarg.h>
 #include <lib/stdio.h>
 #include <config.h>
-// #include <platform/debug_device.h>
 
 typedef enum {
     DL_EMERG    = 0x0000,

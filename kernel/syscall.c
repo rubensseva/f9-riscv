@@ -35,8 +35,6 @@ void syscall_init()
 	softirq_register(SYSCALL_SOFTIRQ, syscall_handler);
 }
 
-/* INIT_HOOK(syscall_init, INIT_LEVEL_KERNEL); */
-
 static void sys_thread_control(uint32_t *param1)
 {
 	l4_thread_t dest = param1[REG_A1];
@@ -46,8 +44,6 @@ static void sys_thread_control(uint32_t *param1)
 
 	if (space != L4_NILTHREAD) {
 		/* Creation of thread */
-		/* TODO: Fix this, what register to use? What does param2 represent? */
-		/* void *utcb = (void *) param2[0];	/\* R4 *\/ */
 		void *utcb = (void*) param1[REG_A5];
 		mempool_t *utcb_pool = mempool_getbyid(mempool_search((memptr_t) utcb,
 		                                       UTCB_SIZE));

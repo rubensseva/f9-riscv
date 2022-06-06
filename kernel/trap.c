@@ -18,7 +18,6 @@
 extern void timervec();
 extern void kernel_vec_in_c_restore();
 
-/* TODO: Should this function really be here? Would be nice to have available in other files as well */
 void dump_state() {
     dump_threads();
     dump_mpu();
@@ -60,13 +59,6 @@ void unimplemented(void) {
 /* interrupt handlers start */
 
 void machine_timer_interrupt_handler(void) {
-
-    /* uint32_t *clint_mtimecmp = (uint32_t*)CLINT_MTIMECMP; */
-    /* uint32_t *clint_mtime = (uint32_t*)CLINT_MTIME; */
-    /* uint32_t interval = 1000000; // cycles; about 1/10th second in qemu. */
-    /* uint32_t new_val = *clint_mtime + interval; */
-    /* *clint_mtimecmp = new_val; */
-
     ktimer_handler();
 }
 
@@ -79,9 +71,8 @@ void supervisor_external_interrupt(void) {
 }
 
 /* interrupt handlers end */
-
 /* exception handlers start */
-/* access fault handlers start */
+
 void illegal_instruction_access_fault_handler(void) {
     access_fault_handler();
 }
@@ -93,7 +84,6 @@ void load_access_fault_handler(void) {
 void store_or_AMO_access_fault_handler(void) {
     access_fault_handler();
 }
-/* access fault handlers end */
 
 void instruction_address_misaligned_handler(void) {
     dbg_printf(DL_EMERG, "Instruction address misaligned exception. mepc: %x, mtval: %x\n",
@@ -157,7 +147,7 @@ void (*exception_handlers[16])() = {
     instruction_address_misaligned_handler,
     illegal_instruction_access_fault_handler,
     illegal_instruction_handler,
-    unimplemented, // breakpoint
+    unimplemented,
     load_address_misaligned_handler,
     load_access_fault_handler,
     store_or_AMO_address_misaligned_handler,
@@ -165,7 +155,7 @@ void (*exception_handlers[16])() = {
     ecall_from_u_handler,
     ecall_from_s_handler,
     unimplemented,
-    ecall_from_m_handler, // should only happen from kernel thread
+    ecall_from_m_handler,
     unimplemented,
     unimplemented,
     unimplemented,
@@ -176,42 +166,21 @@ void (*exception_handlers[16])() = {
 #define MCAUSE_INT_MASK 0x80000000 // [31]=1 interrupt, else exception
 #define MCAUSE_CODE_MASK 0x7FFFFFFF // low bits show code
 
-extern void kerneltrap(uint32_t* caller_sp)
+void kerneltrap(uint32_t* caller_sp)
 {
     unsigned long mcause_value = r_mcause();
-
-    if (r_mstatus() & MSTATUS_MIE) {
-        dbg_printf(DL_EMERG, "ERROR: interrupts are enabled in trap handler\n");
-    }
-
-    if (r_mepc() == 8) {
-        dbg_printf(DL_EMERG, "ERROR: mepc is 8, before interrupt handling\n");
-    }
 
     current->ctx.mepc = r_mepc();
     if (mcause_value & MCAUSE_INT_MASK) {
         if ((mcause_value & MCAUSE_CODE_MASK) == CONFIG_SYSTEM_TIMER_CPU_INTR) {
             machine_timer_interrupt_handler();
-
             /* Clear system timer interrupt */
             volatile uint32_t *systimer_target0_int_clr = REG(SYSTEM_TIMER_BASE + SYSTIMER_INT_CLR_REG);
             *systimer_target0_int_clr = 1; // clear TARGET0
         } else {
-
-            /* TODO: Remove this when no longer needed */
-            /* if ((mcause_value & MCAUSE_CODE_MASK) == CONFIG_UART_CPU_INTR) { */
-            /*     while(UART_rxfifo_count(0) != 0) { */
-            /*         dbg_printf(DL_BASIC, "%c", (UART_read(0))); */
-            /*     } */
-            /* } */
-            /* Try to clear using interrupt matrix (only works for edge type interrupts) */
+            /* Clear CPU interrupt */
             volatile uint32_t *interrupt_core0_cpu_int_clear = REG(INTERRUPT_MATRIX_BASE + INTERRUPT_CORE0_CPU_INT_CLEAR_REG);
-            *interrupt_core0_cpu_int_clear |= (1 << CONFIG_UART_CPU_INTR);
-            /* Try to clear from source */
-            /* TODO: I dont think we can just clear the CPU interrupt, we need to clear the specific UART interrupt that happened */
-            /* volatile uint32_t *uart_int_clr = REG(UART_CONTROLLER_0_BASE + UART_INT_CLR_REG); */
-            /* *uart_int_clr |= (1 << UART_INTR__UART_RXFIFO_FULL); */
-
+            *interrupt_core0_cpu_int_clear |= (1 << (mcause_value & MCAUSE_CODE_MASK));
             __interrupt_handler(mcause_value & MCAUSE_CODE_MASK);
         }
     } else {
@@ -221,41 +190,31 @@ extern void kerneltrap(uint32_t* caller_sp)
     /* Context switch */
     current->ctx.sp = (uint32_t) caller_sp;
     tcb_t* sel = schedule_select();
-    if (sel != current) {
-        /* dbg_printf(DL_EMERG, "Shifting to %s\n", sel->name); */
+    if (sel != current)
         thread_switch(sel);
-    }
 
     if (r_mepc() == 8) {
         dbg_printf(DL_EMERG, "mepc is 8, after interrupt handling\n");
     }
 
-    /* Kernel thread should run in m-mode, rest should run in u-mode
-     * The reason we need the kernel thread in m-mode is because it needs
-     * the ability to disable all interrupts */
-    /* TODO: Consider running idle thread in user mode */
-    /* TODO: Decide on using either *current or thread_current() */
+    /* Kernel and idle thread should run in m-mode, rest should run in u-mode */
     extern tcb_t *kernel, *idle;
     unsigned long x = r_mstatus();
     x &= ~MSTATUS_MPP_MASK;
-    if (thread_current() == kernel || thread_current() == idle) {
+    if (current == kernel || current == idle) {
         x |= MSTATUS_MPP_M;
     } else {
         x |= MSTATUS_MPP_U;
     }
 
-    /* HACK: Always disable interrupts in kernel thread, always enable anytime else */
-    /* This will cause problems if kernel thread takes longer time than timer interrupt */
-    if (thread_current() == kernel) {
+    /* HACK: Always disable interrupts in kernel thread to avoid some weird heisenbugs.
+       This will cause problems if kernel thread takes longer time than timer interrupt */
+    if (current == kernel) {
         x &= ~MSTATUS_MPIE;
     } else {
         x |= MSTATUS_MPIE;
     }
     w_mstatus(x);
-
-    if (r_mstatus() & MSTATUS_MIE) {
-        dbg_printf(DL_EMERG, "ERROR: interrupts are enabled in trap handler\n");
-    }
 
     __asm__ ("csrw mepc, %0" : : "r" (current->ctx.mepc));
     __asm__ volatile ("mv a0, %0" : : "r" (current->ctx.sp));

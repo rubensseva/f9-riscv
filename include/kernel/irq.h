@@ -48,7 +48,4 @@ void irq_init(void);
 	(*SCB_ICSR & SCB_ICSR_RETTOBASE)
 
 
-
-extern volatile tcb_t *current;
-
 #endif	/* PLATFORM_IRQ_H_ */

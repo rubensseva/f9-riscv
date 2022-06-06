@@ -10,9 +10,7 @@
 
 void user_log(tcb_t *from)
 {
-	/* char *format = (char *) from->ctx.regs[1]; */
-	/* va_list *va = (va_list *) from->ctx.regs[2]; */
     char *format = (char *) ipc_read_mr(from, 1);
     va_list *va = (va_list *) ipc_read_mr(from, 2);
-	dbg_vprintf(DL_KDB, format, *va);
+    dbg_vprintf(DL_KDB, format, *va);
 }
