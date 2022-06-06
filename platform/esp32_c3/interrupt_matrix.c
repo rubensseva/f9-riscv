@@ -1,5 +1,5 @@
 #include <stdint.h>
-#include <ESP32_C3.h>
+#include <platform/ESP32_C3.h>
 #include <utility.h>
 #include <config.h>
 

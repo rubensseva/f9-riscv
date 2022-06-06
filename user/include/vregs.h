@@ -10,7 +10,7 @@
 /* ARM virtual registers */
 
 #include <l4/utcb.h>
-#include <link.h>
+#include <platform/link.h>
 #include <user_types.h>
 
 #define __L4_NUM_MRS    16

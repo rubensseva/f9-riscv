@@ -5,9 +5,8 @@
 
 #include <error.h>
 #include <thread.h>
-#include <irq.h>
-#include <riscv.h>
-#include <link.h>
+#include <platform/riscv.h>
+#include <platform/link.h>
 #include <lib/stdarg.h>
 #include <debug.h>
 

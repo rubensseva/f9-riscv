@@ -7,9 +7,7 @@
 #include <lib/ktable.h>
 #include <softirq.h>
 #include <bitops.h>
-#include <irq.h>
-#include <init_hook.h>
-#include <riscv.h>
+#include <platform/riscv.h>
 #include <debug.h>
 
 DECLARE_KTABLE(ktimer_event_t, ktimer_event_table, CONFIG_MAX_KT_EVENTS);

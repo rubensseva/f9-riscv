@@ -2,7 +2,7 @@
 #include <syscall.h>
 #include <ktimer.h>
 #include <syscall.h>
-#include <riscv.h>
+#include <platform/riscv.h>
 #include <irq.h>
 #include <interrupt.h>
 #include <debug.h>
@@ -11,9 +11,9 @@
 #include <platform/mpu.h>
 #include <utility.h>
 #include <config.h>
-#include <ESP32_C3.h>
+#include <platform/ESP32_C3.h>
 #include <error.h>
-#include <uart_ESP32_C3.h>
+#include <platform/ESP32_C3_UART.h>
 
 extern void timervec();
 extern void kernel_vec_in_c_restore();

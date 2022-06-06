@@ -1,5 +1,5 @@
-#ifndef UART_ESP32_C3_H
-#define UART_ESP32_C3_H
+#ifndef ESP32_C3_UART
+#define ESP32_C3_UART
 
 #include <stdint.h>
 
@@ -14,4 +14,4 @@ void UART_write(char c, int controller_num);
 char UART_read(int controller_num);
 void UART_clear(int controller_num);
 
-#endif /* UART_ESP32_C3_H */
+#endif /* ESP32_C3_UART */

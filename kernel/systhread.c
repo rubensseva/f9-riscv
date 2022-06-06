@@ -7,8 +7,9 @@
 #include <softirq.h>
 #include <thread.h>
 #include <ktimer.h>
-#include <riscv.h>
-#include <link.h>
+#include <sched.h>
+#include <platform/riscv.h>
+#include <platform/link.h>
 #include <root_thread.h>
 
 /*

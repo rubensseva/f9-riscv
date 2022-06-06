@@ -9,7 +9,6 @@
 #include <sched.h>
 #include <irq.h>
 #include <fpage_impl.h>
-#include <init_hook.h>
 #include <debug.h>
 
 /**

@@ -1,5 +1,5 @@
 #include <user_log.h>
-#include <link.h>
+#include <platform/link.h>
 #include <message.h>
 #include <F9.h>
 #include <user_stdarg.h>

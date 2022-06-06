@@ -10,7 +10,6 @@
 #include <l4/utcb.h>
 #include <memory.h>
 #include <irq.h>
-#include <init_hook.h>
 #include <debug.h>
 
 __BSS tcb_t *caller;

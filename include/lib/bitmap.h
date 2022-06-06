@@ -6,7 +6,7 @@
 #ifndef LIB_BITMAP_H_
 #define LIB_BITMAP_H_
 
-#include <link.h>
+#include <platform/link.h>
 #include <bitops.h>
 #include <types.h>
 

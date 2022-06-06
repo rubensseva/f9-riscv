@@ -8,7 +8,7 @@
 
 #include <types.h>
 #include <fpage.h>
-#include <link.h>
+#include <platform/link.h>
 #include <config.h>
 
 /*

@@ -1,10 +1,10 @@
 #include <types.h>
-#include <link.h>
+#include <platform/link.h>
 #include <thread.h>
 #include <syscall.h>
 #include <ipc.h>
-#include <uart_ESP32_C3.h>
-#include <timer_ESP32_C3.h>
+#include <platform/ESP32_C3_UART.h>
+#include <ESP32_C3_timer.h>
 #include <interrupt_ipc.h>
 #include <l4/utcb.h>
 #include <F9.h>

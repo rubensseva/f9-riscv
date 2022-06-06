@@ -1,6 +1,6 @@
 #include <types.h>
 #include <kip.h>
-#include <link.h>
+#include <platform/link.h>
 #include <config.h>
 
 kip_t kip __KIP = {

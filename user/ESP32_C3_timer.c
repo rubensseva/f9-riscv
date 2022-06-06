@@ -1,9 +1,9 @@
-#include <ESP32_C3.h>
+#include <platform/ESP32_C3.h>
+#include <ESP32_C3_timer.h>
 #include <utility.h>
-#include <link.h>
+#include <platform/link.h>
 
 #include <stdint.h>
-#include <timer_ESP32_C3.h>
 
 
 __USER_DATA volatile uint32_t *timg_0_update = REG(TIMER_GROUP_0_BASE + TIMG_T0UPDATE_REG);

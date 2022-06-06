@@ -3,10 +3,9 @@
 #include <irq.h>
 #include <interrupt.h>
 #include <interrupt_ipc.h>
-#include <init_hook.h>
 #include <error.h>
 #include <lib/ktable.h>
-#include <riscv.h>
+#include <platform/riscv.h>
 #include <config.h>
 #include <interrupt.h>
 

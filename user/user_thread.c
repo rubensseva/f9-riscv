@@ -3,8 +3,8 @@
 #include <types.h>
 #include <F9.h>
 #include <user_thread.h>
-#include <uart_ESP32_C3.h>
-#include <timer_ESP32_C3.h>
+#include <platform/ESP32_C3_UART.h>
+#include <ESP32_C3_timer.h>
 #include <ipc.h>
 #include <interrupt_ipc.h>
 #include <interrupt.h>

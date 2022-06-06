@@ -1,10 +1,10 @@
 #include <user_stdio.h>
 #include <stdint.h>
 #include <stdarg.h>
-#include <uart_ESP32_C3.h>
+#include <platform/ESP32_C3_UART.h>
 
 #include <user_thread.h>
-#include <link.h>
+#include <platform/link.h>
 
 
 /* TODO: In the original F9 code, this function is part of a debug device abstraction.

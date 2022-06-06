@@ -6,7 +6,6 @@
 #include <sched.h>
 #include <thread.h>
 #include <error.h>
-#include <init_hook.h>
 
 /**
  * @file sched.c

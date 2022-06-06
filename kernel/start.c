@@ -3,23 +3,22 @@
  * found in the LICENSE file.
  */
 
-#include <irq.h>
 #include <error.h>
 #include <types.h>
-#include <riscv.h>
+#include <platform/riscv.h>
 #include <ipc.h>
+#include <sched.h>
 #include <fpage_impl.h>
 #include <ktimer.h>
 #include <softirq.h>
 #include <syscall.h>
 #include <systhread.h>
-#include <init_hook.h>
 #include <lib/string.h>
 #include <config.h>
 #include <thread.h>
 #include <interrupt.h>
-#include <uart_ESP32_C3.h>
-#include <ESP32_C3.h>
+#include <platform/ESP32_C3_UART.h>
+#include <platform/ESP32_C3.h>
 #include <utility.h>
 #include <stdio.h>
 #include <debug.h>

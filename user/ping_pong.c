@@ -3,7 +3,7 @@
 #include <user_thread_log.h>
 #include <user_types.h>
 #include <F9.h>
-#include <timer_ESP32_C3.h>
+#include <ESP32_C3_timer.h>
 
 __USER_DATA L4_ThreadId_t ping_id;
 __USER_DATA L4_ThreadId_t pong_id;

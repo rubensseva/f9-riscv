@@ -1,7 +1,7 @@
 #ifndef MESSAGE_H_
 #define MESSAGE_H_
 
-#include <link.h>
+#include <platform/link.h>
 #include <user_types.h>
 #include <vregs.h>
 

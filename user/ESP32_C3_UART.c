@@ -1,7 +1,7 @@
 #include <stdint.h>
-#include <link.h>
-#include <uart_ESP32_C3.h>
-#include <ESP32_C3.h>
+#include <platform/link.h>
+#include <platform/ESP32_C3_UART.h>
+#include <platform/ESP32_C3.h>
 #include <config.h>
 #include <utility.h>
 

@@ -1,5 +1,5 @@
 #include <platform/mpu.h>
-#include <riscv.h>
+#include <platform/riscv.h>
 #include <thread.h>
 #include <debug.h>
 #include <config.h>

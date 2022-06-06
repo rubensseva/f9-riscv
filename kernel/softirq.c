@@ -8,7 +8,7 @@
 #include <bitops.h>
 #include <softirq.h>
 #include <systhread.h>
-#include <riscv.h>
+#include <platform/riscv.h>
 #include <interrupt.h>
 #include <debug.h>
 

@@ -8,7 +8,6 @@
 #include <thread.h>
 #include <lib/ktable.h>
 #include <fpage_impl.h>
-#include <init_hook.h>
 #include <kip.h>
 #include <debug.h>
 
