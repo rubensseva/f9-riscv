@@ -209,12 +209,12 @@ void kerneltrap(uint32_t* caller_sp)
 
     /* HACK: Always disable interrupts in kernel thread to avoid some weird heisenbugs.
        This will cause problems if kernel thread takes longer time than timer interrupt */
-    if (current == kernel) {
-        x &= ~MSTATUS_MPIE;
-    } else {
-        x |= MSTATUS_MPIE;
-    }
-    w_mstatus(x);
+    /* if (current == kernel) { */
+    /*     x &= ~MSTATUS_MPIE; */
+    /* } else { */
+    /*     x |= MSTATUS_MPIE; */
+    /* } */
+    /* w_mstatus(x); */
 
     __asm__ ("csrw mepc, %0" : : "r" (current->ctx.mepc));
     __asm__ volatile ("mv a0, %0" : : "r" (current->ctx.sp));
