@@ -193,10 +193,6 @@ void kerneltrap(uint32_t* caller_sp)
     if (sel != current)
         thread_switch(sel);
 
-    if (r_mepc() == 8) {
-        dbg_printf(DL_EMERG, "mepc is 8, after interrupt handling\n");
-    }
-
     /* Kernel and idle thread should run in m-mode, rest should run in u-mode */
     extern tcb_t *kernel, *idle;
     unsigned long x = r_mstatus();
