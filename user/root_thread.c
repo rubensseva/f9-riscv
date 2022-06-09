@@ -1,3 +1,4 @@
+#include "include/user_types.h"
 #include <types.h>
 #include <platform/link.h>
 #include <thread.h>
@@ -12,12 +13,15 @@
 #include <message.h>
 #include <user_thread_log.h>
 #include <ping_pong.h>
+#include <replier_thread.h>
 
 
 __USER_DATA uint32_t uart_mem_base = 0x60000000;
 __USER_DATA uint32_t uart_mem_size = 0xFFF;
 __USER_DATA uint32_t timer_mem_base = 0x6001F000;
 __USER_DATA uint32_t timer_mem_size = 0xFFF;
+
+__USER_DATA L4_ThreadId_t hoppus_thread_id;
 
 extern void* current_utcb;
 
@@ -56,6 +60,7 @@ void run_hoppus(kip_t *kip_ptr, utcb_t *utcb_ptr) {
     char *free_mem = (char *) get_free_base(kip_ptr);
 
     L4_ThreadId_t user_thread_id = {.raw = TID_TO_GLOBALID(24)};
+    hoppus_thread_id = user_thread_id;
 
     user_log_printf("Starting hoppus thread with id %d\n", user_thread_id);
 
@@ -171,12 +176,49 @@ void run_pingpong(kip_t *kip_ptr, utcb_t *utcb_ptr) {
 
 
 
+void run_replier(kip_t *kip_ptr, utcb_t *utcb_ptr) {
+    L4_ThreadId_t myself = {.raw = utcb_ptr->t_globalid};
+    char *free_mem = (char *) get_free_base(kip_ptr);
+    free_mem += sizeof(utcb_t);
+
+
+    replier_id = (L4_ThreadId_t){.raw = TID_TO_GLOBALID(60)};
+    user_log_printf("Starting replier thread with id %d\n", replier_id);
+
+    L4_ThreadControl(replier_id, replier_id, L4_nilthread, myself, free_mem);
+
+    map_user_text(kip_ptr, replier_id);
+
+    L4_map((uint32_t)&replier_thread_stack_start,
+        (char *)&replier_thread_stack_end - (char *)&replier_thread_stack_start,
+        replier_id);
+    L4_map((uint32_t)&user_threads_data_start,
+        (char *)&user_threads_data_end - (char *)&user_threads_data_start,
+        replier_id);
+
+    L4_Msg_t msg;
+    L4_MsgClear(&msg);
+    L4_Word_t msgs[5] = {
+        (L4_Word_t) replier,
+        (L4_Word_t) &replier_thread_stack_end,
+        (L4_Word_t)(((uint32_t) &replier_thread_stack_end) - ((uint32_t) &replier_thread_stack_start)), // stack size
+        0,
+        0
+    };
+
+    L4_MsgPut(&msg, 0, 5, msgs, 0, NULL);
+    L4_MsgLoad(&msg);
+    L4_Ipc(replier_id, myself, 0, (L4_ThreadId_t *)0);
+}
+
+
 
 /* Kip_ptr and utcb_ptr will be passed through a0 and a1 by create_root_thread() */
 void __USER_TEXT root_thread(kip_t *kip_ptr, utcb_t *utcb_ptr)
 {
-    /* run_hoppus(kip_ptr, utcb_ptr); */
-    run_pingpong(kip_ptr, utcb_ptr);
+    run_hoppus(kip_ptr, utcb_ptr);
+    /* run_replier(kip_ptr, utcb_ptr); */
+    /* run_pingpong(kip_ptr, utcb_ptr); */
     /* timed_sleep() */
 
 

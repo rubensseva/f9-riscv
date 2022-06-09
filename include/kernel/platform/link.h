@@ -59,6 +59,9 @@ extern uint32_t ping_thread_stack_end;
 extern uint32_t pong_thread_stack_start;
 extern uint32_t pong_thread_stack_end;
 
+extern uint32_t replier_thread_stack_start;
+extern uint32_t replier_thread_stack_end;
+
 extern uint32_t kip_start;
 extern uint32_t kip_end;
 

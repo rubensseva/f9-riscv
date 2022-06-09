@@ -399,6 +399,10 @@ int thread_ispriviliged(tcb_t *thread)
 /* Switch context */
 void thread_switch(tcb_t *thr)
 {
+    if (!thread_isrunnable(thr)) {
+        dbg_printf(DL_EMERG, "thread was not runnable, global id: %d, local id: %d\n",
+                   thr->t_globalid, thr->t_localid);
+    }
 	assert((intptr_t) thr);
 	assert(thread_isrunnable(thr));
 

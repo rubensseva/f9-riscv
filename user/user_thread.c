@@ -28,6 +28,10 @@ __USER_TEXT int read_line(char *buf) {
     while (1) {
         UART_clear(0);
         UART_receive_en(0);
+        /* Flush read buffer */
+        while (UART_rxfifo_count(0) != 0) {
+            char c = UART_read(0);
+        }
         L4_ThreadId_t intr_tid = {.raw = TID_TO_GLOBALID(THREAD_INTERRUPT)};
         L4_Ipc(L4_nilthread, intr_tid, 0, (L4_ThreadId_t *)0);
         UART_receive_dis(0);
@@ -71,29 +75,6 @@ __USER_TEXT void user_thread()
     request_irq(UART_IRQN, 1, myself, (uint32_t) user_uart_handler);
 
     clisp_main();
-    while (1) {
-        UART_clear(0);
-        L4_ThreadId_t intr_tid = {.raw = TID_TO_GLOBALID(THREAD_INTERRUPT)};
-        L4_Ipc(L4_nilthread, intr_tid, 0, (L4_ThreadId_t *)0);
 
-        L4_Msg_t msg;
-        L4_MsgClear(&msg);
-        msg.tag.X.label = USER_INTERRUPT_LABEL;
-        msg.tag.X.u = IRQ_IPC_MSG_NUM;
-
-        L4_MsgStore(msg.tag, &msg);
-
-        irq_handler_t handler = (irq_handler_t) msg.msg[IRQ_IPC_HANDLER + 1];
-        uint32_t action = msg.msg[IRQ_IPC_ACTION + 1];
-
-        switch (action) {
-            case USER_IRQ_ENABLE:
-                handler();
-                break;
-                /* case USER_IRQ_FREE: */
-                /*    return NULL; */
-                /* } */
-        }
-    }
-    while (1) {}
+    while (1) {};
 }
