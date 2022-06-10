@@ -13,25 +13,21 @@ extern L4_ThreadId_t hoppus_thread_id;
 void replier() {
 
     L4_MsgTag_t tag;
-    /* user_log_printf("replier thread start, id: %d\n", replier_id); */
+    user_log_printf("replier thread start, id: %d\n", replier_id);
     L4_Msg_t msg;
     L4_MsgClear(&msg);
 
     while (1) {
         /* Initial message */
-        /* L4_Ipc(L4_nilthread, hoppus_thread_id, 0, (L4_ThreadId_t *)0); */
-        /* tag = (L4_MsgTag_t) __L4_MR0; */
-        /* user_log_puts("Replier got an IPC! :D \n"); */
-        /* user_log_printf("tag - u: %d, t: %d\n", tag.X.u, tag.X.t); */
-        /* L4_MsgStore(tag, &msg); */
+        L4_Ipc(L4_nilthread, hoppus_thread_id, 0, (L4_ThreadId_t *)0);
+        tag = (L4_MsgTag_t) __L4_MR0;
+        L4_MsgStore(tag, &msg);
+        user_log_puts("printer thread got an IPC message\n");
+        user_log_printf("tag: %d untyped, %d typed\n", tag.X.u, tag.X.t);
+        user_log_puts("msgs: ");
+        for (int i = 0; i < tag.X.u; i++) {
+            user_log_printf("%d ", msg.msg[i + 1]);
+        }
+        user_log_puts("\n");
     }
-
-    L4_MsgStore(tag, &msg);
-
-    while (1) {
-        /* TODO: Need to use proper timeout object here */
-        L4_Sleep(100000);
-    }
-
-
 }

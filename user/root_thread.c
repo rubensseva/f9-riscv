@@ -15,6 +15,8 @@
 #include <ping_pong.h>
 #include <replier_thread.h>
 
+#include <utcb.h>
+
 
 __USER_DATA uint32_t uart_mem_base = 0x60000000;
 __USER_DATA uint32_t uart_mem_size = 0xFFF;
@@ -22,6 +24,11 @@ __USER_DATA uint32_t timer_mem_base = 0x6001F000;
 __USER_DATA uint32_t timer_mem_size = 0xFFF;
 
 __USER_DATA L4_ThreadId_t hoppus_thread_id;
+
+/* __USER_DATA utcb_t ping_utcb; */
+/* __USER_DATA utcb_t pong_utcb; */
+/* __USER_DATA utcb_t hoppus_utcb; */
+/* __USER_DATA utcb_t replier_utcb; */
 
 extern void* current_utcb;
 
@@ -111,8 +118,7 @@ void run_pingpong(kip_t *kip_ptr, utcb_t *utcb_ptr) {
         ping_id = (L4_ThreadId_t){.raw = TID_TO_GLOBALID(50)};
         user_log_printf("Starting ping thread with id %d\n", ping_id);
 
-
-        L4_ThreadControl(ping_id, ping_id, L4_nilthread, myself, free_mem);
+        L4_ThreadControl(ping_id, ping_id, L4_nilthread, myself, free_mem + 1024);
 
         map_user_text(kip_ptr, ping_id);
 
@@ -143,10 +149,11 @@ void run_pingpong(kip_t *kip_ptr, utcb_t *utcb_ptr) {
 
     /***** Pong thread *****/
     {
+        free_mem += 512;
         pong_id = (L4_ThreadId_t){.raw = TID_TO_GLOBALID(51)};
         user_log_printf("Starting pong thread with id %d\n", pong_id);
 
-        L4_ThreadControl(pong_id, pong_id, L4_nilthread, myself, free_mem);
+        L4_ThreadControl(pong_id, pong_id, L4_nilthread, myself, free_mem + 1536);
 
         map_user_text(kip_ptr, pong_id);
 
@@ -179,7 +186,7 @@ void run_pingpong(kip_t *kip_ptr, utcb_t *utcb_ptr) {
 void run_replier(kip_t *kip_ptr, utcb_t *utcb_ptr) {
     L4_ThreadId_t myself = {.raw = utcb_ptr->t_globalid};
     char *free_mem = (char *) get_free_base(kip_ptr);
-    free_mem += sizeof(utcb_t);
+    free_mem += 512;
 
 
     replier_id = (L4_ThreadId_t){.raw = TID_TO_GLOBALID(60)};
@@ -217,8 +224,8 @@ void run_replier(kip_t *kip_ptr, utcb_t *utcb_ptr) {
 void __USER_TEXT root_thread(kip_t *kip_ptr, utcb_t *utcb_ptr)
 {
     run_hoppus(kip_ptr, utcb_ptr);
-    /* run_replier(kip_ptr, utcb_ptr); */
-    /* run_pingpong(kip_ptr, utcb_ptr); */
+    run_replier(kip_ptr, utcb_ptr);
+    run_pingpong(kip_ptr, utcb_ptr);
     /* timed_sleep() */
 
 
