@@ -54,7 +54,7 @@ HOPPUS_THREAD_HEAP_SIZE   = 0x00008000;
 PING_THREAD_STACK_SIZE  = 0x00001000;
 PONG_THREAD_STACK_SIZE  = 0x00001000;
 
-REPLIER_THREAD_STACK_SIZE  = 0x00001000;
+PRINTER_THREAD_STACK_SIZE  = 0x00001000;
 
 MEM0_SIZE = 0x00001000;
 
@@ -180,10 +180,10 @@ SECTIONS {
         . = ALIGN (256);
         pong_thread_stack_end = .;
 
-        replier_thread_stack_start = .;
-        . += REPLIER_THREAD_STACK_SIZE;
+        printer_thread_stack_start = .;
+        . += PRINTER_THREAD_STACK_SIZE;
         . = ALIGN (256);
-        replier_thread_stack_end = .;
+        printer_thread_stack_end = .;
 
         user_data_end = .;
     } > dram

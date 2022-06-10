@@ -13,7 +13,7 @@
 #include <message.h>
 #include <user_thread_log.h>
 #include <ping_pong.h>
-#include <replier_thread.h>
+#include <printer_thread.h>
 
 #include <utcb.h>
 
@@ -24,11 +24,6 @@ __USER_DATA uint32_t timer_mem_base = 0x6001F000;
 __USER_DATA uint32_t timer_mem_size = 0xFFF;
 
 __USER_DATA L4_ThreadId_t hoppus_thread_id;
-
-/* __USER_DATA utcb_t ping_utcb; */
-/* __USER_DATA utcb_t pong_utcb; */
-/* __USER_DATA utcb_t hoppus_utcb; */
-/* __USER_DATA utcb_t replier_utcb; */
 
 extern void* current_utcb;
 
@@ -183,39 +178,39 @@ void run_pingpong(kip_t *kip_ptr, utcb_t *utcb_ptr) {
 
 
 
-void run_replier(kip_t *kip_ptr, utcb_t *utcb_ptr) {
+void run_printer(kip_t *kip_ptr, utcb_t *utcb_ptr) {
     L4_ThreadId_t myself = {.raw = utcb_ptr->t_globalid};
     char *free_mem = (char *) get_free_base(kip_ptr);
     free_mem += 512;
 
 
-    replier_id = (L4_ThreadId_t){.raw = TID_TO_GLOBALID(60)};
-    user_log_printf("Starting replier thread with id %d\n", replier_id);
+    printer_id = (L4_ThreadId_t){.raw = TID_TO_GLOBALID(60)};
+    user_log_printf("Starting printer thread with id %d\n", printer_id);
 
-    L4_ThreadControl(replier_id, replier_id, L4_nilthread, myself, free_mem);
+    L4_ThreadControl(printer_id, printer_id, L4_nilthread, myself, free_mem);
 
-    map_user_text(kip_ptr, replier_id);
+    map_user_text(kip_ptr, printer_id);
 
-    L4_map((uint32_t)&replier_thread_stack_start,
-        (char *)&replier_thread_stack_end - (char *)&replier_thread_stack_start,
-        replier_id);
+    L4_map((uint32_t)&printer_thread_stack_start,
+        (char *)&printer_thread_stack_end - (char *)&printer_thread_stack_start,
+        printer_id);
     L4_map((uint32_t)&user_threads_data_start,
         (char *)&user_threads_data_end - (char *)&user_threads_data_start,
-        replier_id);
+        printer_id);
 
     L4_Msg_t msg;
     L4_MsgClear(&msg);
     L4_Word_t msgs[5] = {
-        (L4_Word_t) replier,
-        (L4_Word_t) &replier_thread_stack_end,
-        (L4_Word_t)(((uint32_t) &replier_thread_stack_end) - ((uint32_t) &replier_thread_stack_start)), // stack size
+        (L4_Word_t) printer,
+        (L4_Word_t) &printer_thread_stack_end,
+        (L4_Word_t)(((uint32_t) &printer_thread_stack_end) - ((uint32_t) &printer_thread_stack_start)), // stack size
         0,
         0
     };
 
     L4_MsgPut(&msg, 0, 5, msgs, 0, NULL);
     L4_MsgLoad(&msg);
-    L4_Ipc(replier_id, myself, 0, (L4_ThreadId_t *)0);
+    L4_Ipc(printer_id, myself, 0, (L4_ThreadId_t *)0);
 }
 
 
@@ -224,7 +219,7 @@ void run_replier(kip_t *kip_ptr, utcb_t *utcb_ptr) {
 void __USER_TEXT root_thread(kip_t *kip_ptr, utcb_t *utcb_ptr)
 {
     run_hoppus(kip_ptr, utcb_ptr);
-    run_replier(kip_ptr, utcb_ptr);
+    run_printer(kip_ptr, utcb_ptr);
     run_pingpong(kip_ptr, utcb_ptr);
     /* timed_sleep() */
 

@@ -1,4 +1,4 @@
-#include "replier_thread.h"
+#include "printer_thread.h"
 #include "include/message.h"
 
 #include <platform/link.h>
@@ -6,14 +6,14 @@
 #include <user_types.h>
 #include <user_thread_log.h>
 
-__USER_DATA L4_ThreadId_t replier_id;
+__USER_DATA L4_ThreadId_t printer_id;
 
 extern L4_ThreadId_t hoppus_thread_id;
 
-void replier() {
+void printer() {
 
     L4_MsgTag_t tag;
-    user_log_printf("replier thread start, id: %d\n", replier_id);
+    user_log_printf("printer thread start, id: %d\n", printer_id);
     L4_Msg_t msg;
     L4_MsgClear(&msg);
 
