@@ -57,9 +57,9 @@ void timed_sleep() {
 }
 
 
-void run_hoppus(kip_t *kip_ptr, utcb_t *utcb_ptr) {
-    L4_ThreadId_t myself = {.raw = utcb_ptr->t_globalid};
-    char *free_mem = (char *) get_free_base(kip_ptr);
+void run_hoppus(kip_t *kip_ptr, L4_ThreadId_t myself, char *utcb_space) {
+    /* L4_ThreadId_t myself = {.raw = utcb_ptr->t_globalid}; */
+    char *free_mem = utcb_space;
 
     L4_ThreadId_t user_thread_id = {.raw = TID_TO_GLOBALID(24)};
     hoppus_thread_id = user_thread_id;
@@ -104,16 +104,16 @@ void run_hoppus(kip_t *kip_ptr, utcb_t *utcb_ptr) {
 }
 
 
-void run_pingpong(kip_t *kip_ptr, utcb_t *utcb_ptr) {
-    L4_ThreadId_t myself = {.raw = utcb_ptr->t_globalid};
-    char *free_mem = (char *) get_free_base(kip_ptr);
+void run_pingpong(kip_t *kip_ptr, L4_ThreadId_t myself, char *ping_utcb_space, char *pong_utcb_space) {
+    /* L4_ThreadId_t myself = {.raw = utcb_ptr->t_globalid}; */
+    /* char *free_mem = (char *) get_free_base(kip_ptr); */
 
     /***** Ping thread *****/
     {
         ping_id = (L4_ThreadId_t){.raw = TID_TO_GLOBALID(50)};
         user_log_printf("Starting ping thread with id %d\n", ping_id);
 
-        L4_ThreadControl(ping_id, ping_id, L4_nilthread, myself, free_mem + 1024);
+        L4_ThreadControl(ping_id, ping_id, L4_nilthread, myself, ping_utcb_space);
 
         map_user_text(kip_ptr, ping_id);
 
@@ -144,11 +144,11 @@ void run_pingpong(kip_t *kip_ptr, utcb_t *utcb_ptr) {
 
     /***** Pong thread *****/
     {
-        free_mem += 512;
+        /* free_mem += 512; */
         pong_id = (L4_ThreadId_t){.raw = TID_TO_GLOBALID(51)};
         user_log_printf("Starting pong thread with id %d\n", pong_id);
 
-        L4_ThreadControl(pong_id, pong_id, L4_nilthread, myself, free_mem + 1536);
+        L4_ThreadControl(pong_id, pong_id, L4_nilthread, myself, pong_utcb_space);
 
         map_user_text(kip_ptr, pong_id);
 
@@ -178,11 +178,8 @@ void run_pingpong(kip_t *kip_ptr, utcb_t *utcb_ptr) {
 
 
 
-void run_printer(kip_t *kip_ptr, utcb_t *utcb_ptr) {
-    L4_ThreadId_t myself = {.raw = utcb_ptr->t_globalid};
-    char *free_mem = (char *) get_free_base(kip_ptr);
-    free_mem += 512;
-
+void run_printer(kip_t *kip_ptr, L4_ThreadId_t myself, char *utcb_space) {
+    char *free_mem = utcb_space;
 
     printer_id = (L4_ThreadId_t){.raw = TID_TO_GLOBALID(60)};
     user_log_printf("Starting printer thread with id %d\n", printer_id);
@@ -218,9 +215,17 @@ void run_printer(kip_t *kip_ptr, utcb_t *utcb_ptr) {
 /* Kip_ptr and utcb_ptr will be passed through a0 and a1 by create_root_thread() */
 void __USER_TEXT root_thread(kip_t *kip_ptr, utcb_t *utcb_ptr)
 {
-    run_hoppus(kip_ptr, utcb_ptr);
-    run_printer(kip_ptr, utcb_ptr);
-    run_pingpong(kip_ptr, utcb_ptr);
+    L4_ThreadId_t myself = {.raw = utcb_ptr->t_globalid};
+
+    char *free_base = (char *)get_free_base(kip_ptr);
+    char *hoppus_utcb = free_base;
+    char *printer_utcb = free_base + 512;
+    char *ping_utcb = free_base + 512 * 2;
+    char *pong_utcb = free_base + 512 * 3;
+
+    run_hoppus(kip_ptr, myself, hoppus_utcb);
+    run_printer(kip_ptr, myself, printer_utcb);
+    run_pingpong(kip_ptr, myself, ping_utcb, pong_utcb);
     /* timed_sleep() */
 
 
